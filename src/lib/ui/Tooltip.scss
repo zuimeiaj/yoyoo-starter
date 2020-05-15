@@ -1,0 +1,28 @@
+$bg: rgba(0, 0, 0, 0.9);
+.aj-tooltip-wrapper {
+  position: fixed;
+  background:$bg;
+  z-index: 100000000;
+  color: #ffffff;
+  width: auto;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  transform: translateX(-50%);
+  display: block;
+  white-space: nowrap;
+  min-width: 50px;
+  &.bottom:after{
+    content: '';
+    width:0;
+    height:0;
+    display: block;
+    border-width:0 5px 5px;
+    border-style:solid;
+    border-color:transparent transparent $bg;/*透明 透明  灰*/
+    position: absolute;
+    transform: translateX(-50%);
+    top: -5px;
+    left: 50%;
+  }
+}

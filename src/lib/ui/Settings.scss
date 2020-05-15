@@ -1,0 +1,52 @@
+@import "../../styles/color";
+.component-settings {
+  position: relative;
+  padding: 8px !important;
+  margin: 10px 0;
+  .fixation{
+    display: flex;
+    align-items: center;
+    padding-left: 5px;
+    .iconfont{
+      color: $primary;
+    }
+    div{
+      margin-left: 10px;
+    }
+  }
+  .settings_name {
+    height: 30px;
+    .iconfont {
+      position: relative;
+      float: right;
+      margin-left: 10px;
+      color: #999999;
+    }
+  }
+  .settings_overflow{
+    label{
+      color: #666666;
+      padding-left: 4px;
+      padding-right: 10px;
+    }
+  }
+  .component-alias{
+    top: 8px !important;
+    padding-left:5px;
+    text-align: left;
+
+  }
+  .editable-component_input{
+    text-align: left !important;
+  }
+  .component-alias {
+    position: absolute;
+    width: calc(100% - 16px);
+    top: 0;
+    margin-left: 0;
+    margin-top: 0;
+    border: none;
+    border-radius: 0;
+  }
+
+}

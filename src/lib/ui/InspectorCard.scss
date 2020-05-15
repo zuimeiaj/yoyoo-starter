@@ -1,0 +1,35 @@
+.inspector-card {
+  .ins-card-title {
+    line-height: 30px;
+    padding-left: 10px;
+    color: #000000;
+    border-top: 1px solid #ececec;
+    background: #f5f5f5;
+    .iconfont {
+      font-size: 14px;
+      margin-right: 3px;
+    }
+    .switch {
+      float: right;
+      margin-right: 5px;
+      transition: transform 300ms;
+      color: #989898;
+      &:hover {
+        cursor: pointer;
+      }
+      &:active {
+        opacity: 0.5;
+      }
+    }
+  }
+  .ins-card-content {
+    padding: 15px 10px;
+    // 控件 label
+    .control-label {
+      width: 26px;
+      display: flex;
+      align-items: center;
+      color: #666666;
+    }
+  }
+}

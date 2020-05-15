@@ -1,0 +1,35 @@
+.inspector-control-shape {
+  padding: 10px;
+  background: #ffffff;
+  .item {
+    display: flex;
+    padding: 5px 0;
+  }
+
+  .control-items {
+    display: flex;
+    flex: 1;
+    .aj-button {
+      padding: 0;
+    }
+    .aj-number-input-control, .aj-component-select, .aj-color-input, .aj-button-group {
+      margin-left: 5px;
+      flex: 1;
+    }
+  }
+
+}
+.inspector_line-color{
+  display: flex;
+  align-items: center;
+  .control-label{
+    margin-right: 5px;
+    margin-left: 5px;
+  }
+  .control-items{
+    flex: 1;
+  }
+  .aj-color-input{
+    width: 100% !important;
+  }
+}

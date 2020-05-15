@@ -1,0 +1,30 @@
+@import "../../styles/color";
+
+.viewport-background {
+  background: #ffffff;
+  position: absolute;
+  border: 1px solid rgba(186, 186, 186, 0.5);
+  .resize {
+    height: 26px;
+    position: absolute;
+    bottom: -30px;
+    width: 100%;
+    cursor: move;
+    color: #989898;
+    background: #ffffff;
+    text-align: center;
+    line-height: 26px;
+    border: 1px solid $primary-border;
+    overflow: hidden;
+    .iconfont {
+      margin-left: 43px;
+    }
+    .aj-color-input {
+      float: left;
+    }
+    .viewport-bg_size {
+      float: right;
+      margin-right: 15px;
+    }
+  }
+}

@@ -1,0 +1,28 @@
+@import "../../styles/color";
+.line{
+  position: absolute;
+  left: 0;
+  top: 0;
+  .line_inner{
+    background: $assist-color;
+  }
+}
+.line-h{
+  height: 3px;
+  &:hover{
+    cursor: row-resize;
+  }
+  .line_inner{
+    height: 1px;
+  }
+}
+.line-v{
+  width: 3px;
+  &:hover{
+    cursor: col-resize;
+  }
+  .line_inner{
+    width: 1px;
+    height: 100%;
+  }
+}

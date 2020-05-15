@@ -1,0 +1,35 @@
+$size: 6px;
+@import "../styles/color";
+$bg: rgba(0, 0, 0, 0.5);
+.aj-scroller-slider {
+  background: rgba(0, 0, 0, 1);
+  position: absolute;
+  &:hover {
+    opacity: 1;
+    background: #d3d3d3;
+  }
+}
+
+.aj-scroller-v {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: $size;
+  height: 100%;
+  background: $bg;
+  > div {
+    width: 100%;
+  }
+}
+
+.aj-scroller-h {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: $size;
+  background: $bg;
+  left: 0;
+  > div {
+    height: 100%;
+  }
+}

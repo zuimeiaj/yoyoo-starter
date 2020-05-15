@@ -1,0 +1,66 @@
+@import "../../styles/color";
+
+.closable-panel-item {
+  width: 200px;
+  height: 240px;
+  border-radius: 4px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  float: left;
+  border: 1px solid $primary-border;
+  margin-left: 15px;
+  margin-bottom: 15px;
+  .name {
+    height: 40px;
+    line-height: 40px;
+    padding: 0 15px;
+    display: flex;
+    background: $primary-bg;
+    border-top: 1px solid $primary-border;
+    span {
+      flex: 1;
+      width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .iconfont {
+      color: #d3d3d3;
+    }
+  }
+  .icon {
+    flex: 1;
+    overflow: hidden;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    img {
+      height: 100%;
+      width: auto;
+    }
+  }
+  &.checked {
+    .iconfont {
+      color: $primary-light;
+    }
+  }
+}
+
+.material-panel_operation-bar {
+  display: flex;
+  padding: 10px 15px;
+  .selected {
+    width: 200px;
+  }
+  .extra {
+    flex: 1;
+    text-align: right;
+  }
+  button {
+    margin-right: 10px;
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+}

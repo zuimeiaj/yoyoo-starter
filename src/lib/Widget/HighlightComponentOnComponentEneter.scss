@@ -1,0 +1,14 @@
+@import "../../styles/color";
+$size: 1px;
+.highlight-border {
+  position: absolute;
+  background: $highlight-enter ;
+}
+
+.highlight-top, .highlight-bottom {
+  height: $size;
+}
+
+.highlight-left, .highlight-right {
+  width: $size;
+}

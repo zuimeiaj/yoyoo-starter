@@ -1,0 +1,169 @@
+$bg: linear-gradient(to right, rgba(255, 87, 34, 0.65), #F44336);
+@import "../styles/color";
+.user-center-page {
+  .banner {
+    height: 200px;
+    background: url("../assets/ucenter_banner.png") no-repeat center;
+    background-size: cover;
+    position: relative;
+    .aj-ui-search {
+      position: absolute;
+      right: 50px;
+      top: 25px;
+      background: #ffffff;
+    }
+  }
+  .header {
+    background: #673AB7;
+    padding: 0px 50px;
+    line-height: 45px;
+    height: 45px;
+    font-size: 14px;
+    overflow: hidden;
+    color: #ffffff;
+    .logo {
+      float: left;
+      margin-right: 60px;
+      font-size: 20px;
+      .icon-hot {
+        color: #ffeb3b;
+        margin-right: 5px;
+        font-size: 22px;
+      }
+    }
+    .user {
+      float: right;
+    }
+    .menu {
+      float: right;
+      li {
+        float: left;
+        margin-right: 50px;
+        font-size: 18px;
+        &:hover {
+          .iconfont, a {
+            color: #ffffff !important;
+          }
+        }
+        a, .iconfont {
+          font-size: 18px;
+        }
+
+      }
+    }
+  }
+  .info {
+    position: relative;
+    height: 85px;
+    .head {
+      border-radius: 50%;
+      height: 100px;
+      width: 100px;
+      background: #ffffff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 30px;
+      overflow: hidden;
+      border: 3px solid rgba(255, 87, 34, 0.46);
+      img {
+        height: 100%;
+      }
+    }
+    .tabs {
+      position: absolute;
+      bottom: 0;
+      left: 200px;
+      .desc {
+        padding-bottom: 15px;
+      }
+      li {
+        float: left;
+        margin-right: 25px;
+        border-radius: 28px;
+        line-height: 28px;
+        height: 2428;
+        color: #ffffff;
+        cursor: pointer;
+        border: 1px solid #ffffff;
+        background: rgb(244, 67, 54);
+        > a {
+          padding: 0 15px;
+          display: block;
+          height: 100%;
+        }
+        &.create-project {
+          background: $bg;
+          color: #ffffff;
+          .iconfont {
+            color: #ffffff;
+          }
+        }
+        .iconfont {
+          font-size: 14px;
+          margin-right: 5px;
+        }
+        &:hover {
+          border: 1px solid #ff5460;
+        }
+      }
+    }
+    .avatar {
+      position: absolute;
+      top: -50px;
+      left: 50PX;
+      color: #666666;
+      text-align: center;
+      .extra, .name {
+        padding-top: 10px;
+      }
+      .name {
+        font-size: 16px;
+        color: #47397f;
+      }
+      strong {
+        color: #f09ba0;
+        font-size: 14px;
+      }
+    }
+  }
+
+  .content {
+    padding: 65px 50px 25px 50px;
+    .items {
+      overflow: hidden;
+      padding: 10px;
+    }
+    .project-item {
+      margin-bottom: 20px;
+    }
+  }
+}
+
+// 创建项目
+.create-project-modal {
+  .ant-radio-wrapper {
+    .iconfont {
+      font-size: 50px;
+      border: 1px dashed $primary-border;
+      width: 100px;
+      height: 100px;
+      display: inline-flex;
+      color: rgb(255, 152, 0);
+      align-items: center;
+      justify-content: center;
+      background: $primary-bg;
+      border-radius: 4px;
+    }
+  }
+  .ant-radio {
+    display: none;
+  }
+  .ant-radio-checked + span {
+    .iconfont {
+      color: $primary-light;
+      border-color: $primary-light;
+      border-radius: 4px;
+    }
+  }
+}

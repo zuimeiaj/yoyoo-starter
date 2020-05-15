@@ -1,0 +1,101 @@
+$width: 320px;
+$btncolor: #da261c;
+@import "../styles/color";
+$color: #888;
+.app-signing {
+
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  .app-signing-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    background: #000627;
+
+    a {
+      color: $color
+    }
+  }
+  .canvas-effects {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+  }
+  .singup-form {
+    width: $width;
+    background: $dialog-bg;
+    text-align: center;
+    padding: 24px;
+    border-radius: 8px;
+    .form-content {
+      display: flex;
+    }
+    .ant-form-item-children {
+      display: block;
+    }
+    .form-controls {
+      flex: 1;
+      padding: 15px;
+      height: 100%;
+      .description {
+        padding: 20px 0;
+        color: $color;
+      }
+      input {
+        border: 1px solid #555555;
+        color: $color;
+      }
+    }
+
+    button {
+      background: linear-gradient(to right, rgba(255, 87, 34, 0.54), rgba(233, 30, 99, 0.67), rgba(255, 87, 34, 0.74));
+    }
+  }
+  .send-code {
+    position: absolute;
+    right: 10px;
+    top: 5px;
+    cursor: pointer;
+    color: #ffffff;
+  }
+  .ant-form-explain {
+    margin-top: 5px;
+    margin-bottom: 10px;
+    text-align: left;
+  }
+
+  .has-error .ant-form-explain {
+    color: rgba(245, 34, 45, 0.7);
+  }
+
+  input {
+    height: 50px;
+    border-radius: 4px;
+    background: none;
+  }
+  .form-extra.left {
+    float: left;
+  }
+  .form-extra.right {
+    float: right;
+  }
+  button {
+    height: 50px;
+    border-radius: 4px;
+    margin-top: 20px;
+    background: $btncolor;
+    border: none;
+    &:hover {
+      background: $btncolor;
+      opacity: 0.8;
+    }
+    &:focus {
+      background: $btncolor;
+    }
+    &:active {
+      opacity: 0.9;
+    }
+  }
+}

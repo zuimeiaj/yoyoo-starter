@@ -1,0 +1,61 @@
+@import "../../styles/color";
+
+.aj-poplist {
+  position: relative;
+  z-index: 1000;
+  .aj-poplist_list {
+
+    top: 22px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: $primary-bg;
+    box-shadow: 1px 1px 10px 2px rgba(0, 0, 0, 0.4);
+    border-radius: 4px;
+    overflow: hidden;
+    position: absolute;
+  }
+  .aj-poplist_emitter {
+    &:hover {
+      cursor: pointer;
+    }
+  }
+}
+
+.aj-menus {
+  .aj-menus_line {
+    height: 1px;
+    background: #f5f5f5;
+  }
+  .aj-menus_item {
+    padding: 0 10px;
+    height: 36px;
+    display: flex;
+    line-height: 36px;
+    font-size: 12px;
+    color: $primary-font-alpha-color;
+    &:hover {
+      background: #333;
+      color: $primary-font-color;
+      cursor: pointer;
+    }
+    &.disabled {
+      color: #bbb;
+      cursor: not-allowed;
+    }
+  }
+  .aj-menus_item-extra {
+    width: 50%;
+    text-align: right;
+    color: #989898;
+  }
+  .aj-menus_item-label {
+    display: flex;
+    align-items: center;
+    flex: 1;
+
+    .iconfont {
+      margin-right: 5px;
+      color: #989898;
+    }
+  }
+}

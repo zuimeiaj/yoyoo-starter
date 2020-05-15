@@ -1,0 +1,58 @@
+@import "color";
+/* 设置滚动条的样式 */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+/* 滚动槽 */
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+
+}
+
+/* 滚动条滑块 */
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+[draggable=true] {
+  -khtml-user-drag: element;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+  &:visited, :active {
+    color: inherit;
+  }
+
+}
+
+.ant-message {
+  z-index: 99999999999999 !important;
+}
+
+.anticon > svg {
+  width: 22px;
+  height: 22px;
+}
+
+a.link {
+  color: #0281e6;
+}
+
+.preseticons {
+  color: #F44336;
+}
+
+.ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

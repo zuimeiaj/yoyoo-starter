@@ -1,0 +1,28 @@
+@import "../../styles/color";
+.aj-color-input{
+  flex: 1;
+  height: $input-height;
+  border-radius: $input-radius;
+  border: 1px solid $border;
+  display: inline-flex;
+  position: relative;
+  box-sizing: border-box;
+  background: $input-bg;
+  &:hover{
+    cursor: pointer;
+    border: 1px solid $primary;
+  }
+  >span{
+    display: block;
+    position: absolute;
+    left: 3px;
+    border-radius: $input-radius;
+    top: 3px;
+    right: 3px;
+    bottom: 3px;
+  }
+  .aj-color-input-bg{
+    background: url("./ColorPicker/alpha.png");
+    background-size: 10px 10px;
+  }
+}

@@ -1,0 +1,27 @@
+@import "../../styles/color";
+.inspector-anchor{
+  .item{
+    display: flex;
+    justify-content: space-evenly;
+    padding: 5px 0;
+  }
+  .aj-number-input-control{
+    width: 45%;
+  }
+  .anchor-enabled{
+    padding-left: 8px;
+    color: #989898;
+    display: flex;
+    align-items: center;
+
+    .iconfont{
+      margin-left: 5px;
+      color: #989898;
+    }
+    &.checked{
+      .iconfont{
+        color: $primary;
+      }
+    }
+  }
+}

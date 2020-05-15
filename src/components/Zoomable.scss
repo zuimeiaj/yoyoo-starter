@@ -1,0 +1,18 @@
+.header-zoomable_icons {
+  margin-top: 5px;
+  .preseticons {
+    &.disabled {
+      color: #989898;
+    }
+    &:nth-child(2) {
+      margin: 0 15px;
+    }
+    &:last-child {
+      font-size: 15px;
+    }
+  }
+}
+
+.header-zoomable_text {
+  color: #989898;
+}

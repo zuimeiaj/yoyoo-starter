@@ -1,0 +1,24 @@
+@import "../../styles/color";
+$h:28px;
+.aj-ui-search{
+  background: $primary-bg;
+  height: $h;
+  line-height:$h;
+  padding: 0 10px;
+  display: inline-flex;
+  border-radius: 4px;
+  box-shadow: 1px 1px 3px 1px rgba(0,0,0,0.08);
+  .icon-search{
+    color: #989898;
+    font-size: 12px;
+    margin-right: 5px;
+    margin-left: 10px;
+  }
+  input{
+    border: 0;
+    background: none;
+    outline: none;
+    font-size: 12px;
+    color: #989898;
+  }
+}

@@ -1,0 +1,24 @@
+.header_preferences {
+  padding: 15px;
+  overflow-y: auto;
+}
+
+.preferences-title {
+  padding-bottom: 6px;
+  color: #555555;
+}
+
+.preferences-content {
+  display: flex;
+  margin-bottom: 24px;
+  .preferences-form-item {
+    flex: 1;
+    label {
+      margin-right: 5px;
+    }
+  }
+}
+.preferences-form-item_extra{
+  color: #989898;
+  padding-top: 5px;
+}

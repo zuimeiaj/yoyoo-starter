@@ -1,0 +1,17 @@
+.aj-editable-component {
+  .editable-component_text {
+    border-bottom: 1px solid #ffffff;
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    display: block;
+  }
+  .editable-component_input {
+    border: none;
+    outline: none;
+    border-bottom: 1px solid #ececec;
+    width: 100%;
+    text-align: center;
+  }
+}

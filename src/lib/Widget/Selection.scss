@@ -1,0 +1,7 @@
+@import "../../styles/color";
+
+.aj-selection-rect {
+  position: absolute;
+  border: 1px solid $selection-border;
+  background: $selection-bg;
+}

@@ -1,0 +1,42 @@
+.inspector-text{
+  padding: 10px;
+  background: #ffffff;
+  .item{
+    display: flex;
+    padding: 5px 0;
+  }
+
+  .control-items{
+    flex: 1;
+    display: flex;
+    .aj-button-group{
+      width: 100%;
+      margin-left: 5px;
+    }
+  }
+  .aj-number-input-control,.aj-color-input{
+    flex: 1;
+    margin-left: 5px;
+  }
+  .aj-button{
+    i{
+      font-size: 14px;
+    }
+  }
+
+  .drop-icon{
+    border: 1px dashed #d3d3d3;
+    padding: 8px 10px;
+    border-radius: 4px;
+    color: #666666;
+    .aj-component-dropable{
+      flex: 1;
+    }
+  }
+
+  .drop-icons{
+    .control-label{
+      width: 60px;
+    }
+  }
+}

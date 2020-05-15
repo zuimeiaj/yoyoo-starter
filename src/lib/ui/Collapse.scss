@@ -1,0 +1,27 @@
+.aj-component-collapse {
+  .aj-component-collapse-content {
+    display: none;
+  }
+  &.expand {
+    .aj-component-collapse-content {
+      display: block;
+    }
+  }
+  .collapse-title {
+    display: flex;
+    padding: 10px;
+    padding-left: 0;
+    .iconfont {
+      transition: all 300ms;
+      color: #ffffff;
+      &:hover {
+        cursor: pointer;
+      }
+    }
+    .left-title {
+      flex: 1;
+      font-weight: 700;
+      color: #ececec;
+    }
+  }
+}

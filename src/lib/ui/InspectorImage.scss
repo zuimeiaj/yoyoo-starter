@@ -1,0 +1,47 @@
+@import "../../styles/color";
+
+.inspector-image {
+  padding: 10px;
+  background: #ffffff;
+  .aj-component-dropable {
+    display: flex;
+    flex-direction: column;
+    padding-left: 5px;
+    .ins-image_drop-tips {
+      color: #989898;
+      margin-top: 10px;
+    }
+    .ins-image_drop-image {
+      height: 100px;
+      width: 136px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      border: 1px dashed #ececec;
+      border-radius: 10px;
+    }
+  }
+  .item {
+    display: flex;
+    padding: 5px 0;
+  }
+
+  .control-items {
+    flex: 1
+  }
+  .material-uploader {
+    border: 1px dashed $primary;
+    padding: 15px;
+    border-radius: 4px;
+    height: 100px;
+    display: flex;
+    align-items: center;
+    color: #989898;
+    justify-content: center;
+    margin-left: 5px;
+  }
+  .aj-component-select {
+    margin-left: 5px;
+  }
+}

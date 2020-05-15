@@ -1,0 +1,163 @@
+$header_height: 50px;
+@import "../styles/color";
+.root-layout-header {
+  height: $header_height;
+  display: flex;
+  align-items: center;
+  background: $primary-alpha;
+  border-bottom: 1px solid #3e3e3e;
+  display: flex;
+  position: relative;
+  color: $primary-font-alpha-color;
+  z-index: 999;
+
+  .header_project {
+    height: 100%;
+    display: flex;
+    width: 280px;
+    padding-left: 50px;
+    .editable-component_text {
+      border-bottom: none;
+    }
+    .editable-component_input {
+      background: none;
+      text-align: left;
+      border-bottom: none;
+    }
+    .header_name {
+      flex: 1;
+      display: flex;
+      font-weight: 700;
+      align-items: center;
+    }
+  }
+
+  .header_functions {
+    flex: 1;
+    display: flex;
+    justify-content: flex-start;
+  }
+  .header_action-item {
+    margin-right: 15px;
+  }
+  .header_action-item, .header_action-item_sub {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    font-size: 12px;
+    .icon-loading {
+      animation: loading 1s infinite;
+    }
+    &.disabled {
+      color: #c0c0c0;
+      cursor: not-allowed;
+      .iconfont {
+        color: #c0c0c0
+      }
+    }
+    .iconfont {
+      font-size: 18px;
+    }
+    &:hover:not(.disabled) {
+      opacity: 0.9;
+      cursor: pointer;
+    }
+  }
+  .header_user {
+    display: flex;
+    flex: 1;
+    justify-content: flex-end;
+  }
+}
+
+.header_settings-panel {
+  background: #ffffff;
+  box-shadow: 3px 3px 10px 5px rgba(0, 0, 0, 0.05);
+  width: 800px;
+  position: fixed;
+  right: 10px;
+  border-radius: 4px;
+  z-index: 1000000000;
+  padding: 10px 20px;
+  height: calc(100% - 100px);
+  display: flex;
+  flex-direction: column;
+  .settings-panel_form {
+    display: flex;
+    flex: 1;
+  }
+  .settings-panel_bar {
+    height: 46px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    border-top: 1px solid #ececec;
+  }
+  .header_shortcuts {
+    position: relative;
+    height: 100%;
+    overflow-y: auto;
+    flex: 1;
+  }
+  .header_preferences {
+    flex: 1;
+  }
+  .header_shortcuts-custom {
+    color: #0281e6;
+    display: block;
+    cursor: pointer;
+    margin: 10px 0;
+    &:active {
+      opacity: 0.8;
+    }
+  }
+  .settings_shortcut-item {
+    padding: 5px 0;
+    display: flex;
+    align-items: center;
+  }
+  .settings_shortcuts-name {
+    width: 100px;
+    display: inline-block;
+  }
+  .settings_shortcuts-combo, .settings_shortcuts-key {
+    min-width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 2px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.08);
+    border: 1px solid #ececec;
+    margin-right: 10px;
+    text-align: center;
+    outline: none;
+  }
+  .settings_shortcuts-editmode {
+    background: #f5f5f5;
+    &.selected, &:hover {
+      background: #0281e6;
+      color: #ffffff;
+      border: 1px solid #0281e6;
+      cursor: pointer;
+    }
+  }
+
+}
+
+.header_extra-actions {
+  color: #555555;
+  .iconfont {
+    color: #989898;
+    margin-right: 5px;
+  }
+}
+
+@keyframes loading {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

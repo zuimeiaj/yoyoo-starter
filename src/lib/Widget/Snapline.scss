@@ -1,0 +1,23 @@
+@import "../../styles/color";
+.snapline{
+  position: absolute;
+  display: none;
+}
+.snapline-wrapper-v{
+  position: absolute;
+  height: 100%;
+  width: 0;
+  top: 0;
+}
+.snapline-h{
+  height: 1px;
+  border-top: 1px dashed $snap-line;
+  width: 10000px;
+  transform: translateX(-50%);
+}
+.snapline-v{
+  height: 10000px;
+  transform: translateY(-50%);
+  width: 1px;
+  border-left: 1px dashed $snap-line;
+}

@@ -1,0 +1,12 @@
+.inspector-transform{
+  .item{
+    display: flex;
+    flex-flow: wrap;
+    justify-content: space-evenly;
+  }
+  .aj-number-input-control{
+    width: 45%;
+    box-sizing: border-box;
+    margin-top: 10px;
+  }
+}

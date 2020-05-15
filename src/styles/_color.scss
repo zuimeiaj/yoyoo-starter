@@ -1,0 +1,27 @@
+$primary-bg: #000;
+$primary-border: #000;
+$primary-font-color: #ececec;
+$primary-font-alpha-color: #c0c0c0;
+$primary-selected: rgba(0, 0, 0, 0.1);
+$primary-light: rgba(156, 39, 176, 0.7);
+$primaryBlur: #888;
+$primary: $primaryBlur;
+$assist-color: #2196f3;
+$assist-alpha: rgba(33, 150, 243, 0.3);
+$highlight-aligned: $assist-alpha;
+$highlight-enter: $assist-color;
+$resize-line: $assist-color;
+$snap-line: $assist-color;
+$selection-border: $assist-color;
+$selection-bg: $assist-alpha;
+
+$dialog-bg: linear-gradient(to bottom, rgba(156, 39, 176, 0.3), rgba(244, 67, 54, 0.2));
+
+$border: #555;
+$input-bg: rgba(0, 0, 0, 0.5);
+$primary-alpha: rgba(0, 0, 0, 0.85);
+$input-font-color: #fff;
+$input-radius: 0px;
+$input-height: 26px;
+$input-disabled: #bbb;
+

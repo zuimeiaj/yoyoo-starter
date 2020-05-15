@@ -1,0 +1,17 @@
+.edit-view-item {
+  display: flex;
+  align-items: center;
+  padding: 5px 0;
+  padding-left: 5px;
+  &.selected {
+    background: #ececec;
+    border-radius: 4px;
+  }
+  .iconfont{
+    margin-left: 5px;
+    color: #666666;
+  }
+  .edit-view-name {
+    flex: 1;
+  }
+}
