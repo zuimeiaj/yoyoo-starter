@@ -2,11 +2,9 @@
 import '@babel/polyfill'
 import React from 'react'
 import { render } from 'react-dom'
-import { AppContainer } from 'react-hot-loader'
 import Root from './components/Root'
 import UCenter, { CreateProjectModal } from './components/UserCenter'
 import Signup from './components/SignUp'
-import { BrowserRouter as Router, Redirect, Route } from 'react-router-dom'
 import 'antd/dist/antd.min.css'
 import './styles/base.scss'
 import { message } from 'antd'
@@ -39,25 +37,5 @@ window.onload = () => {
 }
 
 function loadendAfterRender() {
-  render(
-    <AppContainer>
-      <Router>
-        <div>
-          <Route
-            exact
-            path={'/'}
-            render={({ match }) => {
-              return match.path == '/' ? <Redirect to={'/app'} /> : null
-            }}
-          />
-          <Route render={Root} path={'/app'} />
-          <Route render={UCenter} path={'/ucenter'}></Route>
-          <Route component={Signup} path={'/signin'}></Route>
-          <Route component={Pako} path={'/InflateWithPakoJS'}></Route>
-          <CreateProjectModal />
-        </div>
-      </Router>
-    </AppContainer>,
-    document.getElementById('app')
-  )
+  render(<Root />, document.getElementById('root'))
 }
