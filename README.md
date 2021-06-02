@@ -2,6 +2,55 @@
 
 在线可视化网页生成工具，可导出图片
 
+## 安装
+
+```
+npm install && npm start
+
+```
+
+## 自定义组件扩展
+
+```
+// 在lib/widget 下创建一个自定义组件
+
+import React from "react";
+import ViewController from "./ViewController";
+
+export default class YourCustomComponent extends ViewController {
+  renderContent(){
+    return <div>自定义组件</div>
+  }
+}
+
+// 然后在 src/lib/Widget/View.js里面 配置你的组件
+// 框架会根据配置的key去实例化你的组件
+
+```
+## 自定义属性可视化编辑器
+```
+// 在 lib/properties 下创建一个组件属性
+import ViewProperties from "./base";
+
+export default class YourComponentProperty extends ViewProperties{
+    constructor(){
+        super()
+        // 你的自定义组件类型
+        this.type = 'group'
+        // 你的自定义组件名称
+        this.alias = '分组'
+        
+        // 扩展你自己的属性
+        this.customPxx1='xxx'
+    }
+}
+
+// 然后在 ib/properties/types.js 里面声明你的组件属性
+// 声明后，当组件在编辑器中被选中时，属性编辑器会根据你配置的名称来实例化
+
+```
+
+
 ## 特色
 - 支持自定义可视化组件，所有的组件需要继承ViewController 即可
 - 支持自定义组件属性可视化编辑
