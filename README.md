@@ -17,4 +17,4 @@
 - 支持移动端触摸使用
 - 支持自动对齐参考线
 - 支持网格对齐
-[效果：](https://yoyoo.vivw.org/)
+[效果](https://yoyoo.vivw.org/)
