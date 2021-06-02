@@ -11,7 +11,7 @@ npm install && npm start
 
 ## 自定义组件扩展
 
-```
+```javascript
 // 在lib/widget 下创建一个自定义组件
 
 import React from "react";
@@ -28,7 +28,7 @@ export default class YourCustomComponent extends ViewController {
 
 ```
 ## 自定义属性可视化编辑器
-```
+```javascript
 // 在 lib/properties 下创建一个组件属性
 import ViewProperties from "./base";
 
