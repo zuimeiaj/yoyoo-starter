@@ -1,9 +1,10 @@
 $size: 6px;
-@import "../styles/color";
+@import '../styles/color';
 $bg: rgba(0, 0, 0, 0.5);
 .aj-scroller-slider {
-  background: rgba(0, 0, 0, 1);
+  background: #ccc;
   position: absolute;
+  border-radius: 10px;
   &:hover {
     opacity: 1;
     background: #d3d3d3;
@@ -16,7 +17,7 @@ $bg: rgba(0, 0, 0, 0.5);
   top: 0;
   width: $size;
   height: 100%;
-  background: $bg;
+  background: #ececec;
   > div {
     width: 100%;
   }
@@ -27,7 +28,7 @@ $bg: rgba(0, 0, 0, 0.5);
   bottom: 0;
   width: 100%;
   height: $size;
-  background: $bg;
+  background: #ececec;
   left: 0;
   > div {
     height: 100%;

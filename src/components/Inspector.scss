@@ -1,12 +1,11 @@
-@import "../styles/color";
+@import '../styles/color';
 
 .root-layout-inspector_panel {
   width: 260px;
   padding: 15px;
   overflow-y: auto;
   background: $primary-alpha;
-  border-left: 1px solid #000;
-  box-shadow: -2px 0 5px 1px rgba(0, 0, 0, 0.2);
+  border-left: 1px solid #ececec;
 }
 
 .root-layout-inspector {
@@ -25,10 +24,8 @@
     }
     .iconfont {
       font-size: 18px;
-
     }
   }
-
 }
 
 .ins-props-overlay {
@@ -74,7 +71,6 @@
     width: 50px;
     height: 1px;
     background: #ff0000;
-
   }
 }
 

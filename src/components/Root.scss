@@ -1,6 +1,8 @@
-@import "../styles/color";
+@import '../styles/color';
 
-html, body, #app {
+html,
+body,
+#app {
   height: 100vh;
   margin: 0;
   padding: 0;
@@ -52,7 +54,6 @@ ul li {
 }
 
 .view-text {
-
   height: 100%;
   width: 100%;
   word-break: break-all;
@@ -72,7 +73,8 @@ ul li {
 
 .view-input {
   overflow: hidden;
-  input, textarea {
+  input,
+  textarea {
     width: 100% !important;
     height: 100% !important;
     outline: none;
@@ -92,7 +94,6 @@ ul li {
   width: 100%;
   overflow: hidden;
   .view-image-wrapper {
-
     // FLex
     display: flex;
     align-items: center;
@@ -116,11 +117,11 @@ ul li {
   -webkit-appearance: none;
   border: 1px solid $border;
   padding-left: 8px;
-  color: #ffffff;
+  color: #444;
   border-radius: $input-radius;
   &:focus {
     box-shadow: 0 0 5px 0px $primaryBlur;
-    border: 1px solid $primary
+    border: 1px solid $primary;
   }
   &:hover {
     border: 1px solid $primary;
@@ -147,7 +148,6 @@ ul li {
   position: absolute;
   left: -9999999999px;
   top: 0px;
-
 }
 
 .component-control-dot {
@@ -173,7 +173,7 @@ ul li {
 }
 
 .highlight-group-dragging {
-  border: 3px solid $primary-light
+  border: 3px solid $primary-light;
 }
 
 .view-text_comment {

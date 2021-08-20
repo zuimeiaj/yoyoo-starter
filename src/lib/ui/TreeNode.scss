@@ -1,4 +1,4 @@
-@import "../../styles/color";
+@import '../../styles/color';
 
 .aj-component-tree {
   .drag-highlight {
@@ -7,7 +7,7 @@
     width: 100%;
     bottom: 0;
     border-bottom: 1px solid none;
-    &.drag-over{
+    &.drag-over {
       border-bottom: 1px solid $primaryBlur;
     }
   }
@@ -22,7 +22,6 @@
     &.editmode {
       border-bottom: 1px solid $primaryBlur;
     }
-
   }
 
   .iconfont {
@@ -36,11 +35,11 @@
     overflow: hidden;
     color: #444;
     margin-top: 1px;
-    border: 1px solid rgba(0,0,0,0);
-    .editable-component_text{
+    border: 1px solid rgba(0, 0, 0, 0);
+    .editable-component_text {
       border-bottom: 0;
     }
-    .aj-editable-component{
+    .aj-editable-component {
       display: inline-block;
       text-align: left;
       width: 110px;
@@ -48,25 +47,31 @@
       text-overflow: ellipsis;
       white-space: nowrap;
       vertical-align: bottom;
-      .editable-component_input{
+      .editable-component_input {
         text-align: left !important;
       }
     }
     &:hover {
       cursor: pointer;
-      background: $primary-selected;
-      .tree-node-actions{
+      background: rgba(255, 87, 34, 0.3);
+      .editable-component_text,
+      .iconfont {
+        color: #585252;
+      }
+      .tree-node-actions {
         display: block;
       }
     }
-    &.drag-over{
+    &.drag-over {
       border: 1px solid $primary;
     }
     &.selected {
-      background: $primary-selected;
-
+      background: rgba(255, 87, 34, 0.3);
+      .editable-component_text,
+      .iconfont {
+        color: #585252;
+      }
     }
-
   }
   .tree-node-actions {
     position: absolute;

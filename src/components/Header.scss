@@ -1,14 +1,15 @@
 $header_height: 50px;
-@import "../styles/color";
+@import '../styles/color';
 .root-layout-header {
   height: $header_height;
   display: flex;
   align-items: center;
   background: $primary-alpha;
-  border-bottom: 1px solid #3e3e3e;
+  border-bottom: 1px solid #f1f1f1;
+  box-shadow: 0 0 10px 5px rgba(0, 0, 0, 0.05);
   display: flex;
   position: relative;
-  color: $primary-font-alpha-color;
+  color: #666;
   z-index: 999;
 
   .header_project {
@@ -40,7 +41,8 @@ $header_height: 50px;
   .header_action-item {
     margin-right: 15px;
   }
-  .header_action-item, .header_action-item_sub {
+  .header_action-item,
+  .header_action-item_sub {
     display: flex;
     flex-direction: column;
     text-align: center;
@@ -52,7 +54,7 @@ $header_height: 50px;
       color: #c0c0c0;
       cursor: not-allowed;
       .iconfont {
-        color: #c0c0c0
+        color: #c0c0c0;
       }
     }
     .iconfont {
@@ -120,7 +122,8 @@ $header_height: 50px;
     width: 100px;
     display: inline-block;
   }
-  .settings_shortcuts-combo, .settings_shortcuts-key {
+  .settings_shortcuts-combo,
+  .settings_shortcuts-key {
     min-width: 32px;
     height: 32px;
     display: inline-flex;
@@ -135,20 +138,20 @@ $header_height: 50px;
   }
   .settings_shortcuts-editmode {
     background: #f5f5f5;
-    &.selected, &:hover {
+    &.selected,
+    &:hover {
       background: #0281e6;
       color: #ffffff;
       border: 1px solid #0281e6;
       cursor: pointer;
     }
   }
-
 }
 
 .header_extra-actions {
   color: #555555;
   .iconfont {
-    color: #989898;
+    color: #666;
     margin-right: 5px;
   }
 }

@@ -1,14 +1,13 @@
-@import "../../styles/color";
+@import '../../styles/color';
 
 .aj-poplist {
   position: relative;
   z-index: 1000;
   .aj-poplist_list {
-
     top: 22px;
     left: 50%;
     transform: translateX(-50%);
-    background: $primary-bg;
+    background: #fff;
     box-shadow: 1px 1px 10px 2px rgba(0, 0, 0, 0.4);
     border-radius: 4px;
     overflow: hidden;
@@ -24,7 +23,6 @@
 .aj-menus {
   .aj-menus_line {
     height: 1px;
-    background: #f5f5f5;
   }
   .aj-menus_item {
     padding: 0 10px;
@@ -32,10 +30,10 @@
     display: flex;
     line-height: 36px;
     font-size: 12px;
-    color: $primary-font-alpha-color;
+    color: #666;
     &:hover {
-      background: #333;
-      color: $primary-font-color;
+      color: #555;
+      background: #ececec;
       cursor: pointer;
     }
     &.disabled {

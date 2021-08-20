@@ -1,14 +1,14 @@
-@import "color";
+@import 'color';
 /* 设置滚动条的样式 */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
+  display: none;
 }
 
 /* 滚动槽 */
 ::-webkit-scrollbar-track {
   background: rgba(0, 0, 0, 0.2);
-
 }
 
 /* 滚动条滑块 */
@@ -21,17 +21,17 @@
   padding: 0;
 }
 
-[draggable=true] {
+[draggable='true'] {
   -khtml-user-drag: element;
 }
 
 a {
   text-decoration: none;
   color: inherit;
-  &:visited, :active {
+  &:visited,
+  :active {
     color: inherit;
   }
-
 }
 
 .ant-message {
@@ -48,7 +48,7 @@ a.link {
 }
 
 .preseticons {
-  color: #F44336;
+  color: #f44336;
 }
 
 .ellipsis {

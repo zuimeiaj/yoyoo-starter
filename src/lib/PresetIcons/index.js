@@ -15,7 +15,7 @@ export default class PresetIcons extends React.PureComponent {
 
   render() {
     const { type } = this.props
-    return <i style={{ color: '#ffffff' }} ref={'g'} className={`preseticons ${type}`} />
+    return <i ref={'g'} className={`preseticons ${type}`} />
   }
 }
 

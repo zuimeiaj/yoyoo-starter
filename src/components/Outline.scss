@@ -1,4 +1,4 @@
-@import "../styles/color";
+@import '../styles/color';
 
 .root-layout-side {
   display: flex;
@@ -12,26 +12,40 @@
     background: $primary-alpha;
     height: 100%;
     margin-bottom: 0;
+
     overflow-y: auto;
+    &::-webkit-scrollbar {
+      display: none;
+    }
     li > div {
       height: 50px;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      font-size: 10px;
+      font-size: 12px;
       color: $primary-font-color;
       margin-bottom: 20px;
       .iconfont {
         font-size: 20px;
+        color: #555;
       }
       &:hover {
-        background: $primary-alpha;
         cursor: pointer;
-        color: $primary-font-alpha-color;
+        background: #ff7043;
+        color: #fff;
+        .iconfont {
+          font-size: 20px;
+          color: #fff;
+        }
       }
       &.selected {
-        background: $primary-bg;
+        color: #fff;
+        background: #ff7043;
+        .iconfont {
+          font-size: 20px;
+          color: #fff;
+        }
       }
     }
   }
@@ -45,9 +59,8 @@
     }
     .editable-component_text {
       border-bottom: none;
-      color: #989898;
+      color: #454545;
     }
-
   }
 }
 
@@ -60,7 +73,6 @@
 }
 
 .root-layout-side-components {
-
   .aj-component-draggable {
     display: inline-flex;
     align-items: center;
@@ -69,23 +81,27 @@
     height: 80px;
     overflow: hidden;
     position: relative;
-    &:nth-child(2n+1) {
-      border-left: 0;
-    }
+    border: 1px solid #ececec;
+    border-left: 0;
+    border-top: 0;
     &:hover {
       z-index: 10;
-      background: $primary-bg;
+      background: #ececec;
     }
   }
   .base-component {
     display: flex;
     flex-direction: column;
     align-items: center;
-    color: $primary-font-alpha-color;
     background-size: contain;
+    .aj-component-draggable {
+      &:hover {
+        background: #ececec;
+      }
+    }
     .iconfont {
       font-size: 20px;
-      color: $primary-font-alpha-color;
+      color: #666;
       margin-bottom: 5px;
     }
 
@@ -94,7 +110,6 @@
     }
   }
   .component-group-content_adv {
-
     .aj-component-draggable {
       width: 80%;
       height: 180px;
@@ -103,6 +118,7 @@
       flex-direction: column;
       border: 0;
       margin-top: 20px;
+
       div:first-child {
         flex: 1;
         width: 100%;
@@ -129,7 +145,9 @@
       width: 25%;
       height: 50px;
       position: relative;
-
+      .preseticons {
+        color: #444;
+      }
       &:hover {
         z-index: 10;
         cursor: pointer;
@@ -158,7 +176,6 @@
       line-height: 26px;
     }
   }
-
 }
 
 .root-layout-side-assets {
@@ -250,6 +267,10 @@
 
 .outline-pages {
   padding: 10px;
+  overflow-y: auto;
+  &::-webkit-scrollbar {
+    display: none;
+  }
   .aj-button {
     position: absolute;
     bottom: 15px;
@@ -260,8 +281,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid $primary-border;
-    color: #333333;
+    z-index: 9999;
+    box-shadow: 0 0 20px 5px rgba(0, 0, 0, 0.11);
     .iconfont {
       margin-right: 0;
       font-size: 18px;
