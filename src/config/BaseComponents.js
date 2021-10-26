@@ -83,6 +83,13 @@ export const BaseComponents = [
     height: 28,
     width: 180,
   },
+  {
+    icon: 'tupian-copy-copy',
+    name: '图片',
+    type: 'image',
+    height: 80,
+    width: 80,
+  },
 ]
 export const ComponentIconMap = {
   select: 'xialaxuanze',

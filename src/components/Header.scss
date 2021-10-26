@@ -12,6 +12,16 @@ $header_height: 50px;
   color: #666;
   z-index: 999;
 
+  .header-logo{
+    display: flex;
+    align-items: flex-end;
+    h1{
+      font-family: 'Times New Roman', Times, serif;
+      color: #ff7043;
+      font-size: 18px;
+      margin-bottom: 0;
+    }
+  }
   .header_project {
     height: 100%;
     display: flex;

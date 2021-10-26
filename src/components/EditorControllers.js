@@ -60,21 +60,67 @@ import {
   workspace_save_template,
   workspace_undo,
 } from '../lib/util/actions'
-import { getCoveragePickeMode, getScreenOffset, getScreeTransform, pointToWorkspaceCoords, setCoveragePikeMode, setLastCoverageIndex } from '../lib/global'
+import {
+  getCoveragePickeMode,
+  getScreenOffset,
+  getScreeTransform,
+  pointToWorkspaceCoords,
+  setCoveragePikeMode,
+  setLastCoverageIndex,
+} from '../lib/global'
 import ViewSelectGroupBordered, { PropsFilter } from '../lib/Widget/ViewSelectGroupBordered'
 import { parseJSON, parseOjbect, refreshViewId, toJSON } from '../lib/properties/types'
-import { clearGlobalVariabel, getClipboardData, getCurrentPage, getFirstResponder, saveCurrentControllersByPage, setClipboardData, setCurrentPage, setFirstResponder } from '../lib/global/instance'
+import {
+  clearGlobalVariabel,
+  getClipboardData,
+  getCurrentPage,
+  getFirstResponder,
+  saveCurrentControllersByPage,
+  setClipboardData,
+  setCurrentPage,
+  setFirstResponder,
+} from '../lib/global/instance'
 import AlignmentService from './AlignmentService'
 import { setSelfTemplateData } from '../lib/global/template'
-import { clearPageStorage, createNewPage, deletePage, getPageListFromStorage, refresLocalPageObjectId, saveToRemoteFromStorage, selectPage, setPageData, updatePageGuides, updatePageInfo } from '../lib/util/page'
+import {
+  clearPageStorage,
+  createNewPage,
+  deletePage,
+  getPageListFromStorage,
+  refresLocalPageObjectId,
+  saveToRemoteFromStorage,
+  selectPage,
+  setPageData,
+  updatePageGuides,
+  updatePageInfo,
+} from '../lib/util/page'
 import qs from 'query-string'
 import { fetchProjectInfo } from '../api/project'
 import { updateUserInfo } from '../api/user'
 import config, { initPageSizeWithProjectType } from '../lib/util/preference'
 import { setStore } from '../lib/global/store'
 import { getQuery, mergeProps } from '../lib/util/helper'
-import { app_toggle_selection_type, component_empty, context_mode_change, context_outline_delete_master, context_show, context_unpack, controllers_apply_group, workspace_part_master, workspace_save_master, workspace_scroll_center } from '@/lib/util/actions'
-import { clearCurrentMasterFromStorage, clearPATHES, clearUnlockedView, getMasterDataFromStorage, getPATHES, saveCurrentControllersByMaster, setPATHES } from '@/lib/global/instance'
+import {
+  app_toggle_selection_type,
+  component_empty,
+  context_mode_change,
+  context_outline_delete_master,
+  context_show,
+  context_unpack,
+  controllers_apply_group,
+  workspace_part_master,
+  workspace_save_master,
+  workspace_scroll_center,
+} from '@/lib/util/actions'
+import {
+  clearCurrentMasterFromStorage,
+  clearPATHES,
+  clearUnlockedView,
+  getMasterDataFromStorage,
+  getPATHES,
+  saveCurrentControllersByMaster,
+  setPATHES,
+} from '@/lib/global/instance'
 import { proxyAllPropsChange, proxyDeleteItems, proxyPropsChange, proxyTransformOffset } from '@/lib/util/controllers'
 import { createViewFrom, updateTreeIn } from '@/lib/properties/types'
 import { isArray, uuid } from '@/lib/util/helper'
@@ -144,9 +190,6 @@ class EditorControllers extends React.Component {
     let info = { type: 'PAD' }
     setStore('project', info)
     setStore('pages', pages)
-    setTimeout(() => {
-      Event.dispatch(pages_load_end, pages)
-    }, 2000)
     initPageSizeWithProjectType(info)
     Event.dispatch(project_initialized, {})
     Event.dispatch(refresh_project_name, 'YOYOO DESIGN')
@@ -198,6 +241,9 @@ class EditorControllers extends React.Component {
     Event.listen(workspace_part_master, this.handlePartMaster)
     Event.listen(context_mode_change, this.handleEditorModeChange)
     Event.listen(context_outline_delete_master, this.handleDeleMaster)
+    setTimeout(() => {
+      Event.dispatch(pages_load_end, pages)
+    })
   }
 
   handleEmpty = () => {
@@ -413,7 +459,9 @@ class EditorControllers extends React.Component {
   }
   _coverageHanlder = (level, zIndex) => {
     let view = getFirstResponder()
-    let stateItems = proxyAllPropsChange(this.state.items, view, 'zIndex', (item) => (typeof zIndex === 'undefined' ? item.zIndex + level : zIndex))
+    let stateItems = proxyAllPropsChange(this.state.items, view, 'zIndex', (item) =>
+      typeof zIndex === 'undefined' ? item.zIndex + level : zIndex
+    )
     this.setState({ items: stateItems }, this.pushHistory)
   }
   /**

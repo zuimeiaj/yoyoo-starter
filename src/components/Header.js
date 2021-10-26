@@ -42,7 +42,12 @@ class ProjectName extends React.Component {
   }
 
   render() {
-    return <EditableLabel onChange={this.handleUpdate} className={'header_name'} value={this.state.name} />
+    return (
+      <div className="header-logo">
+        <img width={40} src={process.env.PUBLIC_URL + '/design-logo.png'} />
+        <h1>{this.state.name}</h1>
+      </div>
+    )
   }
 }
 
