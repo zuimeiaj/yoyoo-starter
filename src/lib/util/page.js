@@ -1,57 +1,51 @@
-import { getQuery, uuid } from './helper'
-import { getCurrentControllersByPage, getCurrentPage, setCurrentPage } from '../global/instance'
-import { parseJSON } from '../properties/types'
-import { createPage, deletePage as deletePageApi, savePage } from '../../api/page'
-import Event from '../Base/Event'
-import {
-  context_save_failed,
-  context_save_start,
-  context_save_success,
-  outline_page_select_end,
-  show_create_project,
-} from './actions'
-import config from './preference'
-import { isArray } from '@/lib/util/helper'
+import { getQuery, uuid } from './helper';
+import { getCurrentControllersByPage, getCurrentPage, setCurrentPage } from '../global/instance';
+import { parseJSON } from '../properties/types';
+import { createPage, deletePage as deletePageApi, savePage } from '../../api/page';
+import Event from '../Base/Event';
+import { context_save_failed, context_save_start, context_save_success, outline_page_select_end, show_create_project } from './actions';
+import config from './preference';
+import { isArray } from '@/lib/util/helper';
 
-export const storage_page_key = (id) => 'page_data_' + id
-var LocalPageData = []
+export const storage_page_key = (id) => 'page_data_' + id;
+var LocalPageData = [];
 //from server
 export const getPageData = () => {
-  return LocalPageData
-}
+  return LocalPageData;
+};
 export const setPageData = (pages) => {
-  LocalPageData = pages
-}
+  LocalPageData = pages;
+};
 export const getPageDataWithId = (pageid) => {
-  return getPageData().find((item) => item.id == pageid)
-}
-window.__GET_PAGE_DATA__ = getPageData
+  return getPageData().find((item) => item.id == pageid);
+};
+window.__GET_PAGE_DATA__ = getPageData;
 export const refresLocalPageObject = (id, object) => {
   try {
-    let pages = getPageData()
-    let index = pages.findIndex((item) => item.id == id)
-    if (index == -1) return
-    let page = pages[index]
-    let node = Object.assign({}, object)
-    delete node.nodes
-    page = Object.assign({}, node, { nodes: page.nodes })
-    pages[index] = page
-    console.log(pages)
+    let pages = getPageData();
+    let index = pages.findIndex((item) => item.id == id);
+    if (index == -1) return;
+    let page = pages[index];
+    let node = Object.assign({}, object);
+    delete node.nodes;
+    page = Object.assign({}, node, { nodes: page.nodes });
+    pages[index] = page;
+    console.log(pages);
   } catch (e) {
-    console.log('Refresh Error', id)
+    console.log('Refresh Error', id);
   }
-}
+};
 export const selectPage = (pageid) => {
-  if (getCurrentPage() == pageid) return Promise.reject('already selected')
+  if (getCurrentPage() == pageid) return Promise.reject('already selected');
   return new Promise((resolve) => {
-    setCurrentPage(pageid)
+    setCurrentPage(pageid);
     getCurrentControllersByPage(pageid).then((data) => {
-      let items = parseJSON(data)
-      Event.dispatch(outline_page_select_end, { id: pageid, data: getPageData().find((item) => item.id == pageid) })
-      resolve(items)
-    })
-  })
-}
+      let items = parseJSON(data);
+      Event.dispatch(outline_page_select_end, { id: pageid, data: getPageData().find((item) => item.id == pageid) });
+      resolve(items);
+    });
+  });
+};
 
 /**
  * 创建页面之前，项目必须存在
@@ -60,95 +54,95 @@ export const selectPage = (pageid) => {
  */
 export const createNewPage = (pid, state) => {
   return new Promise(async (resolve) => {
-    let pages = getPageData()
-    let data = generateNewPage(pid)
-    data.projectid = 'testid'
-    data.type = state || 'PAGE'
-    data.alias = data.type == 'PAGE' ? '新页面' : '新状态'
-    data.width = config.viewport.width
-    pages.push(data)
-    resolve()
-  })
-}
+    let pages = getPageData();
+    let data = generateNewPage(pid);
+    data.projectid = 'testid';
+    data.type = state || 'PAGE';
+    data.alias = data.type == 'PAGE' ? '新页面' : '新状态';
+    data.width = config.viewport.width;
+    pages.push(data);
+    resolve();
+  });
+};
 
 export const duplicatePageState = (id, pid) => {
   return new Promise((resolve) => {
-    let page = getPageData().find((item) => item.id == id)
-    let copyofPage = JSON.parse(JSON.stringify(page))
-    copyofPage.id = uuid('page_')
-    let prefix = copyofPage.alias.split(' ')[0]
-    let name = copyofPage.alias.split(' ')[1]
-    name = +(name ? name.trim() : 0) + 1
-    copyofPage.alias = prefix + ' ' + name
-    if (pid) copyofPage.parentid = pid
-    copyofPage.type = 'STATE'
+    let page = getPageData().find((item) => item.id == id);
+    let copyofPage = JSON.parse(JSON.stringify(page));
+    copyofPage.id = uuid('page_');
+    let prefix = copyofPage.alias.split(' ')[0];
+    let name = copyofPage.alias.split(' ')[1];
+    name = +(name ? name.trim() : 0) + 1;
+    copyofPage.alias = prefix + ' ' + name;
+    if (pid) copyofPage.parentid = pid;
+    copyofPage.type = 'STATE';
     createPage(copyofPage).then((res) => {
-      res.data.nodes = copyofPage.nodes
-      copyofPage = null
-      getPageData().push(res.data)
-      resolve()
-    })
-  })
-}
+      res.data.nodes = copyofPage.nodes;
+      copyofPage = null;
+      getPageData().push(res.data);
+      resolve();
+    });
+  });
+};
 
 const batchDeletePage = (ids) => {
-  let maps = {}
+  let maps = {};
   ids.forEach((item) => {
-    maps[item] = true
-    deletePageFromStorage(item)
-  })
+    maps[item] = true;
+    deletePageFromStorage(item);
+  });
 
-  let pages = getPageData()
-  let realIds = []
+  let pages = getPageData();
+  let realIds = [];
   pages = pages.filter((item) => {
-    let matched = maps[item.id]
-    if (matched) realIds.push(item._id)
-    return !matched
-  })
-  setPageData(pages)
-  return Promise.resolve()
-}
+    let matched = maps[item.id];
+    if (matched) realIds.push(item._id);
+    return !matched;
+  });
+  setPageData(pages);
+  return Promise.resolve();
+};
 
 //delte
 export const deletePage = (id) => {
   return new Promise((resolve) => {
-    if (isArray(id)) return batchDeletePage(id).then(resolve)
-    let pages = getPageData()
-    let index = pages.findIndex((item) => item.id == id)
-    pages.splice(index, 1)
-    deletePageFromStorage(id)
-    resolve()
-  })
-}
+    if (isArray(id)) return batchDeletePage(id).then(resolve);
+    let pages = getPageData();
+    let index = pages.findIndex((item) => item.id == id);
+    pages.splice(index, 1);
+    deletePageFromStorage(id);
+    resolve();
+  });
+};
 
 //update
 export const updateName = (name = '', id) => {
-  if (!name.trim()) return Promise.reject()
+  if (!name.trim()) return Promise.reject();
   return new Promise((resolve) => {
-    let item = getPageDataWithId(id)
-    if (!item) return
-    item.alias = name
-    updatePageToSorage(id, item)
-  })
-}
+    let item = getPageDataWithId(id);
+    if (!item) return;
+    item.alias = name;
+    updatePageToSorage(id, item);
+  });
+};
 export const updatePageInfo = (id, key, value) => {
   return new Promise((resolve) => {
-    let pages = getPageData()
-    let item = pages.find((item) => item.id == id)
-    if (!item) return
-    item[key] = value
-    updatePageToSorage(id, item)
-  })
-}
+    let pages = getPageData();
+    let item = pages.find((item) => item.id == id);
+    if (!item) return;
+    item[key] = value;
+    updatePageToSorage(id, item);
+  });
+};
 export const updatePageGuides = (id, key, value) => {
   return new Promise((resolve) => {
-    let pages = getPageData()
-    let item = pages.find((item) => item.id == id)
-    if (!item) return
-    item.guides[key] = value
-    updatePageToSorage(id, item)
-  })
-}
+    let pages = getPageData();
+    let item = pages.find((item) => item.id == id);
+    if (!item) return;
+    item.guides[key] = value;
+    updatePageToSorage(id, item);
+  });
+};
 export const generateNewPage = (pid) => ({
   bg: 'rgba(255,255,255,1)',
   width: 380,
@@ -162,1487 +156,41 @@ export const generateNewPage = (pid) => ({
     y: [],
   },
   nodes: [],
-})
+});
 export const getPageListFromStorage = () => {
-  let pages = []
+  let pages = [];
   for (let key in localStorage) {
     if (key.startsWith('page_data')) {
       try {
-        pages.push(JSON.parse(localStorage.getItem(key)))
+        pages.push(JSON.parse(localStorage.getItem(key)));
       } catch (e) {
-        localStorage.removeItem(key)
+        localStorage.removeItem(key);
       }
     }
   }
-  if (pages.length == 0) {
-    pages.push({
-      bg: 'rgba(255,255,255,1)',
-      width: 800,
-      height: 900,
-      id: 'page_74240224222',
-      alias: '新页面',
-      parentid: null,
-      projectid: 'testid',
-      guides: { x: [], y: [] },
-      nodes: [
-        {
-          type: 'rect',
-          alias: '矩形',
-          zIndex: 1001,
-          id: 'sb_4101078771053',
-          selected: false,
-          transform: { x: 29.5, y: 105, width: 360, height: 693, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 0, color: 'rgba(221,221,221,1)', style: 'solid' },
-          corner: { topLeft: 20, topRight: 20, bottomLeft: 20, bottomRight: 20 },
-          shadow: { blur: 10, spread: 2, offsetX: 0, offsetY: 0, color: 'rgba(0,0,0,0.25)', type: 'outset' },
-          bg: 'rgba(0,0,0,1)',
-        },
-        {
-          type: 'rect',
-          alias: '矩形(副本)',
-          zIndex: 1001,
-          id: 'sb_0713844185001',
-          selected: false,
-          transform: { x: 39.5, y: 119, width: 341, height: 669, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 1, color: 'rgba(0,0,0,1)', style: 'solid' },
-          corner: { topLeft: 20, topRight: 20, bottomLeft: 20, bottomRight: 20 },
-          shadow: { blur: 5, spread: 1, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)' },
-          bg: 'rgba(255,255,255,1)',
-        },
-        {
-          type: 'rect',
-          alias: '矩形',
-          zIndex: 1002,
-          id: 'sb_3376859092521',
-          selected: false,
-          transform: { x: 202.5, y: 131, width: 15, height: 15, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 1, color: 'rgba(0,0,0,1)', style: 'solid' },
-          corner: { topLeft: 8, topRight: 8, bottomLeft: 8, bottomRight: 8 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(0,0,0,1)',
-        },
-        {
-          type: 'rect',
-          alias: '矩形(副本)',
-          zIndex: 1002,
-          id: 'sb_3341464401933',
-          selected: false,
-          transform: { x: 136.5, y: 768, width: 146, height: 5, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 1, color: 'rgba(0,0,0,1)', style: 'solid' },
-          corner: { topLeft: 8, topRight: 8, bottomLeft: 8, bottomRight: 8 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(0,0,0,1)',
-        },
-        {
-          type: 'text',
-          alias: '文本',
-          zIndex: 1003,
-          id: 'sb_0884381381683',
-          selected: false,
-          transform: { x: 51.5, y: 131, width: 76, height: 16, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 0, color: 'rgba(224,224,224,1)', style: 'solid' },
-          corner: { topLeft: 0, topRight: 0, bottomLeft: 0, bottomRight: 0 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,255,255,0)',
-          font: { size: 14, color: 'rgba(0,0,0,1)' },
-          align: { x: 'flex-start', y: 'flex-start' },
-          fontStyle: [],
-          decorator: 'none',
-          fontData: '中国移动&nbsp;',
-          spacing: { height: 1, width: 0 },
-        },
-        {
-          type: 'rect',
-          alias: '矩形(副本)',
-          zIndex: 1002,
-          id: 'sb_2554967743210',
-          selected: false,
-          transform: { x: 334.5, y: 131, width: 31, height: 13, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 1, color: 'rgba(0,0,0,1)', style: 'solid' },
-          corner: { topLeft: 4, topRight: 4, bottomLeft: 4, bottomRight: 4 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,255,255,1)',
-        },
-        {
-          type: 'rect',
-          alias: '矩形(副本)',
-          zIndex: 1002,
-          id: 'sb_2280300889590',
-          selected: false,
-          transform: { x: 364.5, y: 134, width: 3, height: 6, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 1, color: 'rgba(0,0,0,1)', style: 'solid' },
-          corner: { topLeft: 0, topRight: 0, bottomLeft: 0, bottomRight: 0 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,255,255,1)',
-        },
-        {
-          type: 'rect',
-          alias: '矩形(副本)',
-          zIndex: 1002,
-          id: 'sb_5866297323928',
-          selected: false,
-          transform: { x: 334.5, y: 131, width: 23, height: 13, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 1, color: 'rgba(0,0,0,1)', style: 'solid' },
-          corner: { topLeft: 4, topRight: 0, bottomLeft: 4, bottomRight: 0 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(0,0,0,1)',
-        },
-        {
-          type: 'rect',
-          alias: '矩形',
-          zIndex: 1012,
-          id: 'sb_7590979314935',
-          selected: false,
-          transform: { x: 59.5, y: 175, width: 60, height: 60, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 1, color: 'rgba(103,58,183,1)', style: 'solid' },
-          corner: { topLeft: 10, topRight: 10, bottomLeft: 10, bottomRight: 10 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,152,0,1)',
-        },
-        {
-          type: 'rect',
-          alias: '矩形(副本)',
-          zIndex: 1012,
-          id: 'sb_0131323774202',
-          selected: false,
-          transform: { x: 140.5, y: 175, width: 60, height: 60, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 1, color: 'rgba(103,58,183,1)', style: 'solid' },
-          corner: { topLeft: 10, topRight: 10, bottomLeft: 10, bottomRight: 10 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,152,0,1)',
-        },
-        {
-          type: 'rect',
-          alias: '矩形(副本)',
-          zIndex: 1012,
-          id: 'sb_9256746819145',
-          selected: false,
-          transform: { x: 221.5, y: 175, width: 60, height: 60, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 1, color: 'rgba(103,58,183,1)', style: 'solid' },
-          corner: { topLeft: 10, topRight: 10, bottomLeft: 10, bottomRight: 10 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,152,0,1)',
-        },
-        {
-          type: 'rect',
-          alias: '矩形(副本)',
-          zIndex: 1012,
-          id: 'sb_8459496257993',
-          selected: false,
-          transform: { x: 302.5, y: 175, width: 60, height: 60, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 1, color: 'rgba(103,58,183,1)', style: 'solid' },
-          corner: { topLeft: 10, topRight: 10, bottomLeft: 10, bottomRight: 10 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,152,0,1)',
-        },
-        {
-          type: 'text',
-          alias: '文本(副本)',
-          zIndex: 1003,
-          id: 'sb_9359755891794',
-          selected: false,
-          transform: { x: 73.5, y: 238, width: 33, height: 16, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 0, color: 'rgba(224,224,224,1)', style: 'solid' },
-          corner: { topLeft: 0, topRight: 0, bottomLeft: 0, bottomRight: 0 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,255,255,0)',
-          font: { size: 14, color: 'rgba(80,78,78,1)' },
-          align: { x: 'center', y: 'flex-start' },
-          fontStyle: [],
-          decorator: 'none',
-          fontData: 'App',
-          spacing: { height: 1, width: 0 },
-        },
-        {
-          type: 'text',
-          alias: '文本(副本)',
-          zIndex: 1003,
-          id: 'sb_0051568919071',
-          selected: false,
-          transform: { x: 155.5, y: 238, width: 33, height: 16, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 0, color: 'rgba(224,224,224,1)', style: 'solid' },
-          corner: { topLeft: 0, topRight: 0, bottomLeft: 0, bottomRight: 0 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,255,255,0)',
-          font: { size: 14, color: 'rgba(80,78,78,1)' },
-          align: { x: 'center', y: 'flex-start' },
-          fontStyle: [],
-          decorator: 'none',
-          fontData: 'App',
-          spacing: { height: 1, width: 0 },
-        },
-        {
-          type: 'text',
-          alias: '文本(副本)',
-          zIndex: 1003,
-          id: 'sb_8737814446583',
-          selected: false,
-          transform: { x: 237.5, y: 238, width: 33, height: 16, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 0, color: 'rgba(224,224,224,1)', style: 'solid' },
-          corner: { topLeft: 0, topRight: 0, bottomLeft: 0, bottomRight: 0 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,255,255,0)',
-          font: { size: 14, color: 'rgba(80,78,78,1)' },
-          align: { x: 'center', y: 'flex-start' },
-          fontStyle: [],
-          decorator: 'none',
-          fontData: 'App',
-          spacing: { height: 1, width: 0 },
-        },
-        {
-          type: 'text',
-          alias: '文本(副本)',
-          zIndex: 1003,
-          id: 'sb_3488520617666',
-          selected: false,
-          transform: { x: 319.5, y: 238, width: 33, height: 16, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 0, color: 'rgba(224,224,224,1)', style: 'solid' },
-          corner: { topLeft: 0, topRight: 0, bottomLeft: 0, bottomRight: 0 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,255,255,0)',
-          font: { size: 14, color: 'rgba(80,78,78,1)' },
-          align: { x: 'center', y: 'flex-start' },
-          fontStyle: [],
-          decorator: 'none',
-          fontData: 'App',
-          spacing: { height: 1, width: 0 },
-        },
-        {
-          type: 'rect',
-          alias: '矩形(副本)',
-          zIndex: 1012,
-          id: 'sb_5305891996857',
-          selected: false,
-          transform: { x: 59.5, y: 271, width: 60, height: 60, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 1, color: 'rgba(103,58,183,1)', style: 'solid' },
-          corner: { topLeft: 10, topRight: 10, bottomLeft: 10, bottomRight: 10 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,152,0,1)',
-        },
-        {
-          type: 'rect',
-          alias: '矩形(副本)',
-          zIndex: 1012,
-          id: 'sb_9543443187944',
-          selected: false,
-          transform: { x: 140.5, y: 271, width: 60, height: 60, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 1, color: 'rgba(103,58,183,1)', style: 'solid' },
-          corner: { topLeft: 10, topRight: 10, bottomLeft: 10, bottomRight: 10 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,152,0,1)',
-        },
-        {
-          type: 'rect',
-          alias: '矩形(副本)',
-          zIndex: 1012,
-          id: 'sb_6404555325210',
-          selected: false,
-          transform: { x: 221.5, y: 271, width: 60, height: 60, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 1, color: 'rgba(103,58,183,1)', style: 'solid' },
-          corner: { topLeft: 10, topRight: 10, bottomLeft: 10, bottomRight: 10 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,152,0,1)',
-        },
-        {
-          type: 'rect',
-          alias: '矩形(副本)',
-          zIndex: 1012,
-          id: 'sb_2400909955304',
-          selected: false,
-          transform: { x: 302.5, y: 271, width: 60, height: 60, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 1, color: 'rgba(103,58,183,1)', style: 'solid' },
-          corner: { topLeft: 10, topRight: 10, bottomLeft: 10, bottomRight: 10 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,152,0,1)',
-        },
-        {
-          type: 'text',
-          alias: '文本(副本)',
-          zIndex: 1003,
-          id: 'sb_8713524832026',
-          selected: false,
-          transform: { x: 73.5, y: 334, width: 33, height: 16, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 0, color: 'rgba(224,224,224,1)', style: 'solid' },
-          corner: { topLeft: 0, topRight: 0, bottomLeft: 0, bottomRight: 0 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,255,255,0)',
-          font: { size: 14, color: 'rgba(80,78,78,1)' },
-          align: { x: 'center', y: 'flex-start' },
-          fontStyle: [],
-          decorator: 'none',
-          fontData: 'App',
-          spacing: { height: 1, width: 0 },
-        },
-        {
-          type: 'text',
-          alias: '文本(副本)',
-          zIndex: 1003,
-          id: 'sb_8495979938795',
-          selected: false,
-          transform: { x: 155.5, y: 334, width: 33, height: 16, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 0, color: 'rgba(224,224,224,1)', style: 'solid' },
-          corner: { topLeft: 0, topRight: 0, bottomLeft: 0, bottomRight: 0 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,255,255,0)',
-          font: { size: 14, color: 'rgba(80,78,78,1)' },
-          align: { x: 'center', y: 'flex-start' },
-          fontStyle: [],
-          decorator: 'none',
-          fontData: 'App',
-          spacing: { height: 1, width: 0 },
-        },
-        {
-          type: 'text',
-          alias: '文本(副本)',
-          zIndex: 1003,
-          id: 'sb_6609843380362',
-          selected: false,
-          transform: { x: 237.5, y: 334, width: 33, height: 16, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 0, color: 'rgba(224,224,224,1)', style: 'solid' },
-          corner: { topLeft: 0, topRight: 0, bottomLeft: 0, bottomRight: 0 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,255,255,0)',
-          font: { size: 14, color: 'rgba(80,78,78,1)' },
-          align: { x: 'center', y: 'flex-start' },
-          fontStyle: [],
-          decorator: 'none',
-          fontData: 'App',
-          spacing: { height: 1, width: 0 },
-        },
-        {
-          type: 'text',
-          alias: '文本(副本)',
-          zIndex: 1003,
-          id: 'sb_4053042313911',
-          selected: false,
-          transform: { x: 319.5, y: 334, width: 33, height: 16, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 0, color: 'rgba(224,224,224,1)', style: 'solid' },
-          corner: { topLeft: 0, topRight: 0, bottomLeft: 0, bottomRight: 0 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,255,255,0)',
-          font: { size: 14, color: 'rgba(80,78,78,1)' },
-          align: { x: 'center', y: 'flex-start' },
-          fontStyle: [],
-          decorator: 'none',
-          fontData: 'App',
-          spacing: { height: 1, width: 0 },
-        },
-        {
-          type: 'rect',
-          alias: '矩形(副本)',
-          zIndex: 1012,
-          id: 'sb_5665715295040',
-          selected: false,
-          transform: { x: 59.5, y: 367, width: 60, height: 60, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 1, color: 'rgba(103,58,183,1)', style: 'solid' },
-          corner: { topLeft: 10, topRight: 10, bottomLeft: 10, bottomRight: 10 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,152,0,1)',
-        },
-        {
-          type: 'rect',
-          alias: '矩形(副本)',
-          zIndex: 1012,
-          id: 'sb_4689026084419',
-          selected: false,
-          transform: { x: 140.5, y: 367, width: 60, height: 60, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 1, color: 'rgba(103,58,183,1)', style: 'solid' },
-          corner: { topLeft: 10, topRight: 10, bottomLeft: 10, bottomRight: 10 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,152,0,1)',
-        },
-        {
-          type: 'rect',
-          alias: '矩形(副本)',
-          zIndex: 1012,
-          id: 'sb_4698539190072',
-          selected: false,
-          transform: { x: 221.5, y: 367, width: 60, height: 60, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 1, color: 'rgba(103,58,183,1)', style: 'solid' },
-          corner: { topLeft: 10, topRight: 10, bottomLeft: 10, bottomRight: 10 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,152,0,1)',
-        },
-        {
-          type: 'rect',
-          alias: '矩形(副本)',
-          zIndex: 1012,
-          id: 'sb_4038511111615',
-          selected: false,
-          transform: { x: 302.5, y: 367, width: 60, height: 60, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 1, color: 'rgba(103,58,183,1)', style: 'solid' },
-          corner: { topLeft: 10, topRight: 10, bottomLeft: 10, bottomRight: 10 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,152,0,1)',
-        },
-        {
-          type: 'text',
-          alias: '文本(副本)',
-          zIndex: 1003,
-          id: 'sb_0150402616031',
-          selected: false,
-          transform: { x: 73.5, y: 430, width: 33, height: 16, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 0, color: 'rgba(224,224,224,1)', style: 'solid' },
-          corner: { topLeft: 0, topRight: 0, bottomLeft: 0, bottomRight: 0 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,255,255,0)',
-          font: { size: 14, color: 'rgba(80,78,78,1)' },
-          align: { x: 'center', y: 'flex-start' },
-          fontStyle: [],
-          decorator: 'none',
-          fontData: 'App',
-          spacing: { height: 1, width: 0 },
-        },
-        {
-          type: 'text',
-          alias: '文本(副本)',
-          zIndex: 1003,
-          id: 'sb_4128205127992',
-          selected: false,
-          transform: { x: 155.5, y: 430, width: 33, height: 16, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 0, color: 'rgba(224,224,224,1)', style: 'solid' },
-          corner: { topLeft: 0, topRight: 0, bottomLeft: 0, bottomRight: 0 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,255,255,0)',
-          font: { size: 14, color: 'rgba(80,78,78,1)' },
-          align: { x: 'center', y: 'flex-start' },
-          fontStyle: [],
-          decorator: 'none',
-          fontData: 'App',
-          spacing: { height: 1, width: 0 },
-        },
-        {
-          type: 'text',
-          alias: '文本(副本)',
-          zIndex: 1003,
-          id: 'sb_6088970340113',
-          selected: false,
-          transform: { x: 237.5, y: 430, width: 33, height: 16, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 0, color: 'rgba(224,224,224,1)', style: 'solid' },
-          corner: { topLeft: 0, topRight: 0, bottomLeft: 0, bottomRight: 0 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,255,255,0)',
-          font: { size: 14, color: 'rgba(80,78,78,1)' },
-          align: { x: 'center', y: 'flex-start' },
-          fontStyle: [],
-          decorator: 'none',
-          fontData: 'App',
-          spacing: { height: 1, width: 0 },
-        },
-        {
-          type: 'text',
-          alias: '文本(副本)',
-          zIndex: 1003,
-          id: 'sb_6320016585631',
-          selected: false,
-          transform: { x: 319.5, y: 430, width: 33, height: 16, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 0, color: 'rgba(224,224,224,1)', style: 'solid' },
-          corner: { topLeft: 0, topRight: 0, bottomLeft: 0, bottomRight: 0 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,255,255,0)',
-          font: { size: 14, color: 'rgba(80,78,78,1)' },
-          align: { x: 'center', y: 'flex-start' },
-          fontStyle: [],
-          decorator: 'none',
-          fontData: 'App',
-          spacing: { height: 1, width: 0 },
-        },
-        {
-          type: 'rect',
-          alias: '矩形(副本)',
-          zIndex: 1012,
-          id: 'sb_3486693119867',
-          selected: false,
-          transform: { x: 59.5, y: 463, width: 60, height: 60, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 1, color: 'rgba(103,58,183,1)', style: 'solid' },
-          corner: { topLeft: 10, topRight: 10, bottomLeft: 10, bottomRight: 10 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,152,0,1)',
-        },
-        {
-          type: 'rect',
-          alias: '矩形(副本)',
-          zIndex: 1012,
-          id: 'sb_2949998326640',
-          selected: false,
-          transform: { x: 140.5, y: 463, width: 60, height: 60, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 1, color: 'rgba(103,58,183,1)', style: 'solid' },
-          corner: { topLeft: 10, topRight: 10, bottomLeft: 10, bottomRight: 10 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,152,0,1)',
-        },
-        {
-          type: 'rect',
-          alias: '矩形(副本)',
-          zIndex: 1012,
-          id: 'sb_8234927736715',
-          selected: false,
-          transform: { x: 221.5, y: 463, width: 60, height: 60, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 1, color: 'rgba(103,58,183,1)', style: 'solid' },
-          corner: { topLeft: 10, topRight: 10, bottomLeft: 10, bottomRight: 10 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,152,0,1)',
-        },
-        {
-          type: 'rect',
-          alias: '矩形(副本)',
-          zIndex: 1012,
-          id: 'sb_7242590433306',
-          selected: false,
-          transform: { x: 302.5, y: 463, width: 60, height: 60, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 1, color: 'rgba(103,58,183,1)', style: 'solid' },
-          corner: { topLeft: 10, topRight: 10, bottomLeft: 10, bottomRight: 10 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,152,0,1)',
-        },
-        {
-          type: 'text',
-          alias: '文本(副本)',
-          zIndex: 1003,
-          id: 'sb_1359314590727',
-          selected: false,
-          transform: { x: 73.5, y: 526, width: 33, height: 16, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 0, color: 'rgba(224,224,224,1)', style: 'solid' },
-          corner: { topLeft: 0, topRight: 0, bottomLeft: 0, bottomRight: 0 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,255,255,0)',
-          font: { size: 14, color: 'rgba(80,78,78,1)' },
-          align: { x: 'center', y: 'flex-start' },
-          fontStyle: [],
-          decorator: 'none',
-          fontData: 'App',
-          spacing: { height: 1, width: 0 },
-        },
-        {
-          type: 'text',
-          alias: '文本(副本)',
-          zIndex: 1003,
-          id: 'sb_8504860320864',
-          selected: false,
-          transform: { x: 155.5, y: 526, width: 33, height: 16, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 0, color: 'rgba(224,224,224,1)', style: 'solid' },
-          corner: { topLeft: 0, topRight: 0, bottomLeft: 0, bottomRight: 0 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,255,255,0)',
-          font: { size: 14, color: 'rgba(80,78,78,1)' },
-          align: { x: 'center', y: 'flex-start' },
-          fontStyle: [],
-          decorator: 'none',
-          fontData: 'App',
-          spacing: { height: 1, width: 0 },
-        },
-        {
-          type: 'text',
-          alias: '文本(副本)',
-          zIndex: 1003,
-          id: 'sb_4860722534889',
-          selected: false,
-          transform: { x: 237.5, y: 526, width: 33, height: 16, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 0, color: 'rgba(224,224,224,1)', style: 'solid' },
-          corner: { topLeft: 0, topRight: 0, bottomLeft: 0, bottomRight: 0 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,255,255,0)',
-          font: { size: 14, color: 'rgba(80,78,78,1)' },
-          align: { x: 'center', y: 'flex-start' },
-          fontStyle: [],
-          decorator: 'none',
-          fontData: 'App',
-          spacing: { height: 1, width: 0 },
-        },
-        {
-          type: 'text',
-          alias: '文本(副本)',
-          zIndex: 1003,
-          id: 'sb_5185072434262',
-          selected: false,
-          transform: { x: 319.5, y: 526, width: 33, height: 16, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 0, color: 'rgba(224,224,224,1)', style: 'solid' },
-          corner: { topLeft: 0, topRight: 0, bottomLeft: 0, bottomRight: 0 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,255,255,0)',
-          font: { size: 14, color: 'rgba(80,78,78,1)' },
-          align: { x: 'center', y: 'flex-start' },
-          fontStyle: [],
-          decorator: 'none',
-          fontData: 'App',
-          spacing: { height: 1, width: 0 },
-        },
-        {
-          type: 'rect',
-          alias: '矩形(副本)',
-          zIndex: 1012,
-          id: 'sb_8749098739076',
-          selected: false,
-          transform: { x: 59.5, y: 551, width: 60, height: 60, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 1, color: 'rgba(103,58,183,1)', style: 'solid' },
-          corner: { topLeft: 10, topRight: 10, bottomLeft: 10, bottomRight: 10 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,152,0,1)',
-        },
-        {
-          type: 'rect',
-          alias: '矩形(副本)',
-          zIndex: 1012,
-          id: 'sb_7703086550665',
-          selected: false,
-          transform: { x: 140.5, y: 551, width: 60, height: 60, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 1, color: 'rgba(103,58,183,1)', style: 'solid' },
-          corner: { topLeft: 10, topRight: 10, bottomLeft: 10, bottomRight: 10 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,152,0,1)',
-        },
-        {
-          type: 'rect',
-          alias: '矩形(副本)',
-          zIndex: 1012,
-          id: 'sb_6010685122339',
-          selected: false,
-          transform: { x: 221.5, y: 551, width: 60, height: 60, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 1, color: 'rgba(103,58,183,1)', style: 'solid' },
-          corner: { topLeft: 10, topRight: 10, bottomLeft: 10, bottomRight: 10 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,152,0,1)',
-        },
-        {
-          type: 'rect',
-          alias: '矩形(副本)',
-          zIndex: 1012,
-          id: 'sb_4279299533987',
-          selected: false,
-          transform: { x: 302.5, y: 551, width: 60, height: 60, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 1, color: 'rgba(103,58,183,1)', style: 'solid' },
-          corner: { topLeft: 10, topRight: 10, bottomLeft: 10, bottomRight: 10 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,152,0,1)',
-        },
-        {
-          type: 'text',
-          alias: '文本(副本)',
-          zIndex: 1003,
-          id: 'sb_4455932830955',
-          selected: false,
-          transform: { x: 73.5, y: 614, width: 33, height: 16, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 0, color: 'rgba(224,224,224,1)', style: 'solid' },
-          corner: { topLeft: 0, topRight: 0, bottomLeft: 0, bottomRight: 0 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,255,255,0)',
-          font: { size: 14, color: 'rgba(80,78,78,1)' },
-          align: { x: 'center', y: 'flex-start' },
-          fontStyle: [],
-          decorator: 'none',
-          fontData: 'App',
-          spacing: { height: 1, width: 0 },
-        },
-        {
-          type: 'text',
-          alias: '文本(副本)',
-          zIndex: 1003,
-          id: 'sb_0109533095845',
-          selected: false,
-          transform: { x: 155.5, y: 614, width: 33, height: 16, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 0, color: 'rgba(224,224,224,1)', style: 'solid' },
-          corner: { topLeft: 0, topRight: 0, bottomLeft: 0, bottomRight: 0 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,255,255,0)',
-          font: { size: 14, color: 'rgba(80,78,78,1)' },
-          align: { x: 'center', y: 'flex-start' },
-          fontStyle: [],
-          decorator: 'none',
-          fontData: 'App',
-          spacing: { height: 1, width: 0 },
-        },
-        {
-          type: 'text',
-          alias: '文本(副本)',
-          zIndex: 1003,
-          id: 'sb_8973062539141',
-          selected: false,
-          transform: { x: 237.5, y: 614, width: 33, height: 16, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 0, color: 'rgba(224,224,224,1)', style: 'solid' },
-          corner: { topLeft: 0, topRight: 0, bottomLeft: 0, bottomRight: 0 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,255,255,0)',
-          font: { size: 14, color: 'rgba(80,78,78,1)' },
-          align: { x: 'center', y: 'flex-start' },
-          fontStyle: [],
-          decorator: 'none',
-          fontData: 'App',
-          spacing: { height: 1, width: 0 },
-        },
-        {
-          type: 'text',
-          alias: '文本(副本)',
-          zIndex: 1003,
-          id: 'sb_9267156874394',
-          selected: false,
-          transform: { x: 319.5, y: 614, width: 33, height: 16, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 0, color: 'rgba(224,224,224,1)', style: 'solid' },
-          corner: { topLeft: 0, topRight: 0, bottomLeft: 0, bottomRight: 0 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,255,255,0)',
-          font: { size: 14, color: 'rgba(80,78,78,1)' },
-          align: { x: 'center', y: 'flex-start' },
-          fontStyle: [],
-          decorator: 'none',
-          fontData: 'App',
-          spacing: { height: 1, width: 0 },
-        },
-        {
-          type: 'rect',
-          alias: '矩形(副本)',
-          zIndex: 1012,
-          id: 'sb_9599483476672',
-          selected: false,
-          transform: { x: 59.5, y: 687, width: 60, height: 60, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 1, color: 'rgba(103,58,183,1)', style: 'solid' },
-          corner: { topLeft: 10, topRight: 10, bottomLeft: 10, bottomRight: 10 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,152,0,1)',
-        },
-        {
-          type: 'rect',
-          alias: '矩形(副本)',
-          zIndex: 1012,
-          id: 'sb_3328178879768',
-          selected: false,
-          transform: { x: 140.5, y: 687, width: 60, height: 60, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 1, color: 'rgba(103,58,183,1)', style: 'solid' },
-          corner: { topLeft: 10, topRight: 10, bottomLeft: 10, bottomRight: 10 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,152,0,1)',
-        },
-        {
-          type: 'rect',
-          alias: '矩形(副本)',
-          zIndex: 1012,
-          id: 'sb_6201635161508',
-          selected: false,
-          transform: { x: 221.5, y: 687, width: 60, height: 60, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 1, color: 'rgba(103,58,183,1)', style: 'solid' },
-          corner: { topLeft: 10, topRight: 10, bottomLeft: 10, bottomRight: 10 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,152,0,1)',
-        },
-        {
-          type: 'rect',
-          alias: '矩形(副本)',
-          zIndex: 1012,
-          id: 'sb_6777484920010',
-          selected: false,
-          transform: { x: 302.5, y: 687, width: 60, height: 60, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 1, color: 'rgba(103,58,183,1)', style: 'solid' },
-          corner: { topLeft: 10, topRight: 10, bottomLeft: 10, bottomRight: 10 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,152,0,1)',
-        },
-        {
-          type: 'rect',
-          alias: '矩形(副本)',
-          zIndex: 1001,
-          id: 'sb_4947554044970',
-          selected: false,
-          transform: { x: 410.5, y: 105, width: 360, height: 693, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 0, color: 'rgba(221,221,221,1)', style: 'solid' },
-          corner: { topLeft: 20, topRight: 20, bottomLeft: 20, bottomRight: 20 },
-          shadow: { blur: 10, spread: 2, offsetX: 0, offsetY: 0, color: 'rgba(0,0,0,0.25)', type: 'outset' },
-          bg: 'rgba(0,0,0,1)',
-        },
-        {
-          type: 'rect',
-          alias: '矩形(副本)',
-          zIndex: 1001,
-          id: 'sb_8658742829402',
-          selected: false,
-          transform: { x: 420.5, y: 119, width: 341, height: 669, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 1, color: 'rgba(0,0,0,1)', style: 'solid' },
-          corner: { topLeft: 20, topRight: 20, bottomLeft: 20, bottomRight: 20 },
-          shadow: { blur: 5, spread: 1, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)' },
-          bg: 'rgba(255,255,255,1)',
-        },
-        {
-          type: 'rect',
-          alias: '矩形(副本)',
-          zIndex: 1002,
-          id: 'sb_7123206395353',
-          selected: false,
-          transform: { x: 583.5, y: 131, width: 15, height: 15, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 1, color: 'rgba(0,0,0,1)', style: 'solid' },
-          corner: { topLeft: 8, topRight: 8, bottomLeft: 8, bottomRight: 8 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(0,0,0,1)',
-        },
-        {
-          type: 'rect',
-          alias: '矩形(副本)',
-          zIndex: 1002,
-          id: 'sb_8030809224524',
-          selected: false,
-          transform: { x: 517.5, y: 768, width: 146, height: 5, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 1, color: 'rgba(0,0,0,1)', style: 'solid' },
-          corner: { topLeft: 8, topRight: 8, bottomLeft: 8, bottomRight: 8 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(0,0,0,1)',
-        },
-        {
-          type: 'text',
-          alias: '文本(副本)',
-          zIndex: 1003,
-          id: 'sb_9431211646431',
-          selected: false,
-          transform: { x: 432.5, y: 131, width: 76, height: 16, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 0, color: 'rgba(224,224,224,1)', style: 'solid' },
-          corner: { topLeft: 0, topRight: 0, bottomLeft: 0, bottomRight: 0 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,255,255,0)',
-          font: { size: 14, color: 'rgba(0,0,0,1)' },
-          align: { x: 'flex-start', y: 'flex-start' },
-          fontStyle: [],
-          decorator: 'none',
-          fontData: '中国移动&nbsp;',
-          spacing: { height: 1, width: 0 },
-        },
-        {
-          type: 'rect',
-          alias: '矩形(副本)',
-          zIndex: 1002,
-          id: 'sb_4568832284608',
-          selected: false,
-          transform: { x: 715.5, y: 131, width: 31, height: 13, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 1, color: 'rgba(0,0,0,1)', style: 'solid' },
-          corner: { topLeft: 4, topRight: 4, bottomLeft: 4, bottomRight: 4 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,255,255,1)',
-        },
-        {
-          type: 'rect',
-          alias: '矩形(副本)',
-          zIndex: 1002,
-          id: 'sb_5385082978425',
-          selected: false,
-          transform: { x: 745.5, y: 134, width: 3, height: 6, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 1, color: 'rgba(0,0,0,1)', style: 'solid' },
-          corner: { topLeft: 0, topRight: 0, bottomLeft: 0, bottomRight: 0 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,255,255,1)',
-        },
-        {
-          type: 'rect',
-          alias: '矩形(副本)',
-          zIndex: 1002,
-          id: 'sb_2157432002063',
-          selected: false,
-          transform: { x: 715.5, y: 131, width: 23, height: 13, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 1, color: 'rgba(0,0,0,1)', style: 'solid' },
-          corner: { topLeft: 4, topRight: 0, bottomLeft: 4, bottomRight: 0 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(0,0,0,1)',
-        },
-        {
-          type: 'rect',
-          alias: '矩形(副本)',
-          zIndex: 1012,
-          id: 'sb_2957984333202',
-          selected: false,
-          transform: { x: 602.5, y: 367, width: 60, height: 60, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 1, color: 'rgba(103,58,183,1)', style: 'solid' },
-          corner: { topLeft: 10, topRight: 10, bottomLeft: 10, bottomRight: 10 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,152,0,1)',
-        },
-        {
-          type: 'rect',
-          alias: '矩形(副本)',
-          zIndex: 1012,
-          id: 'sb_5360474560131',
-          selected: false,
-          transform: { x: 683.5, y: 367, width: 60, height: 60, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 1, color: 'rgba(103,58,183,1)', style: 'solid' },
-          corner: { topLeft: 10, topRight: 10, bottomLeft: 10, bottomRight: 10 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,152,0,1)',
-        },
-        {
-          type: 'text',
-          alias: '文本(副本)',
-          zIndex: 1003,
-          id: 'sb_1459515237444',
-          selected: false,
-          transform: { x: 618.5, y: 430, width: 33, height: 16, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 0, color: 'rgba(224,224,224,1)', style: 'solid' },
-          corner: { topLeft: 0, topRight: 0, bottomLeft: 0, bottomRight: 0 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,255,255,0)',
-          font: { size: 14, color: 'rgba(80,78,78,1)' },
-          align: { x: 'center', y: 'flex-start' },
-          fontStyle: [],
-          decorator: 'none',
-          fontData: 'App',
-          spacing: { height: 1, width: 0 },
-        },
-        {
-          type: 'text',
-          alias: '文本(副本)',
-          zIndex: 1003,
-          id: 'sb_7228090541479',
-          selected: false,
-          transform: { x: 700.5, y: 430, width: 33, height: 16, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 0, color: 'rgba(224,224,224,1)', style: 'solid' },
-          corner: { topLeft: 0, topRight: 0, bottomLeft: 0, bottomRight: 0 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,255,255,0)',
-          font: { size: 14, color: 'rgba(80,78,78,1)' },
-          align: { x: 'center', y: 'flex-start' },
-          fontStyle: [],
-          decorator: 'none',
-          fontData: 'App',
-          spacing: { height: 1, width: 0 },
-        },
-        {
-          type: 'rect',
-          alias: '矩形(副本)',
-          zIndex: 1012,
-          id: 'sb_1383416502664',
-          selected: false,
-          transform: { x: 602.5, y: 463, width: 60, height: 60, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 1, color: 'rgba(103,58,183,1)', style: 'solid' },
-          corner: { topLeft: 10, topRight: 10, bottomLeft: 10, bottomRight: 10 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,152,0,1)',
-        },
-        {
-          type: 'rect',
-          alias: '矩形(副本)',
-          zIndex: 1012,
-          id: 'sb_6209440816864',
-          selected: false,
-          transform: { x: 683.5, y: 463, width: 60, height: 60, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 1, color: 'rgba(103,58,183,1)', style: 'solid' },
-          corner: { topLeft: 10, topRight: 10, bottomLeft: 10, bottomRight: 10 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,152,0,1)',
-        },
-        {
-          type: 'text',
-          alias: '文本(副本)',
-          zIndex: 1003,
-          id: 'sb_0867980368184',
-          selected: false,
-          transform: { x: 618.5, y: 526, width: 33, height: 16, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 0, color: 'rgba(224,224,224,1)', style: 'solid' },
-          corner: { topLeft: 0, topRight: 0, bottomLeft: 0, bottomRight: 0 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,255,255,0)',
-          font: { size: 14, color: 'rgba(80,78,78,1)' },
-          align: { x: 'center', y: 'flex-start' },
-          fontStyle: [],
-          decorator: 'none',
-          fontData: 'App',
-          spacing: { height: 1, width: 0 },
-        },
-        {
-          type: 'text',
-          alias: '文本(副本)',
-          zIndex: 1003,
-          id: 'sb_4677855140396',
-          selected: false,
-          transform: { x: 700.5, y: 526, width: 33, height: 16, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 0, color: 'rgba(224,224,224,1)', style: 'solid' },
-          corner: { topLeft: 0, topRight: 0, bottomLeft: 0, bottomRight: 0 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,255,255,0)',
-          font: { size: 14, color: 'rgba(80,78,78,1)' },
-          align: { x: 'center', y: 'flex-start' },
-          fontStyle: [],
-          decorator: 'none',
-          fontData: 'App',
-          spacing: { height: 1, width: 0 },
-        },
-        {
-          type: 'rect',
-          alias: '矩形(副本)',
-          zIndex: 1012,
-          id: 'sb_6309850244103',
-          selected: false,
-          transform: { x: 440.5, y: 551, width: 60, height: 60, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 1, color: 'rgba(103,58,183,1)', style: 'solid' },
-          corner: { topLeft: 10, topRight: 10, bottomLeft: 10, bottomRight: 10 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,152,0,1)',
-        },
-        {
-          type: 'rect',
-          alias: '矩形(副本)',
-          zIndex: 1012,
-          id: 'sb_9519865635528',
-          selected: false,
-          transform: { x: 521.5, y: 551, width: 60, height: 60, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 1, color: 'rgba(103,58,183,1)', style: 'solid' },
-          corner: { topLeft: 10, topRight: 10, bottomLeft: 10, bottomRight: 10 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,152,0,1)',
-        },
-        {
-          type: 'rect',
-          alias: '矩形(副本)',
-          zIndex: 1012,
-          id: 'sb_2199461582075',
-          selected: false,
-          transform: { x: 602.5, y: 551, width: 60, height: 60, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 1, color: 'rgba(103,58,183,1)', style: 'solid' },
-          corner: { topLeft: 10, topRight: 10, bottomLeft: 10, bottomRight: 10 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,152,0,1)',
-        },
-        {
-          type: 'rect',
-          alias: '矩形(副本)',
-          zIndex: 1012,
-          id: 'sb_3833557648308',
-          selected: false,
-          transform: { x: 683.5, y: 551, width: 60, height: 60, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 1, color: 'rgba(103,58,183,1)', style: 'solid' },
-          corner: { topLeft: 10, topRight: 10, bottomLeft: 10, bottomRight: 10 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,152,0,1)',
-        },
-        {
-          type: 'text',
-          alias: '文本(副本)',
-          zIndex: 1003,
-          id: 'sb_5722147450614',
-          selected: false,
-          transform: { x: 454.5, y: 614, width: 33, height: 16, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 0, color: 'rgba(224,224,224,1)', style: 'solid' },
-          corner: { topLeft: 0, topRight: 0, bottomLeft: 0, bottomRight: 0 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,255,255,0)',
-          font: { size: 14, color: 'rgba(80,78,78,1)' },
-          align: { x: 'center', y: 'flex-start' },
-          fontStyle: [],
-          decorator: 'none',
-          fontData: 'App',
-          spacing: { height: 1, width: 0 },
-        },
-        {
-          type: 'text',
-          alias: '文本(副本)',
-          zIndex: 1003,
-          id: 'sb_8130602580518',
-          selected: false,
-          transform: { x: 536.5, y: 614, width: 33, height: 16, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 0, color: 'rgba(224,224,224,1)', style: 'solid' },
-          corner: { topLeft: 0, topRight: 0, bottomLeft: 0, bottomRight: 0 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,255,255,0)',
-          font: { size: 14, color: 'rgba(80,78,78,1)' },
-          align: { x: 'center', y: 'flex-start' },
-          fontStyle: [],
-          decorator: 'none',
-          fontData: 'App',
-          spacing: { height: 1, width: 0 },
-        },
-        {
-          type: 'text',
-          alias: '文本(副本)',
-          zIndex: 1003,
-          id: 'sb_3252384627472',
-          selected: false,
-          transform: { x: 618.5, y: 614, width: 33, height: 16, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 0, color: 'rgba(224,224,224,1)', style: 'solid' },
-          corner: { topLeft: 0, topRight: 0, bottomLeft: 0, bottomRight: 0 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,255,255,0)',
-          font: { size: 14, color: 'rgba(80,78,78,1)' },
-          align: { x: 'center', y: 'flex-start' },
-          fontStyle: [],
-          decorator: 'none',
-          fontData: 'App',
-          spacing: { height: 1, width: 0 },
-        },
-        {
-          type: 'text',
-          alias: '文本(副本)',
-          zIndex: 1003,
-          id: 'sb_9087287984579',
-          selected: false,
-          transform: { x: 700.5, y: 614, width: 33, height: 16, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 0, color: 'rgba(224,224,224,1)', style: 'solid' },
-          corner: { topLeft: 0, topRight: 0, bottomLeft: 0, bottomRight: 0 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,255,255,0)',
-          font: { size: 14, color: 'rgba(80,78,78,1)' },
-          align: { x: 'center', y: 'flex-start' },
-          fontStyle: [],
-          decorator: 'none',
-          fontData: 'App',
-          spacing: { height: 1, width: 0 },
-        },
-        {
-          type: 'rect',
-          alias: '矩形(副本)',
-          zIndex: 1012,
-          id: 'sb_5559056628535',
-          selected: false,
-          transform: { x: 440.5, y: 687, width: 60, height: 60, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 1, color: 'rgba(103,58,183,1)', style: 'solid' },
-          corner: { topLeft: 10, topRight: 10, bottomLeft: 10, bottomRight: 10 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,152,0,1)',
-        },
-        {
-          type: 'rect',
-          alias: '矩形(副本)',
-          zIndex: 1012,
-          id: 'sb_3211240076482',
-          selected: false,
-          transform: { x: 521.5, y: 687, width: 60, height: 60, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 1, color: 'rgba(103,58,183,1)', style: 'solid' },
-          corner: { topLeft: 10, topRight: 10, bottomLeft: 10, bottomRight: 10 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,152,0,1)',
-        },
-        {
-          type: 'rect',
-          alias: '矩形(副本)',
-          zIndex: 1012,
-          id: 'sb_3894879692576',
-          selected: false,
-          transform: { x: 602.5, y: 687, width: 60, height: 60, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 1, color: 'rgba(103,58,183,1)', style: 'solid' },
-          corner: { topLeft: 10, topRight: 10, bottomLeft: 10, bottomRight: 10 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,152,0,1)',
-        },
-        {
-          type: 'rect',
-          alias: '矩形(副本)',
-          zIndex: 1012,
-          id: 'sb_7490429239252',
-          selected: false,
-          transform: { x: 683.5, y: 687, width: 60, height: 60, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 1, color: 'rgba(103,58,183,1)', style: 'solid' },
-          corner: { topLeft: 10, topRight: 10, bottomLeft: 10, bottomRight: 10 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,152,0,1)',
-        },
-        {
-          type: 'rect',
-          alias: '矩形(副本)',
-          zIndex: 1012,
-          id: 'sb_1284140424362',
-          selected: false,
-          transform: { x: 441.5, y: 175, width: 302, height: 158, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 1, color: 'rgba(103,58,183,1)', style: 'solid' },
-          corner: { topLeft: 10, topRight: 10, bottomLeft: 10, bottomRight: 10 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,152,0,1)',
-        },
-        {
-          type: 'rect',
-          alias: '矩形(副本)',
-          zIndex: 1012,
-          id: 'sb_7831563745268',
-          selected: false,
-          transform: { x: 440.5, y: 367, width: 141, height: 159, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 1, color: 'rgba(103,58,183,1)', style: 'solid' },
-          corner: { topLeft: 10, topRight: 10, bottomLeft: 10, bottomRight: 10 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,152,0,1)',
-        },
-        {
-          type: 'text',
-          alias: '文本',
-          zIndex: 1015,
-          id: 'sb_0806205719131',
-          selected: false,
-          transform: { x: 552.5, y: 247, width: 78, height: 15, rotation: 0 },
-          interactions: [],
-          animations: {},
-          settings: { fixation: false, hover: true, resize: null, ratio: false, isHide: false, overflow: '' },
-          border: { width: 0, color: 'rgba(224,224,224,1)', style: 'solid' },
-          corner: { topLeft: 0, topRight: 0, bottomLeft: 0, bottomRight: 0 },
-          shadow: { blur: 0, spread: 0, offsetX: 0, offsetY: 0, color: 'rgba(255,255,255,1)', type: 'outset' },
-          bg: 'rgba(255,255,255,0)',
-          font: { size: 14, color: 'rgba(255,255,255,1)' },
-          align: { x: 'flex-start', y: 'flex-start' },
-          fontStyle: [],
-          decorator: 'none',
-          fontData: 'HarmonyOS',
-          spacing: { height: 1, width: 0 },
-        },
-      ],
-      type: 'PAGE',
-    })
-  }
-  return pages
-}
+  return pages;
+};
 
 export const getUnsavedPageListFromStorage = () => {
-  let pages = getPageListFromStorage()
-  return pages.filter((item) => !item.projectid)
-}
+  let pages = getPageListFromStorage();
+  return pages.filter((item) => !item.projectid);
+};
 export const updatePageToSorage = (id, data) => {
-  localStorage.setItem(storage_page_key(id), JSON.stringify(data))
-}
+  localStorage.setItem(storage_page_key(id), JSON.stringify(data));
+};
 // 保存到后台之后就清除前端的缓存数据
 export const clearPageStorage = () => {
   for (let key in localStorage) {
     if (key.startsWith('page_data')) {
-      localStorage.removeItem(key)
+      localStorage.removeItem(key);
     }
   }
-}
+};
 
 export const deletePageFromStorage = (id) => {
-  localStorage.removeItem(storage_page_key(id))
-}
+  localStorage.removeItem(storage_page_key(id));
+};
 
 export async function saveToRemoteFromStorage(pages) {
-  Event.dispatch(context_save_success)
+  Event.dispatch(context_save_success);
 }

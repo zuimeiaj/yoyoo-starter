@@ -79,7 +79,8 @@
     "redux-thunk": "2.3.0",
     "resolve": "1.15.0",
     "resolve-url-loader": "3.1.1",
-    "sass-loader": "8.0.2",
+    "sass": "^1.56.1",
+    "sass-loader": "^8.0.2",
     "semver": "6.3.0",
     "style-loader": "0.23.1",
     "terser-webpack-plugin": "2.3.5",
@@ -105,7 +106,6 @@
     "build": "node scripts/build.js",
     "test": "node scripts/test.js"
   },
-
   "browserslist": {
     "production": [
       ">0.2%",
