@@ -32,19 +32,19 @@
       }
       &:hover {
         cursor: pointer;
-        background: #ff7043;
-        color: #fff;
+        background: $primary-bg;
+        color: $primary-light;
         .iconfont {
-          font-size: 20px;
-          color: #fff;
+          font-size: 18px;
+          color: $primary-light;
         }
       }
       &.selected {
-        color: #fff;
-        background: #ff7043;
+        color: $primary-light;
+        background: $primary-bg;
         .iconfont {
           font-size: 20px;
-          color: #fff;
+          color: $primary-light;
         }
       }
     }
@@ -73,26 +73,36 @@
 }
 
 .root-layout-side-components {
+  .component-group-content {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+  }
   .aj-component-draggable {
     display: inline-flex;
     align-items: center;
-    justify-content: center;
-    width: 50%;
-    height: 80px;
     overflow: hidden;
     position: relative;
     border: 1px solid #ececec;
-    border-left: 0;
-    border-top: 0;
+    padding: 6px 6px;
+    margin-top: 10px;
+    border-radius: 5px;
+    background: #fcfcfc;
+    width: 45%;
     &:hover {
       z-index: 10;
-      background: #ececec;
+      background: $primary-bg;
+      color: $primary-light;
+      border-color: $primary-bg;
+      .iconfont {
+        color: $primary-light;
+      }
     }
   }
   .base-component {
     display: flex;
-    flex-direction: column;
     align-items: center;
+    font-size: 12px;
     background-size: contain;
     .aj-component-draggable {
       &:hover {
@@ -100,9 +110,16 @@
       }
     }
     .iconfont {
-      font-size: 20px;
+      font-size: 12px;
+      margin-right: 4px;
       color: #666;
-      margin-bottom: 5px;
+      padding: 4px;
+      height: 22px;
+      width: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
     }
 
     img {
@@ -142,17 +159,21 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 25%;
-      height: 50px;
+      width: 20%;
+      aspect-ratio: 1;
       position: relative;
       .preseticons {
         color: #444;
       }
       &:hover {
+        border-radius: 5px;
         z-index: 10;
         cursor: pointer;
         background: $primary-bg;
-        color: $primary-alpha;
+        color: $primary-light;
+        .preseticons {
+          color: $primary-light;
+        }
       }
     }
   }
@@ -314,6 +335,13 @@
   }
   .aj-editable-component {
     display: inline-block;
+  }
+  .ant-tree li .ant-tree-node-content-wrapper.ant-tree-node-selected {
+    background: $primary-bg;
+    border-radius: 5px;
+    .editable-component_text {
+      color: $primary-light;
+    }
   }
 }
 

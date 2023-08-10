@@ -3,12 +3,8 @@
  *
  */
 
-import React from "react";
-import ViewController from "./ViewController";
-
-
+import React from 'react';
+import ViewController from './ViewController';
 
 // Default view
-export default class ViewContainer extends ViewController {
-
-}
+export default class ViewContainer extends ViewController {}

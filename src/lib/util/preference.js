@@ -1,16 +1,16 @@
 //mock
-import { getScreeTransform } from '../global'
-import Event from '../Base/Event'
-import { context_zoom_level, preferences_configchange, refresh_editor_config, workspace_scroll_center } from './actions'
-import { DEFAULT_ZOOM_LEVEL } from '../Widget/EditorScrollbar'
+import { getScreeTransform } from '../global';
+import Event from '../Base/Event';
+import { context_zoom_level, preferences_configchange, refresh_editor_config, workspace_scroll_center } from './actions';
+import { DEFAULT_ZOOM_LEVEL } from '../Widget/EditorScrollbar';
 
-const width = Math.floor(window.screen.width * 5)
-const height = Math.floor(window.screen.height * 10)
+const width = Math.floor(window.screen.width * 5);
+const height = Math.floor(window.screen.height * 10);
 const VIEW_PORT_SIZE = {
   PAD: 800,
   PC: 1200,
   MOBILE: 380,
-}
+};
 let config = {
   editorDomRect: {
     left: 280,
@@ -41,41 +41,41 @@ let config = {
     y: {},
   },
   autoAlign: 1,
-}
-window._config = config
+};
+window._config = config;
 export const getSnaplineConfig = () => {
-  let scale = getScreeTransform().scale
+  let scale = getScreeTransform().scale;
   let x = config.snap.x / scale,
-    y = config.snap.y / scale
-  return { x, y }
-}
+    y = config.snap.y / scale;
+  return { x, y };
+};
 export const initPageSizeWithProjectType = (info) => {
-  config.viewport.width = VIEW_PORT_SIZE[info.type]
+  config.viewport.width = VIEW_PORT_SIZE[info.type];
   setTimeout(() => {
     let size = {
       PAD: DEFAULT_ZOOM_LEVEL - 4,
       PC: 11,
       MOBILE: DEFAULT_ZOOM_LEVEL,
-    }
-    Event.dispatch(preferences_configchange, config)
+    };
+    Event.dispatch(preferences_configchange, config);
     if (window.screen.width < 1400) {
       // 小于1400的屏幕对面板进行缩放
-      Event.dispatch(context_zoom_level, size[info.type])
+      Event.dispatch(context_zoom_level, size[info.type]);
     }
-    Event.dispatch(workspace_scroll_center)
-  }, 1000)
-}
-export default config
+    Event.dispatch(workspace_scroll_center);
+  }, 1000);
+};
+export default config;
 export const updatePreferences = (newConfig, emitEvent = true) => {
-  Object.assign(config, newConfig)
+  Object.assign(config, newConfig);
   if (emitEvent) {
-    Event.dispatch(preferences_configchange, config)
+    Event.dispatch(preferences_configchange, config);
     Event.dispatch(refresh_editor_config, {
       key: 'preference',
       value: newConfig,
-    })
+    });
   }
-}
+};
 export const updatePreferenceConfig = (obj = {}) => {
-  Object.assign({}, config, obj)
-}
+  Object.assign({}, config, obj);
+};

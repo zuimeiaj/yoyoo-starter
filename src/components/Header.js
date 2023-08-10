@@ -44,7 +44,8 @@ class ProjectName extends React.Component {
   render() {
     return (
       <div className='header-logo'>
-        <h1>在线设计工具</h1>
+        <img className='app-icon' src={require('@/assets/app-icon.png')} />
+        <span className='app-name'>yoyoo设计</span>
       </div>
     );
   }

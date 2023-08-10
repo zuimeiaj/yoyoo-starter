@@ -4,7 +4,7 @@ const defaultTransform = () => ({
   width: 100,
   height: 100,
   rotation: 0,
-})
+});
 export const BaseComponents = [
   {
     icon: 'text',
@@ -90,7 +90,7 @@ export const BaseComponents = [
     height: 80,
     width: 80,
   },
-]
+];
 export const ComponentIconMap = {
   select: 'xialaxuanze',
   textarea: 'fuhao-duohangshurukuang',
@@ -106,4 +106,4 @@ export const ComponentIconMap = {
   rect: 'juxing',
   icon: 'tubiao',
   block: 'group',
-}
+};

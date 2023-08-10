@@ -2,29 +2,29 @@
  *  created by yaojun on 2019/1/26
  *
  */
-import React from 'react'
-import { Popover } from 'antd'
-import { getQuery } from '../lib/util/helper'
-import { getCurrentPage } from '../lib/global/instance'
-import { getStore } from '../lib/global/store'
-import QRCode from 'qrcode.react'
-import { PREVIEW_URL } from '@config'
-import IconText from '@/lib/ui/IconText'
+import React from 'react';
+import { Popover } from 'antd';
+import { getQuery } from '../lib/util/helper';
+import { getCurrentPage } from '../lib/global/instance';
+import { getStore } from '../lib/global/store';
+import QRCode from 'qrcode.react';
+import { PREVIEW_URL } from '@config';
+import IconText from '@/lib/ui/IconText';
 
 export default class HeaderPlay extends React.Component {
   state = {
     visible: false,
     qrcode: true,
-  }
-  handlePreview = () => {}
+  };
+  handlePreview = () => {};
   handleMouseEnter = (e) => {
-    e.preventDefault()
-    e.stopPropagation()
-  }
+    e.preventDefault();
+    e.stopPropagation();
+  };
   handleMouseLeave = (e) => {
-    e.stopPropagation()
-    e.preventDefault()
-  }
+    e.stopPropagation();
+    e.preventDefault();
+  };
 
   render() {
     return (
@@ -48,6 +48,6 @@ export default class HeaderPlay extends React.Component {
           </IconText>
         </span>
       </Popover>
-    )
+    );
   }
 }

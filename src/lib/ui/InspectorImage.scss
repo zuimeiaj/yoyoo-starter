@@ -1,4 +1,4 @@
-@import "../../styles/color";
+@import '../../styles/color';
 
 .inspector-image {
   padding: 10px;
@@ -28,7 +28,7 @@
   }
 
   .control-items {
-    flex: 1
+    flex: 1;
   }
   .material-uploader {
     border: 1px dashed $primary;

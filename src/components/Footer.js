@@ -3,12 +3,10 @@
  *
  */
 
-import React from "react";
-
-
+import React from 'react';
 
 export default class Component extends React.Component {
-    render(){
-        return (<div className={'root-layout-footer'}>Footer</div>)
-    }
+  render() {
+    return <div className={'root-layout-footer'}>Footer</div>;
+  }
 }

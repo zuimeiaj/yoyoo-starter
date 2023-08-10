@@ -114,17 +114,15 @@ ul li {
 // common
 .aj-input {
   outline: none;
-  -webkit-appearance: none;
   border: 1px solid $border;
   padding-left: 8px;
   color: #444;
   border-radius: $input-radius;
   &:focus {
-    box-shadow: 0 0 5px 0px $primaryBlur;
-    border: 1px solid $primary;
+    border: 1px solid $primary-bg;
   }
   &:hover {
-    border: 1px solid $primary;
+    border: 1px solid $primary-bg;
   }
 }
 

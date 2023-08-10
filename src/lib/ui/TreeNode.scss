@@ -27,10 +27,10 @@
   .iconfont {
     color: #bbb;
     margin-right: 5px;
-    font-size: 13px;
+    font-size: 12px;
   }
   .tree-node-name {
-    padding: 4px 0;
+    padding: 4px 6px;
     position: relative;
     overflow: hidden;
     color: #444;
@@ -53,10 +53,12 @@
     }
     &:hover {
       cursor: pointer;
-      background: rgba(255, 87, 34, 0.3);
+      background: $primary-bg;
+      border-radius: 5px;
+      color: $primary-light;
       .editable-component_text,
       .iconfont {
-        color: #585252;
+        color: $primary-light;
       }
       .tree-node-actions {
         display: block;
@@ -66,10 +68,11 @@
       border: 1px solid $primary;
     }
     &.selected {
-      background: rgba(255, 87, 34, 0.3);
+      background: $primary-bg;
+      border-radius: 5px;
       .editable-component_text,
       .iconfont {
-        color: #585252;
+        color: $primary-light;
       }
     }
   }
@@ -80,7 +83,7 @@
     display: none;
     .iconfont {
       &:hover {
-        color: $primary;
+        opacity: 0.8;
       }
     }
   }

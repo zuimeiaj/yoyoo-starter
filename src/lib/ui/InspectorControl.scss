@@ -1,4 +1,4 @@
-@import "../../styles/color";
+@import '../../styles/color';
 
 .ins-control_wrapper {
   padding: 0px 15px;
@@ -31,10 +31,13 @@
 
 .ins-control_border {
   display: flex;
-  .aj-component-select, .aj-color-input, .aj-number-input-control {
+  .aj-component-select,
+  .aj-color-input,
+  .aj-number-input-control {
     flex: 1 !important;
   }
-  .aj-component-select, .aj-number-input-control {
+  .aj-component-select,
+  .aj-number-input-control {
     margin-right: 5px;
   }
 }
@@ -44,7 +47,8 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-    .aj-component-select, .aj-color-input {
+    .aj-component-select,
+    .aj-color-input {
       width: 49% !important;
       margin-bottom: 5px;
     }
@@ -57,7 +61,6 @@
   .aj-color-input {
     flex: initial;
   }
-
 }
 
 .ins-control_corner {
@@ -65,7 +68,8 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-    .aj-number-input-control, .aj-button-group {
+    .aj-number-input-control,
+    .aj-button-group {
       width: 49%;
       margin-bottom: 5px;
     }
@@ -97,7 +101,8 @@
 
 .ins-control_font {
   display: flex;
-  .aj-color-input, .aj-number-input-control {
+  .aj-color-input,
+  .aj-number-input-control {
     width: 50% !important;
   }
 }
@@ -139,7 +144,7 @@
     color: #989898;
     .preseticons {
       font-size: 20px;
-      color: #F44336;
+      color: #f44336;
     }
   }
 }

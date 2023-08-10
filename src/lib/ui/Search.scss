@@ -1,10 +1,9 @@
 @import '../../styles/color';
 $h: 28px;
 .aj-ui-search {
-  background: $primary-bg;
+  background: $input-bg;
   height: $h;
   line-height: $h;
-  padding: 0 10px;
   display: inline-flex;
   border-radius: 4px;
   .icon-search {

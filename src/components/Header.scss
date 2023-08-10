@@ -14,19 +14,21 @@ $header_height: 50px;
 
   .header-logo {
     display: flex;
-    align-items: flex-end;
-    h1 {
-      font-family: 'Times New Roman', Times, serif;
-      color: #ff7043;
-      font-size: 18px;
-      margin-bottom: 0;
+    align-items: center;
+    padding: 8px 15px;
+    .app-name {
+      font-weight: 600;
+      margin-left: 10px;
+      font-size: 15px;
+    }
+    .app-icon {
+      height: 24px;
     }
   }
   .header_project {
     height: 100%;
     display: flex;
     width: 280px;
-    padding-left: 50px;
     .editable-component_text {
       border-bottom: none;
     }

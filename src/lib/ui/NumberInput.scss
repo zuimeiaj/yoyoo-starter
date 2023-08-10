@@ -9,7 +9,7 @@
   overflow: hidden;
   background: $input-bg;
   &:hover {
-    border: 1px solid $primary;
+    border: 1px solid $primary-bg;
   }
   &.disabled {
     background: $input-disabled;

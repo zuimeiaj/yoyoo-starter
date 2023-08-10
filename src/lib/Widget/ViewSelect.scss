@@ -43,7 +43,8 @@
     top: 0;
     right: 0;
     flex-direction: column;
-    .arrows_up, .arrows_down {
+    .arrows_up,
+    .arrows_down {
       position: absolute;
       width: 0;
       height: 0;
@@ -55,11 +56,9 @@
       border-bottom: 6px solid #d3d3d3;
       margin-top: -6px;
     }
-    .arrows_down{
-      border-top: 6px solid #d3d3d3;;
+    .arrows_down {
+      border-top: 6px solid #d3d3d3;
       margin-top: 2px;
     }
-
   }
-
 }

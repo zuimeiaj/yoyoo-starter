@@ -1,4 +1,3 @@
+const agent = navigator.userAgent.toLowerCase();
 
-const agent = navigator.userAgent.toLowerCase()
-
-export const isMac=()=> agent.indexOf('mac os')>-1
+export const isMac = () => agent.indexOf('mac os') > -1;

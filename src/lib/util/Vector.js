@@ -1,4 +1,4 @@
-const EPSILOW = 1e-8
+const EPSILOW = 1e-8;
 
 /**
  *  ||u|| 表示向量u的求模，或者向量的大小
@@ -20,127 +20,111 @@ const EPSILOW = 1e-8
  *  normalize: 单位向量 v * 1/norm :Vector
  */
 class Vector {
-    
-    static zero(dim){
-        return new Vector(new Array(dim).fill(0))
+  static zero(dim) {
+    return new Vector(new Array(dim).fill(0));
+  }
+
+  constructor(lst) {
+    this._values = lst;
+  }
+
+  valueOf() {
+    return JSON.parse(JSON.stringify(this._values));
+  }
+
+  /**
+   * 所有维度（分量）的开平方根
+   * 求模，向量大小 ||a^2+b^2+c^2+...n^2||
+   * @return {number}
+   */
+  norm() {
+    return Math.sqrt(this._values.map((item) => Math.pow(item, 2)).reduce((a, b) => a + b));
+  }
+
+  /**
+   *求单位向量, 向量 *  大小的倒数
+   * @return {Vector}
+   */
+  normalize() {
+    let n = this.norm();
+    if (n < EPSILOW) throw Error(`[ Normalize Error] ${this.toString()} can not be normalize.`);
+    return this.div(n);
+  }
+
+  toString() {
+    return `Vector(${this._values.join(', ')})`;
+  }
+
+  get length() {
+    return this._values.length;
+  }
+
+  // 向量加法
+  /**
+   * 与一个新的向量的每一个分量相加
+   * @param vector
+   * @return {Vector}
+   */
+  add(vector) {
+    return new Vector(vector._values.map((item, index) => item + this._values[index]));
+  }
+
+  /**
+   * 减去向量中每个分量
+   * @param vector
+   * @return {Vector}
+   */
+  sub(vector) {
+    return new Vector(vector._values.map((item, index) => item - this._values[index]));
+  }
+
+  /**
+   * 向量乘以一个标量，向量里面的每个分量 乘以标量
+   * @param number
+   * @return {Vector}
+   */
+  mul(number) {
+    return new Vector(this._values.map((item) => item * number));
+  }
+
+  /**
+   * 1.点乘在推荐系统中常用，判断相似度 。
+   *  - =0 , 表示为两个向量为垂直关系 ,没有关系
+   *  - >0 , 夹角为锐角, 越大越相似
+   *  - <0 , 夹角为钝角，相悖
+   * 2.几何计算
+   *  - 夹角 dot() / ||vector||
+   *  - 投影向量的距离 (dot() / ||vector||) :number
+   *  - 投影点坐标 (dot() / ||vector||) * normalize() :Vector
+   *
+   * @param vector
+   * @return {number}
+   */
+  dot(vector) {
+    if (vector instanceof Vector && this.length === vector.length) {
+      return this._values.map((item, index) => item * vector._values[index]).reduce((a, b) => a + b);
     }
-    
-    
-    constructor(lst){
-        this._values = lst
-    }
-    
-    
-    valueOf(){
-        return JSON.parse(JSON.stringify(this._values))
-    }
-    
-    
-    /**
-     * 所有维度（分量）的开平方根
-     * 求模，向量大小 ||a^2+b^2+c^2+...n^2||
-     * @return {number}
-     */
-    norm(){
-        return Math.sqrt(this._values.map(item => Math.pow(item, 2)).reduce((a, b) => a + b))
-    }
-    
-    
-    /**
-     *求单位向量, 向量 *  大小的倒数
-     * @return {Vector}
-     */
-    normalize(){
-        let n = this.norm()
-        if (n < EPSILOW) throw Error(`[ Normalize Error] ${this.toString()} can not be normalize.`)
-        return this.div(n)
-    }
-    
-    
-    toString(){
-        return `Vector(${this._values.join(', ')})`
-    }
-    
-    
-    get length(){
-        return this._values.length
-    }
-    
-    
-    // 向量加法
-    /**
-     * 与一个新的向量的每一个分量相加
-     * @param vector
-     * @return {Vector}
-     */
-    add(vector){
-        return new Vector(vector._values.map((item, index) => item + this._values[index]))
-    }
-    
-    
-    /**
-     * 减去向量中每个分量
-     * @param vector
-     * @return {Vector}
-     */
-    sub(vector){
-        return new Vector(vector._values.map((item, index) => item - this._values[index]))
-    }
-    
-    
-    /**
-     * 向量乘以一个标量，向量里面的每个分量 乘以标量
-     * @param number
-     * @return {Vector}
-     */
-    mul(number){
-        return new Vector(this._values.map((item) => item * number))
-    }
-    
-    
-    /**
-     * 1.点乘在推荐系统中常用，判断相似度 。
-     *  - =0 , 表示为两个向量为垂直关系 ,没有关系
-     *  - >0 , 夹角为锐角, 越大越相似
-     *  - <0 , 夹角为钝角，相悖
-     * 2.几何计算
-     *  - 夹角 dot() / ||vector||
-     *  - 投影向量的距离 (dot() / ||vector||) :number
-     *  - 投影点坐标 (dot() / ||vector||) * normalize() :Vector
-     *
-     * @param vector
-     * @return {number}
-     */
-    dot(vector){
-        if (vector instanceof Vector && this.length === vector.length) {
-            return this._values.map((item, index) => item * vector._values[index]).reduce((a, b) => a + b)
-        }
-        throw Error('The param `vector` must instance of Vector')
-    }
-    
-    
-    // 向量数量除法
-    div(number){
-        return this.mul(1 / number)
-    }
-    
-    
-    // 取正
-    pos(){
-        return this.mul(1)
-    }
-    
-    
-    // 取负
-    neg(){
-        return this.mul(-1)
-    }
-    
-    
-    get(index){
-        return this._values[index]
-    }
-    
+    throw Error('The param `vector` must instance of Vector');
+  }
+
+  // 向量数量除法
+  div(number) {
+    return this.mul(1 / number);
+  }
+
+  // 取正
+  pos() {
+    return this.mul(1);
+  }
+
+  // 取负
+  neg() {
+    return this.mul(-1);
+  }
+
+  get(index) {
+    return this._values[index];
+  }
 }
 
-export default Vector
+export default Vector;

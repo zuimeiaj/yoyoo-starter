@@ -1,9 +1,9 @@
-$primary-bg: #ececec;
+$primary-bg: #009688;
 $primary-border: #f5f5f5;
 $primary-font-color: #222;
 $primary-font-alpha-color: #fff;
-$primary-selected: #222;
-$primary-selected-color: #222;
+$primary-selected: #dadada;
+$primary-selected-color: #474747;
 $primary-light: #fff;
 $primaryBlur: #999;
 $primary: $primaryBlur;
@@ -18,10 +18,10 @@ $selection-bg: $assist-alpha;
 
 $dialog-bg: linear-gradient(to bottom, rgba(156, 39, 176, 0.3), rgba(244, 67, 54, 0.2));
 
-$border: #d3d3d3;
-$input-bg: #fff;
-$primary-alpha: #fff;
+$border: #ffffff;
+$input-bg: #f1f1f1;
+$primary-alpha: #ffffff;
 $input-font-color: #222;
-$input-radius: 0px;
+$input-radius: 5px;
 $input-height: 28px;
 $input-disabled: rgba(0, 0, 0, 0.1);
