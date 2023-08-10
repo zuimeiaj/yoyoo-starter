@@ -292,6 +292,7 @@ export const outline_page_create = 'outlinepages/create';
  */
 export const outline_page_select = 'outlinepages/select';
 export const outline_page_select_end = 'outlinepages/select_end';
+export const outline_page_add = 'outlinepage/add';
 /**
  * 选中图层
  * @type {string}

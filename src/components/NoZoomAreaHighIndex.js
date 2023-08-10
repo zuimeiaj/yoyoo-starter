@@ -9,7 +9,8 @@ import Snapline from '../lib/Widget/Snapline';
 import Guides from '../lib/Widget/Guides';
 import HighlightComponentOnComponentEneter from '../lib/Widget/HighlightComponentOnComponentEneter';
 import HighlightComponentOnAligned from '../lib/Widget/HighlightComponentOnAligned';
-
+import HighlightOnChildDraging from '../lib/Widget/HighlightOnChildDraging';
+import PositionInfo from '../lib/Widget/PositionInfo';
 export default class NoZoomAreaHighIndex extends React.Component {
   render() {
     return (
@@ -27,7 +28,9 @@ export default class NoZoomAreaHighIndex extends React.Component {
         {/*Align*/}
         <HighlightComponentOnAligned />
 
-        {/*<HighlightOnChildDraging/>*/}
+        <HighlightOnChildDraging />
+
+        <PositionInfo />
       </Stage>
     );
   }

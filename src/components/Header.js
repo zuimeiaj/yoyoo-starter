@@ -10,13 +10,13 @@ import HeaderCoverage from './HeaderCoverage';
 import HeaderUser from './HeaderUser';
 import HeaderPanToCenter from './HeaderPanToCenter';
 import HeaderGuides from './HeaderGuides';
-import EditableLabel from '../lib/ui/EditableLabel';
 import Event from '../lib/Base/Event';
 import { refresh_project_name } from '../lib/util/actions';
 import { updateProject } from '../api/project';
 import qs from 'query-string';
 import HeaderExport from '@/components/HeaderExport';
 import HeaderGroupControl from '@/components/HeaderGroupControl';
+import HeaderSettings, { Settings } from './HeaderSettings';
 
 class ProjectName extends React.Component {
   state = {
@@ -69,6 +69,7 @@ export default class Header extends React.Component {
           <HeaderGuides />
         </div>
         <div className={'header_user'}>
+          <HeaderSettings />
           <HeaderExport />
           <HeaderUser />
         </div>

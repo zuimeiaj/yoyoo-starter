@@ -163,6 +163,7 @@ class EditorControllers extends React.Component {
 
   componentWillMount() {
     let pages = getPageListFromStorage();
+    console.log('pages:', pages);
     let info = { type: 'PAD' };
     setStore('project', info);
     setStore('pages', pages);
@@ -401,7 +402,7 @@ class EditorControllers extends React.Component {
   };
   // 编辑器偏好设置变化
   handleEditorConfig = ({ key, value }) => {
-    updateUserInfo({ [key]: value }).then(() => message.success('操作成功'));
+    message.success('操作成功');
   };
   // BG WIDTH GUIDES
   handlePageInfoUpdate = ({ id, key, value }) => {

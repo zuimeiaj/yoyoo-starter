@@ -1,0 +1,10 @@
+@import '../../styles/color';
+.component-position-info {
+  position: absolute;
+  background: $primary-bg;
+  color: $primary-light;
+  font-size: 12px;
+  display: none;
+  padding: 4px 8px;
+  border-radius: 5px;
+}

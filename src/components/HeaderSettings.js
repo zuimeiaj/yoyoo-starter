@@ -143,9 +143,11 @@ class Shortcuts extends React.Component {
           <a onClick={this.toggleMode}>{this.state.mode ? '保存' : '自定义快捷键'} </a>
         </div>
 
-        {this.state.actions.map((item) => {
-          return <ShortcutsItem onComboChange={this.handleComboChange} onChange={this.handleChange} key={item} mode={this.state.mode} item={item} />;
-        })}
+        <div className='header-shortcuts-wrapper'>
+          {this.state.actions.map((item) => {
+            return <ShortcutsItem onComboChange={this.handleComboChange} onChange={this.handleChange} key={item} mode={this.state.mode} item={item} />;
+          })}
+        </div>
       </div>
     );
   }
@@ -160,8 +162,15 @@ export class Settings extends React.Component {
   //  工具设置
   preference = null;
 
+  componentDidMount() {
+    Event.listen(workspace_setting_show, this.toggleShow);
+  }
+  componentWillUnmount() {
+    Event.destroy(workspace_setting_show, this.toggleShow);
+  }
+
   toggleShow = () => {
-    this.setState({ show: true });
+    this.setState({ show: !this.state.show });
   };
   hide = () => {
     this.setState({ show: false });

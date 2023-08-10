@@ -150,4 +150,28 @@ class Matrix {
     return this.cols() === this.rows();
   }
 }
+
+export function getPoints({ x, y, width, height, rotation }) {
+  let a = (rotation * Math.PI) / 180;
+  let wc = width / 2;
+  let hc = height / 2;
+  let deg = new Matrix([
+    [Math.cos(a), Math.sin(a)],
+    [-Math.sin(a), Math.cos(a)],
+  ]);
+  let rect = new Matrix([
+    [-wc, hc],
+    [wc, hc],
+    [wc, -hc],
+    [-wc, -hc],
+  ]);
+
+  return deg
+    .dot(rect.T())
+    .T()
+    .valueOf()
+    .map((item) => {
+      return { x: item[0] + wc + x, y: -(item[1] - hc) + y };
+    });
+}
 export default Matrix;

@@ -1,4 +1,4 @@
-@import "../../styles/color";
+@import '../../styles/color';
 
 $size: 9px;
 $half: 4px;
@@ -7,7 +7,7 @@ $zindex: 10000000;
   position: absolute;
   width: $size;
   height: $size;
-  border: 1px solid $resize-line;
+  border: 1px solid $primary-bg;
   background: #ffffff;
   border-radius: 50%;
   z-index: $zindex;
@@ -16,7 +16,7 @@ $zindex: 10000000;
 
 .resizable-border {
   position: absolute;
-  background: $resize-line;
+  background: $primary-bg;
   z-index: $zindex - 1;
   display: none;
   &.rb-v {
@@ -31,17 +31,9 @@ $zindex: 10000000;
   height: $size;
   width: $size;
   position: absolute;
-  border: 1px solid $resize-line;
+  border: 1px solid $primary-bg;
   border-radius: 50%;
   display: none;
   background: #ffffff;
   cursor: crosshair;
-  .r-line {
-    width: 1px;
-    height: 16px;
-    top: 7px;
-    position: absolute;
-    left: 3px;
-    background: #2196f3;
-  }
 }

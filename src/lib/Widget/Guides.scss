@@ -1,28 +1,29 @@
-@import "../../styles/color";
-.line{
+@import '../../styles/color';
+.line {
   position: absolute;
   left: 0;
   top: 0;
-  .line_inner{
-    background: $assist-color;
+  .line_inner {
+    background: $primary-bg;
   }
 }
-.line-h{
+.line-h {
   height: 3px;
-  &:hover{
+  &:hover {
     cursor: row-resize;
   }
-  .line_inner{
+  .line_inner {
     height: 1px;
   }
 }
-.line-v{
+.line-v {
   width: 3px;
-  &:hover{
+  &:hover {
     cursor: col-resize;
   }
-  .line_inner{
-    width: 1px;
+  .line_inner {
+    width: 2px;
+    transform: scaleX(0.5);
     height: 100%;
   }
 }

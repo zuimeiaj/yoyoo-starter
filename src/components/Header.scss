@@ -84,6 +84,17 @@ $header_height: 50px;
   }
 }
 
+@keyframes panelShow {
+  from {
+    transform-origin: top right;
+    transform: scale(0);
+  }
+  to {
+    transform-origin: top right;
+    transform: scale(1);
+  }
+}
+
 .header_settings-panel {
   background: #ffffff;
   box-shadow: 3px 3px 10px 5px rgba(0, 0, 0, 0.05);
@@ -94,11 +105,13 @@ $header_height: 50px;
   z-index: 1000000000;
   padding: 10px 20px;
   height: calc(100% - 100px);
+  animation: panelShow 300ms;
   display: flex;
   flex-direction: column;
   .settings-panel_form {
     display: flex;
     flex: 1;
+    height: 0;
   }
   .settings-panel_bar {
     height: 46px;
@@ -110,9 +123,17 @@ $header_height: 50px;
   .header_shortcuts {
     position: relative;
     height: 100%;
-    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid #ececec;
     flex: 1;
   }
+  .header-shortcuts-wrapper {
+    flex: 1;
+    height: 0;
+    overflow-y: auto;
+  }
+
   .header_preferences {
     flex: 1;
   }
@@ -136,8 +157,10 @@ $header_height: 50px;
   }
   .settings_shortcuts-combo,
   .settings_shortcuts-key {
-    min-width: 32px;
     height: 32px;
+    padding: 0 10px;
+    box-sizing: border-box;
+    min-width: 32px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -149,12 +172,11 @@ $header_height: 50px;
     outline: none;
   }
   .settings_shortcuts-editmode {
-    background: #f5f5f5;
     &.selected,
     &:hover {
-      background: #0281e6;
-      color: #ffffff;
-      border: 1px solid #0281e6;
+      background: $primary-bg;
+      color: $primary-light;
+      border: 1px solid $primary-bg;
       cursor: pointer;
     }
   }

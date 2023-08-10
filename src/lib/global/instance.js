@@ -2,10 +2,12 @@ import Event from '../Base/Event';
 import { component_active, component_empty, component_inactive } from '../util/actions';
 import jQuery from 'jquery';
 import ViewSelectGroupBordered from '../Widget/ViewSelectGroupBordered';
-import { getPageData, storage_page_key } from '../util/page';
+import { createNewPage, getPageData, storage_page_key } from '../util/page';
 import { findPageDetail } from '../../api/page';
 import { getQuery } from '@/lib/util/helper';
 import { setMasterNodes } from '@/api/master';
+
+createNewPage;
 
 /**
  *

@@ -5,11 +5,12 @@
 import React from 'react';
 import Event from '../Base/Event';
 import { component_drag, component_dragend, component_resize_end } from '../util/actions';
-import { Dom } from '../util/helper';
+import { Dom, getClientBoundingRect } from '../util/helper';
+import NoZoomTransform from '../Base/NoZoomTransform';
+import './position-info.scss';
+import { getPoints } from '../util/Matrix';
 
-export default class PositionInfo extends React.Component {
-  show = false;
-
+export default class PositionInfo extends NoZoomTransform {
   componentWillMount() {
     Event.listen(component_drag, this.handleDrag);
     Event.listen(component_dragend, this.handleDragEnd);
@@ -22,29 +23,27 @@ export default class PositionInfo extends React.Component {
 
   handleDragEnd = () => {
     this.dom.hide();
-    this.show = false;
   };
   handleDrag = (target, options = {}) => {
-    let { x, y, width, height, rotation } = target.properties.transform;
-    x = Math.round(x);
-    y = Math.round(y);
-    width = Math.round(width);
-    height = Math.round(height);
-    rotation = Math.round(rotation);
-    let mx = window._mouse;
+    this.target = target;
+    this.options = options;
+    this.setBoundingRect();
+  };
+  applyToDom() {
+    this.dom.show();
+    let { x, y, width, height, rotation } = this;
+    let options = this.options;
     if (options.from === 'Draggable') {
-      this.dom.text(`${x} : ${y}`);
+      this.dom.text(`x=${x} , y=${y}`);
     } else if (options.from === 'Rotatable') {
       this.dom.text(`${rotation}°`);
     } else if (options.from === 'Resizable') {
-      this.dom.text(`${width} x ${height}`);
-    } else return;
-    this.dom.left(mx.mouseX).top(mx.mouseY + 15);
-    if (this.show === false) {
-      this.dom.show();
-      this.show = true;
+      this.dom.text(`w=${width} , h=${height}`);
     }
-  };
+    const points = getPoints(this);
+
+    this.dom.left(points[1].x + 10).top(points[1].y - 30);
+  }
 
   componentWillUnmount() {
     Event.destroy(component_drag, this.handleDrag);
@@ -53,18 +52,6 @@ export default class PositionInfo extends React.Component {
   }
 
   render() {
-    return (
-      <div
-        style={{
-          display: 'none',
-          position: 'fixed',
-          background: '#fff',
-          border: '1px solid #ececec',
-          padding: '5px 10px',
-          fontSize: 12,
-        }}
-        ref={'g'}
-      ></div>
-    );
+    return <div className='component-position-info' ref={'g'}></div>;
   }
 }

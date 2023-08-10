@@ -9,8 +9,8 @@
     margin-right: 5px;
   }
   &.checked {
-    color: #ffffff;
-    background: #ff5722;
+    color: $primary-light;
+    background: $primary-bg;
   }
   &:hover {
     cursor: pointer;
@@ -61,8 +61,8 @@
     line-height: $input-height;
 
     &:hover {
-      background: #ff5722;
-      color: #ffffff;
+      background: $primary-bg;
+      color: $primary-light;
     }
     &:last-child {
       border-right: 0;

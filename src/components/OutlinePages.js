@@ -41,6 +41,7 @@ export default class OutlinePages extends React.Component {
   };
   autoSelectPage = () => {
     if (getPageData().length == 0) return;
+
     setTimeout(() => {
       let screen = getQuery().s;
       if (screen) localStorage.setItem('selected-page', screen);
@@ -68,12 +69,12 @@ export default class OutlinePages extends React.Component {
     wrapper.find(`#treenode${id}`).addClass('selected');
     Event.dispatch(outline_page_select, id);
   };
-  handleCreate = async () => {
-    await createNewPage();
+  handleCreate = () => {
+    createNewPage();
     this.refresh();
   };
-  handleCreateSub = async (id) => {
-    await createNewPage(id);
+  handleCreateSub = (id) => {
+    createNewPage(id);
     this.refresh();
   };
   _getSubPages = (item) => {
@@ -147,8 +148,8 @@ export default class OutlinePages extends React.Component {
     });
     this.setState({ data });
   };
-  handleCreateSubState = async (id) => {
-    await createNewPage(id, 'STATE');
+  handleCreateSubState = (id) => {
+    createNewPage(id, 'STATE');
     this.refresh();
   };
   handleDuplicate = async (id, pid) => {
@@ -168,11 +169,6 @@ export default class OutlinePages extends React.Component {
     }
     if (type == 'PAGE') {
       actions.push(
-        <Tooltip key={'state'} title={'创建新的状态'}>
-          <span onClick={() => this.handleDuplicate(id, id)}>
-            <Icon type={'zhuangtai'} />
-          </span>
-        </Tooltip>,
         <Tooltip key={'sub'} title={'添加子页面'}>
           <span onClick={() => this.handleCreateSub(id)}>
             <Icon type={'jia1'} />

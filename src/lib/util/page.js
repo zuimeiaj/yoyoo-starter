@@ -1,9 +1,9 @@
 import { getQuery, uuid } from './helper';
-import { getCurrentControllersByPage, getCurrentPage, setCurrentPage } from '../global/instance';
+import { getCurrentControllersByPage, getCurrentPage, saveCurrentControllersByPage, setCurrentPage } from '../global/instance';
 import { parseJSON } from '../properties/types';
 import { createPage, deletePage as deletePageApi, savePage } from '../../api/page';
 import Event from '../Base/Event';
-import { context_save_failed, context_save_start, context_save_success, outline_page_select_end, show_create_project } from './actions';
+import { context_save_failed, context_save_start, context_save_success, outline_page_add, outline_page_select_end, show_create_project } from './actions';
 import config from './preference';
 import { isArray } from '@/lib/util/helper';
 
@@ -53,16 +53,14 @@ export const selectPage = (pageid) => {
  * @return {Promise<any>}
  */
 export const createNewPage = (pid, state) => {
-  return new Promise(async (resolve) => {
-    let pages = getPageData();
-    let data = generateNewPage(pid);
-    data.projectid = 'testid';
-    data.type = state || 'PAGE';
-    data.alias = data.type == 'PAGE' ? '新页面' : '新状态';
-    data.width = config.viewport.width;
-    pages.push(data);
-    resolve();
-  });
+  let pages = getPageData();
+  let data = generateNewPage(pid);
+  data.projectid = 'testid';
+  data.type = state || 'PAGE';
+  data.alias = data.type == 'PAGE' ? '新页面' : '新状态';
+  data.width = config.viewport.width;
+  pages.push(data);
+  localStorage.setItem(storage_page_key(data.id), JSON.stringify(data));
 };
 
 export const duplicatePageState = (id, pid) => {
@@ -167,6 +165,11 @@ export const getPageListFromStorage = () => {
         localStorage.removeItem(key);
       }
     }
+  }
+  if (pages.length == 0) {
+    createNewPage();
+
+    return LocalPageData;
   }
   return pages;
 };

@@ -20,13 +20,14 @@ import './ViewResizable.scss';
 import Draggable from '../Draggable';
 import NoZoomTransform from '../Base/NoZoomTransform';
 import { Dom } from '../util/helper';
-import Matrix from '../util/Matrix';
+import Matrix, { getPoints } from '../util/Matrix';
 import { pointToWorkspaceCoords } from '../global';
 
 const gResize = ['rotation', 'tl', 'tm', 'tr', 'r', 'br', 'bm', 'bl', 'l', 'borderLeft', 'borderRight', 'borderTop', 'borderBottom'];
 const cursorStartMap = { n: 0, ne: 1, e: 2, se: 3, s: 4, sw: 5, w: 6, nw: 7 };
 const cursorDirectionArray = ['n', 'ne', 'e', 'se', 's', 'sw', 'w', 'nw'];
 const cursorMap = { 0: 0, 1: 1, 2: 2, 3: 2, 4: 3, 5: 4, 6: 4, 7: 5, 8: 6, 9: 6, 10: 7, 11: 8 };
+
 export const getCursor = (rotateAngle, d) => {
   const increment = cursorMap[Math.floor(rotateAngle / 30)];
   const index = cursorStartMap[d];
@@ -37,7 +38,7 @@ export default class ViewResizable extends NoZoomTransform {
   constructor() {
     super();
     /**
-     * 当前定点矩阵
+     * 当前顶点矩阵
      * @type {Matrix}
      */
     this.origin = null;
@@ -144,29 +145,6 @@ export default class ViewResizable extends NoZoomTransform {
       r: 1,
       l: 1,
     };
-
-    function getPoints({ x, y, width, height, rotation }) {
-      let a = (rotation * Math.PI) / 180;
-      let wc = width / 2;
-      let hc = height / 2;
-      let deg = new Matrix([
-        [Math.cos(a), Math.sin(a)],
-        [-Math.sin(a), Math.cos(a)],
-      ]);
-      let rect = new Matrix([
-        [-wc, hc],
-        [wc, hc],
-        [wc, -hc],
-        [-wc, -hc],
-      ]);
-      return deg
-        .dot(rect.T())
-        .T()
-        .valueOf()
-        .map((item) => {
-          return { x: item[0] + wc + x, y: -(item[1] - hc) + y };
-        });
-    }
 
     function getRect() {
       return self.target.getOffsetRect();
@@ -343,10 +321,10 @@ export default class ViewResizable extends NoZoomTransform {
 
   onComponentDrag = (target) => {
     let t = target.properties.transform;
-    if (!this._isHide) {
-      this._isHide = true;
-      this.show(false);
-    }
+    // if (!this._isHide) {
+    //   this._isHide = true;
+    //   this.show(false);
+    // }
     this.setBoundingRect(t);
   };
   onComponentActive = (target) => {

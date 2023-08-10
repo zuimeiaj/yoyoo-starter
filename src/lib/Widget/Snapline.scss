@@ -1,23 +1,23 @@
-@import "../../styles/color";
-.snapline{
+@import '../../styles/color';
+.snapline {
   position: absolute;
   display: none;
 }
-.snapline-wrapper-v{
+.snapline-wrapper-v {
   position: absolute;
   height: 100%;
   width: 0;
   top: 0;
 }
-.snapline-h{
+.snapline-h {
   height: 1px;
-  border-top: 1px dashed $snap-line;
+  border-top: 1px dashed $primary-bg;
   width: 10000px;
   transform: translateX(-50%);
 }
-.snapline-v{
+.snapline-v {
   height: 10000px;
   transform: translateY(-50%);
   width: 1px;
-  border-left: 1px dashed $snap-line;
+  border-left: 1px dashed $primary-bg;
 }

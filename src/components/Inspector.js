@@ -5,7 +5,7 @@
 import React, { Component } from 'react';
 import './Inspector.scss';
 import Event from '../lib/Base/Event';
-import { component_active, component_empty, component_inactive, component_properties_change } from '../lib/util/actions';
+import { component_active, component_empty, component_inactive, component_properties_change, window_size_change } from '../lib/util/actions';
 import {
   InspectorAlign,
   InspectorAnimation,
@@ -26,7 +26,7 @@ import Types from 'prop-types';
 import deepEqual from 'fast-deep-equal';
 import { Popover } from 'antd';
 import Icon from '../lib/Icon';
-import { mergeProps } from '../lib/util/helper';
+import { Dom, mergeProps } from '../lib/util/helper';
 import Collapse from '@/lib/ui/Collapse';
 
 const getDefaultValues = () => {
@@ -228,9 +228,32 @@ class InspectorProps extends Component {
 }
 
 export default class RightLayout extends InspectorProps {
+  componentWillMount() {
+    super.componentWillMount();
+    Event.listen(component_active, this._handleActive);
+    Event.listen(component_inactive, this._handleInactive);
+  }
+  componentDidMount() {
+    this._handleInactive();
+  }
+  componentWillUnmount() {
+    super.componentWillUnmount();
+    Event.listen(component_active, this._handleActive);
+    Event.listen(component_inactive, this._handleInactive);
+  }
+
+  _handleActive = () => {
+    Dom.of(this.refs.g).show();
+    Event.dispatch(window_size_change);
+  };
+  _handleInactive = () => {
+    Dom.of(this.refs.g).hide();
+    Event.dispatch(window_size_change);
+  };
+
   render() {
     return (
-      <div className={'root-layout-inspector_panel'}>
+      <div ref='g' className={'root-layout-inspector_panel'}>
         {this.state.keys.map((key) => {
           return (
             <Collapse title={LABELS[key][0]}>
