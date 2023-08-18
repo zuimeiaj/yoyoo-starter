@@ -117,14 +117,35 @@ export default class ViewResizable extends NoZoomTransform {
     let self = this;
     let pointMap = {
       br: 0,
-      tr: 3,
-      tl: 2,
-      bl: 1,
-      tm: 2,
-      bm: 0,
-      l: 1,
-      r: 3,
+      tr: 6,
+      tl: 4,
+      bl: 2,
+      tm: 5,
+      bm: 1,
+      l: 3,
+      r: 7,
     };
+    const pointMap2 = {
+      br: 0,
+      bm: 0,
+      bl: 2,
+      l: 2,
+      tl: 4,
+      tm: 4,
+      tr: 6,
+      r: 6,
+    };
+    const handlerPointMap = {
+      tl: 0,
+      tm: 1,
+      tr: 2,
+      r: 3,
+      br: 4,
+      bm: 5,
+      bl: 6,
+      l: 7,
+    };
+
     let widthMap = {
       l: 1,
       r: 1,
@@ -158,7 +179,7 @@ export default class ViewResizable extends NoZoomTransform {
       return (rad * 180) / Math.PI;
     }
 
-    function getSize({ type, x, y, dis, ratio }) {
+    function getSize({ type, x, y, dis }) {
       let w, h;
       let currentAngle = rad2deg(Math.atan2(y, x));
       let rad = deg2rad(pressAngle + currentAngle - startAngle);
@@ -169,13 +190,7 @@ export default class ViewResizable extends NoZoomTransform {
         h = Math.sin(rad) * dis;
         w = Math.cos(rad) * dis;
       }
-      if (ratio) {
-        if (widthMap[type]) {
-          h = w / currentRatio;
-        } else if (heightMap) {
-          w = h * currentRatio;
-        }
-      }
+
       return { w, h };
     }
 
@@ -204,21 +219,30 @@ export default class ViewResizable extends NoZoomTransform {
       rect,
       matrix = null,
       opposite = null,
+      offsetX = 0,
+      offsetY = 0,
       startAngle = 0,
       pressAngle = 0,
       currentRatio = 0,
-      parentRect = {};
+      isInitialRatio = false,
+      parentRect = {},
+      opp2 = null;
     new Draggable(self.refs.resize, {
       onDragStart(data, e) {
         type = e.target.dataset.d;
         rect = getRect();
         parentRect = getParentRect(rect);
         matrix = getPoints(rect);
+
         if (type) {
           opposite = matrix[pointMap[type]];
+          opp2 = matrix[pointMap2[type]];
+          let handlerPoint = matrix[handlerPointMap[type]];
           let { x, y } = pointToWorkspaceCoords(e);
-          let x1 = x - opposite.x;
-          let y1 = y - opposite.y;
+          offsetX = x - handlerPoint.x;
+          offsetY = y - handlerPoint.y;
+          let x1 = x - opp2.x - offsetX;
+          let y1 = y - opp2.y - offsetY;
           let _width = rect.width,
             _height = rect.height;
           currentRatio = _width / _height;
@@ -236,13 +260,33 @@ export default class ViewResizable extends NoZoomTransform {
         if (!deltaX && !deltaY) return;
         if (type) {
           let { x: mouseX, y: mouseY } = pointToWorkspaceCoords(e);
-          let x = mouseX - opposite.x;
-          let y = mouseY - opposite.y;
+          let x = mouseX - opp2.x - offsetX;
+          let y = mouseY - opp2.y - offsetY;
+
           window._mouse = { mouseX: e.pageX, mouseY: e.pageY };
           let dis = Math.hypot(y, x);
           let ratio = e.shiftKey || self.target.properties.settings.ratio;
           let { w, h } = getSize({ type, dis, x, y, ratio });
           let transform = Object.assign({}, self.target.properties.transform);
+          // 锁定纵横比
+          if (!isInitialRatio && ratio) {
+            currentRatio = transform.width / transform.height;
+            isInitialRatio = true;
+          }
+          if (!ratio) {
+            isInitialRatio = false;
+          }
+
+          // 等比缩放
+          if (isInitialRatio) {
+            if (widthMap[type]) h = w / currentRatio;
+            else w = h * currentRatio;
+          }
+
+          w = Math.max(Math.round(w), self.minWidth);
+          h = Math.max(Math.round(h), self.minHeight);
+
+          // 判断当前控制点是否为宽度缩放还是高度缩放
           if (widthMap[type] && !ratio) {
             transform.width = w;
           } else if (heightMap[type] && !ratio) {
@@ -251,13 +295,7 @@ export default class ViewResizable extends NoZoomTransform {
             transform.width = w;
             transform.height = h;
           }
-          if (transform.width < self.minWidth) {
-            transform.width = self.minWidth;
-          }
-          if (transform.height < self.minHeight) {
-            transform.height = self.minHeight;
-          }
-          currentRatio = transform.width / transform.height;
+
           // 顶点固定
           let matrix = getPoints(getOffsetRect(transform));
           let _opp = matrix[pointMap[type]];
@@ -268,7 +306,10 @@ export default class ViewResizable extends NoZoomTransform {
           self.setTargetTransform(transform);
         }
       },
-      onDragEnd: self.setScaleStatus,
+      onDragEnd: () => {
+        isInitialRatio = false;
+        self.setScaleStatus();
+      },
     });
   };
   onComponentDragend = () => {

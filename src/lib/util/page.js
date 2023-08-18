@@ -186,7 +186,7 @@ export const clearPageStorage = () => {
   for (let key in localStorage) {
     if (key.startsWith('page_data')) {
       localStorage.removeItem(key);
-    }
+    }s
   }
 };
 

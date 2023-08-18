@@ -161,9 +161,13 @@ export function getPoints({ x, y, width, height, rotation }) {
   ]);
   let rect = new Matrix([
     [-wc, hc],
+    [0, hc],
     [wc, hc],
+    [wc, 0],
     [wc, -hc],
+    [0, -hc],
     [-wc, -hc],
+    [-wc, 0],
   ]);
 
   return deg
