@@ -137,7 +137,8 @@ export default class Snapline extends NoZoomTransform {
     this.arrayItems = arrayItems;
   };
   // Display line
-  showHTLine = (t) => {
+  showHTLine = (t, target) => {
+    console.log(target);
     this.htline.top(t.y * getScreeTransform().scale).show();
   };
   showHBLine = (t) => {
@@ -170,32 +171,32 @@ export default class Snapline extends NoZoomTransform {
     let cmatched = this.alignParent();
     // Fix BUG : 2019-02-01 22:00,根据父元素没有匹配到时把其他对齐线隐藏了
     if (cmatched[0] !== void 0) {
-      this.showVLLine(t2);
+      this.showVLLine(t2, cmatched[0]);
     } else if (!matched[3]) {
       this.vlline.hide();
     }
     if (cmatched[1] !== void 0) {
-      this.showVCLine(t2);
+      this.showVCLine(t2, cmatched[1]);
     } else if (!matched[4]) {
       this.vcline.hide();
     }
     if (cmatched[2] !== void 0) {
-      this.showVRLine(t2);
+      this.showVRLine(t2, cmatched[2]);
     } else if (!matched[5]) {
       this.vrline.hide();
     }
     if (cmatched[3] !== void 0) {
-      this.showHTLine(t2);
+      this.showHTLine(t2, cmatched[3]);
     } else if (!matched[0]) {
       this.htline.hide();
     }
     if (cmatched[4] !== void 0) {
-      this.showHCLine(t2);
+      this.showHCLine(t2, cmatched[4]);
     } else if (!matched[1]) {
       this.hcline.hide();
     }
     if (cmatched[5] !== void 0) {
-      this.showHBLine(t2);
+      this.showHBLine(t2, cmatched[5]);
     } else if (!matched[2]) {
       this.hbline.hide();
     }
@@ -312,12 +313,12 @@ export default class Snapline extends NoZoomTransform {
       ht = t1;
       ht._alignType_h_top = true;
       ht._alignDiff_h_top = dx;
-      this.showHTLine(t2);
+      this.showHTLine(t2, ht);
     } else if (Math.abs(dx2) < P) {
       ht = t1;
       ht._alignType_h_bottom_top = true;
       ht._alignDiff_h_bottom_top = dx2;
-      this.showHTLine(t2);
+      this.showHTLine(t2, ht);
     }
     return ht;
   };
@@ -329,7 +330,7 @@ export default class Snapline extends NoZoomTransform {
       hc = t1;
       hc._alignType_h_center = true;
       hc._alignDiff_h_center = dx;
-      this.showHCLine(t2);
+      this.showHCLine(t2, hc);
     }
     return hc;
   };
@@ -342,12 +343,12 @@ export default class Snapline extends NoZoomTransform {
       hb = t1;
       hb._alignType_h_bottom = true;
       hb._alignDiff_h_bottom = dx;
-      this.showHBLine(t2);
+      this.showHBLine(t2, hb);
     } else if (Math.abs(dx2) < P) {
       hb = t1;
       hb._alignType_h_top_bottom = true;
       hb._alignDiff_h_top_bottom = dx2;
-      this.showHBLine(t2);
+      this.showHBLine(t2, hb);
     }
     return hb;
   };

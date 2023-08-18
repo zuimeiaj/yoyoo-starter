@@ -395,7 +395,7 @@ export class Dom {
   }
 
   getUnit(w) {
-    return w.toString().endsWith('%') ? w : w + 'px';
+    return w.toString().endsWith('%') ? w : Math.floor(w) + 'px';
   }
 
   border({ width, color, style }) {
