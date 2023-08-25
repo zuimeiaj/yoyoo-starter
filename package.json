@@ -80,6 +80,7 @@
     "resolve": "1.15.0",
     "resolve-url-loader": "3.1.1",
     "sass": "^1.56.1",
+    "node-sass": "4.14.1",
     "sass-loader": "^8.0.2",
     "semver": "6.3.0",
     "style-loader": "0.23.1",
@@ -103,7 +104,7 @@
   },
   "scripts": {
     "start": "node scripts/start.js",
-    "build": "node scripts/build.js",
+    "build": "PUBLIC_URL=/yoyoo/  node scripts/build.js",
     "test": "node scripts/test.js"
   },
   "browserslist": {
