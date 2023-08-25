@@ -2,21 +2,21 @@
  *  created by yaojun on 2019/1/16
  *
  */
-import React from 'react';
-import { Draggable } from '../lib/ui/NativeDragDrop';
-import { updateAlias } from '../lib/global/template';
-import EditableLabel from '../lib/ui/EditableLabel';
-import Icon from '../lib/Icon';
-import { deleteTemplate, updateMaterialName } from '../api/material';
-import { Icon as AntIcon, Modal } from 'antd';
-import Event from '../lib/Base/Event';
-import { workspace_save_template_success } from '../lib/util/actions';
-import { fetchMaster, setMasterToStore } from '@/api/master';
-import event from '@/lib/Base/Event';
-import { context_outline_delete_master } from '@/lib/util/actions';
-import { getQuery } from '@/lib/util/helper';
+import React from 'react'
+import { Draggable } from '../lib/ui/NativeDragDrop'
+import { updateAlias } from '../lib/global/template'
+import EditableLabel from '../lib/ui/EditableLabel'
+import Icon from '../lib/Icon'
+import { deleteTemplate, updateMaterialName } from '../api/material'
+import { Icon as AntIcon, Modal } from 'antd'
+import Event from '../lib/Base/Event'
+import { workspace_save_template_success } from '../lib/util/actions'
+import { fetchMaster, setMasterToStore } from '@/api/master'
+import event from '@/lib/Base/Event'
+import { context_outline_delete_master } from '@/lib/util/actions'
+import { getQuery } from '@/lib/util/helper'
 
-export const imageCache = {};
+export const imageCache = {}
 
 class OutlinePrefabs extends React.Component {
   state = {
@@ -31,83 +31,72 @@ class OutlinePrefabs extends React.Component {
       pageIndex: 1,
       pageSize: 5,
     },
-  };
+  }
 
   componentWillMount() {
-    Event.listen(workspace_save_template_success, this.handleCreate);
-    this.refresh(Object.assign({}, this.state.query));
+    Event.listen(workspace_save_template_success, this.handleCreate)
+    this.refresh(Object.assign({}, this.state.query))
   }
 
   refresh = (query, reset = false) => {
     fetchMaster().then((res) => {
-<<<<<<< HEAD
-      const { pages, page, docs } = res.data;
+      const { pages, page, docs } = res.data
       const resultdata = docs.map((item) => {
-        let content = item.content;
-        content._id = item._id;
-        content.name = item.name;
-        return content;
-      });
+        let content = item.content
+        content._id = item._id
+        content.name = item.name
+        return content
+      })
       this.setState({
         template: reset ? resultdata : this.state.template.concat(resultdata),
         result: { page, pages },
         query,
-      });
-    });
-  };
-=======
-      this.setState({
-        template: reset ? res : this.state.template.concat(res),
       })
     })
   }
->>>>>>> ae9d685 (x)
 
   componentWillUnmount() {
-    Event.destroy(workspace_save_template_success, this.handleCreate);
+    Event.destroy(workspace_save_template_success, this.handleCreate)
   }
 
   handleCreate = ({ type, data }) => {
     if (type == 'MASTER') {
-      this.setState({ template: [data].concat(this.state.template) });
+      this.setState({ template: [data].concat(this.state.template) })
     }
-  };
+  }
   handleChange = (id, value) => {
     updateMaterialName(id, value).then(() => {
-      let index = this.state.template.findIndex((item) => item._id == id);
-      let data = Object.assign({}, this.state.template[index]);
-      data.name = value;
-      this.state.template[index] = data;
-      this.setState({ template: this.state.template });
-    });
-  };
+      let index = this.state.template.findIndex((item) => item._id == id)
+      let data = Object.assign({}, this.state.template[index])
+      data.name = value
+      this.state.template[index] = data
+      this.setState({ template: this.state.template })
+    })
+  }
   handleDelete = (id) => {
     Modal.confirm({
       title: '提示',
       content: '母版删除后，所有引用该母版的数据都将被删除。确认继续',
       onOk: () => {
         deleteTemplate(id).then((res) => {
-          let data = this.state.template;
-          let index = data.findIndex((item) => item._id == id);
-          data.splice(index, 1);
-          event.dispatch(context_outline_delete_master, id);
-          setMasterToStore(id);
-          this.setState({ template: data });
-        });
+          let data = this.state.template
+          let index = data.findIndex((item) => item._id == id)
+          data.splice(index, 1)
+          event.dispatch(context_outline_delete_master, id)
+          setMasterToStore(id)
+          this.setState({ template: data })
+        })
       },
-    });
-  };
+    })
+  }
   handleEdit = (id) => {
-    this.props.history.replace('/app?p=' + getQuery().p + '&m=' + id);
-  };
+    this.props.history.replace('/app?p=' + getQuery().p + '&m=' + id)
+  }
 
   render() {
     return (
-      <div className='root-layout-side-assets root-layout-side-master'>
+      <div className="root-layout-side-assets root-layout-side-master">
         {this.state.template.map((item) => {
-<<<<<<< HEAD
-          return <WrapperIamgeItem item={item} key={item._id} handleEdit={this.handleEdit} handleChange={this.handleChange} handleDelete={this.handleDelete} />;
-=======
           return (
             <WrapperIamgeItem
               item={item}
@@ -117,7 +106,6 @@ class OutlinePrefabs extends React.Component {
               handleDelete={this.handleDelete}
             />
           )
->>>>>>> ae9d685 (x)
         })}
 
         {this.state.template.length === 0 && (
@@ -131,13 +119,13 @@ class OutlinePrefabs extends React.Component {
           </div>
         )}
       </div>
-    );
+    )
   }
 }
 
 class WrapperIamgeItem extends React.PureComponent {
   render() {
-    let { item, handleDelete, handleChange, handleEdit } = this.props;
+    let { item, handleDelete, handleChange, handleEdit } = this.props
     return (
       <div className={'side-assets_image-item'}>
         <Draggable params={item}>{item.image ? <img src={item.image} /> : <AntIcon type={'loading'} />}</Draggable>
@@ -145,8 +133,8 @@ class WrapperIamgeItem extends React.PureComponent {
         <Icon onClick={() => handleDelete(item._id)} type={'delete'} />
         <Icon onClick={() => handleEdit(item._id)} type={'edit'} />
       </div>
-    );
+    )
   }
 }
 
-export default OutlinePrefabs;
+export default OutlinePrefabs

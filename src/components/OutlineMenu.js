@@ -2,11 +2,11 @@
  *  created by yaojun on 2019/1/16
  *
  */
-import React from 'react';
-import IconText from '../lib/ui/IconText';
-import PropTypes from 'prop-types';
-import Event from '../lib/Base/Event';
-import { context_mode_change } from '@/lib/util/actions';
+import React from 'react'
+import IconText from '../lib/ui/IconText'
+import PropTypes from 'prop-types'
+import Event from '../lib/Base/Event'
+import { context_mode_change } from '@/lib/util/actions'
 
 export const menus = () => [
   {
@@ -29,49 +29,40 @@ export const menus = () => [
     text: '图标',
     type: 'icons',
   },
-<<<<<<< HEAD
-];
-=======
-  {
-    icon: 'tupiantujpg',
-    text: '素材',
-    type: 'assets',
-  },
 ]
->>>>>>> ae9d685 (x)
 export default class OutlineMenu extends React.Component {
   static propTypes = {
     onChange: PropTypes.func,
     selected: PropTypes.string,
-  };
+  }
   state = {
     menus: menus(),
-  };
+  }
 
   componentWillMount() {
-    Event.listen(context_mode_change, this.handleModeChange);
+    Event.listen(context_mode_change, this.handleModeChange)
   }
 
   componentWillUnmount() {
-    Event.destroy(context_mode_change, this.handleModeChange);
+    Event.destroy(context_mode_change, this.handleModeChange)
   }
 
   handleModeChange = (type) => {
-    let data;
+    let data
     if (type == 'MASTER') {
-      data = menus();
-      data.splice(0, 1);
-      data.splice(3, 1);
+      data = menus()
+      data.splice(0, 1)
+      data.splice(3, 1)
     } else {
-      data = menus();
+      data = menus()
     }
-    this.setState({ menus: data });
-    this.props.onChange(type == 'MASTER' ? 'coverage' : 'pages');
-  };
+    this.setState({ menus: data })
+    this.props.onChange(type == 'MASTER' ? 'coverage' : 'pages')
+  }
 
   render() {
     return (
-      <ul className='root-layout-side-menu'>
+      <ul className="root-layout-side-menu">
         {this.state.menus.map((item) => {
           return (
             <li onClick={() => this.props.onChange(item.type)} key={item.icon}>
@@ -79,9 +70,9 @@ export default class OutlineMenu extends React.Component {
                 {item.text}
               </IconText>
             </li>
-          );
+          )
         })}
       </ul>
-    );
+    )
   }
 }
