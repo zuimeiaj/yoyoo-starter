@@ -122,11 +122,20 @@ class EditorControllers extends React.Component {
 
   setState = (state, callback, options = {}) => {
     super.setState(state, () => {
+<<<<<<< HEAD
       let items = this.state.items;
       window.allWidgets = {};
       clearPATHES();
       clearComponentPosition();
       this.eachiItems(items);
+=======
+      debugger
+      let items = this.state.items
+      window.allWidgets = {}
+      clearPATHES()
+      clearComponentPosition()
+      this.eachiItems(items)
+>>>>>>> ae9d685 (x)
       if (!options.nosave) {
         if (getQuery().m) {
           saveCurrentControllersByMaster(toJSON(items));
@@ -219,8 +228,13 @@ class EditorControllers extends React.Component {
     Event.listen(context_mode_change, this.handleEditorModeChange);
     Event.listen(context_outline_delete_master, this.handleDeleMaster);
     setTimeout(() => {
+<<<<<<< HEAD
       Event.dispatch(pages_load_end, pages);
     });
+=======
+      Event.dispatch(pages_load_end, pages)
+    }, 100)
+>>>>>>> ae9d685 (x)
   }
 
   handleEmpty = () => {
@@ -545,9 +559,15 @@ class EditorControllers extends React.Component {
       } else {
         setLastCoverageIndex(1000);
       }
+<<<<<<< HEAD
       setFirstResponder(null);
     });
   };
+=======
+      // setFirstResponder(null)
+    })
+  }
+>>>>>>> ae9d685 (x)
   handlePageCreate = (pid) => {
     let q = qs.parse(location.search);
     if (q.p) {

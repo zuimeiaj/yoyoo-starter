@@ -8,12 +8,7 @@ const ENCODE = 'base64'
  * @return {*}
  */
 export const infalte = (base64) => {
-  let array = new Buffer(base64, ENCODE)
-  let str = pako.inflate(array, { to: 'string' })
-  if ((str[0] == '{' && str[str.length - 1] == '}') || (str[0] == '[' && str[str.length - 1] == ']')) {
-    return JSON.parse(str)
-  }
-  return str
+  return JSON.parse(base64)
 }
 
 /**
@@ -22,10 +17,5 @@ export const infalte = (base64) => {
  * @return {string} -
  */
 export const deflate = (object) => {
-  if (typeof object !== 'string') {
-    object = JSON.stringify(object)
-  }
-  let array = pako.deflate(object, { to: 'binary' })
-  let code = new Buffer(array).toString(ENCODE)
-  return code
+  return typeof object === 'string' ? object : JSON.stringify(object)
 }

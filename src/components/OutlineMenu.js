@@ -29,7 +29,16 @@ export const menus = () => [
     text: '图标',
     type: 'icons',
   },
+<<<<<<< HEAD
 ];
+=======
+  {
+    icon: 'tupiantujpg',
+    text: '素材',
+    type: 'assets',
+  },
+]
+>>>>>>> ae9d685 (x)
 export default class OutlineMenu extends React.Component {
   static propTypes = {
     onChange: PropTypes.func,

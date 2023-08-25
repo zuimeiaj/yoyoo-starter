@@ -199,7 +199,14 @@ export default class OutlinePages extends React.Component {
           <Search placeholder={'按回车搜索'} onSearch={this.handleSearch} />
         </div>
         <Button onClick={this.handleCreate} type={'primary'} icon={'jia1'} />
-        <Tree renderActions={this.renderActions} onSelect={this.handleSelect} onNameChange={this.handleNameChange} draggable={true} renderIcon={this.renderIcon} data={this.state.data} />
+        <Tree
+          renderActions={this.renderActions}
+          onSelect={this.handleSelect}
+          onNameChange={this.handleNameChange}
+          draggable={true}
+          renderIcon={this.renderIcon}
+          data={this.state.data}
+        />
       </div>
     );
   }

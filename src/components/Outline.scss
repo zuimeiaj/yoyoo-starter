@@ -201,49 +201,41 @@
 
 .root-layout-side-assets {
   min-height: 100%;
+  >div:first-child{
+    border-bottom: 1px solid #ececec;
+  }
   .aj-ui-search {
     flex: 1;
     width: 0 !important;
   }
   .side-assets_image-item {
-    width: 100%;
+    width: 50%;
+    border: 1px solid #ececec;
+    float: left;
     text-align: center;
     color: #989898;
+    border-left: 0;
     position: relative;
-    margin-top: 15px;
-    .icon-delete {
-      position: absolute;
-      right: 5px;
-      top: -10px;
-      color: #ffffff;
-      text-align: center;
-      border-radius: 50%;
-      width: 20px;
-      height: 20px;
-      line-height: 20px;
-      font-size: 12px;
-      display: none;
-      background: #ff0000;
+    border-top: 0;
+    padding-top: 12px;
+    &:hover{
+      background: #f8f8f8;
     }
-    &:hover {
-      .icon-delete {
-        display: block;
-      }
+
+    >div{
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
     }
+
     .aj-component-draggable {
       margin: 0 auto;
       margin-bottom: 5px;
       text-align: center;
-      &:hover {
-        background: $primary-bg;
-        img {
-          box-shadow: 1px 1px 4px 2px $primary-selected;
-        }
-      }
       img {
-        max-width: 80%;
-        height: auto;
-        border: 1px solid $primary-border;
+        width: 88px;
+        height: 88px;
+        object-fit: contain;
         border-radius: 10px;
       }
     }

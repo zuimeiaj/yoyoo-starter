@@ -40,6 +40,7 @@ class OutlinePrefabs extends React.Component {
 
   refresh = (query, reset = false) => {
     fetchMaster().then((res) => {
+<<<<<<< HEAD
       const { pages, page, docs } = res.data;
       const resultdata = docs.map((item) => {
         let content = item.content;
@@ -54,6 +55,13 @@ class OutlinePrefabs extends React.Component {
       });
     });
   };
+=======
+      this.setState({
+        template: reset ? res : this.state.template.concat(res),
+      })
+    })
+  }
+>>>>>>> ae9d685 (x)
 
   componentWillUnmount() {
     Event.destroy(workspace_save_template_success, this.handleCreate);
@@ -97,7 +105,19 @@ class OutlinePrefabs extends React.Component {
     return (
       <div className='root-layout-side-assets root-layout-side-master'>
         {this.state.template.map((item) => {
+<<<<<<< HEAD
           return <WrapperIamgeItem item={item} key={item._id} handleEdit={this.handleEdit} handleChange={this.handleChange} handleDelete={this.handleDelete} />;
+=======
+          return (
+            <WrapperIamgeItem
+              item={item}
+              key={item._id}
+              handleEdit={this.handleEdit}
+              handleChange={this.handleChange}
+              handleDelete={this.handleDelete}
+            />
+          )
+>>>>>>> ae9d685 (x)
         })}
 
         {this.state.template.length === 0 && (
