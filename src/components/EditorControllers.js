@@ -152,11 +152,11 @@ class EditorControllers extends React.Component {
       clearComponentPosition()
       this.eachiItems(items)
       if (!options.nosave) {
-        if (getQuery().m) {
-          saveCurrentControllersByMaster(toJSON(items))
-        } else {
-          saveCurrentControllersByPage(toJSON(items))
-        }
+        // if (getQuery().m) {
+        //   saveCurrentControllersByMaster(toJSON(items))
+        // } else {
+        saveCurrentControllersByPage(toJSON(items))
+        // }
       }
       typeof callback === 'function' && callback(items)
       Event.dispatch(controllers_change, items)
@@ -185,8 +185,8 @@ class EditorControllers extends React.Component {
   }
   _initializingProject = () => {}
 
-  componentWillMount() {
-    let pages = getPageListFromStorage()
+  async componentWillMount() {
+    let pages = await getPageListFromStorage()
     console.log('pages:', pages)
     let info = { type: 'PAD' }
     setStore('project', info)

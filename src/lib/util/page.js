@@ -6,7 +6,7 @@ import {
   setCurrentPage,
 } from '../global/instance'
 import { parseJSON } from '../properties/types'
-import { createPage, deletePage as deletePageApi, savePage } from '../../api/page'
+import { createPage, savePage } from '../../api/page'
 import Event from '../Base/Event'
 import {
   context_save_failed,
@@ -18,6 +18,7 @@ import {
 } from './actions'
 import config from './preference'
 import { isArray } from '@/lib/util/helper'
+import { addPage, getPages, updatePage, deletePage as delPageApi } from '../../db'
 
 export const storage_page_key = (id) => 'page_data_' + id
 var LocalPageData = []
@@ -72,7 +73,7 @@ export const createNewPage = (pid, state) => {
   data.alias = data.type == 'PAGE' ? '新页面' : '新状态'
   data.width = config.viewport.width
   pages.push(data)
-  localStorage.setItem(storage_page_key(data.id), JSON.stringify(data))
+  return addPage(data)
 }
 
 export const duplicatePageState = (id, pid) => {
@@ -99,7 +100,6 @@ const batchDeletePage = (ids) => {
   let maps = {}
   ids.forEach((item) => {
     maps[item] = true
-    deletePageFromStorage(item)
   })
 
   let pages = getPageData()
@@ -110,7 +110,7 @@ const batchDeletePage = (ids) => {
     return !matched
   })
   setPageData(pages)
-  return Promise.resolve()
+  return Promise.all(ids.map(delPageApi))
 }
 
 //delte
@@ -120,8 +120,7 @@ export const deletePage = (id) => {
     let pages = getPageData()
     let index = pages.findIndex((item) => item.id == id)
     pages.splice(index, 1)
-    deletePageFromStorage(id)
-    resolve()
+    delPageApi(id).then(resolve)
   })
 }
 
@@ -157,7 +156,7 @@ export const generateNewPage = (pid) => ({
   bg: 'rgba(255,255,255,1)',
   width: 380,
   height: 900,
-  id: uuid('page_'),
+  id: Date.now(),
   alias: '新页面',
   parentid: pid || null,
   projectid: null,
@@ -167,21 +166,11 @@ export const generateNewPage = (pid) => ({
   },
   nodes: [],
 })
-export const getPageListFromStorage = () => {
-  let pages = []
-  for (let key in localStorage) {
-    if (key.startsWith('page_data')) {
-      try {
-        pages.push(JSON.parse(localStorage.getItem(key)))
-      } catch (e) {
-        localStorage.removeItem(key)
-      }
-    }
-  }
+export const getPageListFromStorage = async () => {
+  let pages = await getPages()
   if (pages.length == 0) {
-    createNewPage()
-
-    return LocalPageData
+    await createNewPage()
+    pages = await getPages()
   }
   return pages
 }
@@ -191,7 +180,8 @@ export const getUnsavedPageListFromStorage = () => {
   return pages.filter((item) => !item.projectid)
 }
 export const updatePageToSorage = (id, data) => {
-  localStorage.setItem(storage_page_key(id), JSON.stringify(data))
+  data.id = id
+  return updatePage(data)
 }
 // 保存到后台之后就清除前端的缓存数据
 export const clearPageStorage = () => {

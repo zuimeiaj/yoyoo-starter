@@ -6,6 +6,7 @@ import { createNewPage, getPageData, storage_page_key } from '../util/page'
 import { findPageDetail } from '../../api/page'
 import { getQuery } from '@/lib/util/helper'
 import { setMasterNodes } from '@/api/master'
+import { updatePage } from '../../db'
 
 /**
  *
@@ -178,7 +179,7 @@ export const saveCurrentControllersByPage = (data) => {
     try {
       if (page) {
         page.nodes = data
-        localStorage.setItem(storage_page_key(pageid), JSON.stringify(page))
+        updatePage(page)
       }
     } catch (e) {
       alert('超过浏览器存储限制')
