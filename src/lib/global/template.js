@@ -86,11 +86,50 @@ export function getPageTransform(data) {
   return page;
 }
 
+/**
+ * 为多个选中的组件创建临时导出 DOM 容器
+ * @param {Array} items  - ViewProperties 数组（来自 ViewSelectGroupBordered.getItems()）
+ * @param {Object} page  - { width, height, x, y }
+ * @returns {HTMLElement}
+ */
+function createTempExportWrapper(items, page) {
+  const wrapper = document.createElement('div');
+  wrapper.className = 'temp-export-wrapper canvas-save-as-image';
+  // 使用 fixed 放在屏幕内可见位置，确保 html2canvas 能正常渲染
+  wrapper.style.position = 'fixed';
+  wrapper.style.left = '0px';
+  wrapper.style.top = '0px';
+  wrapper.style.zIndex = '999999';
+  wrapper.style.width = (page.width || 500) + 'px';
+  wrapper.style.height = (page.height || 500) + 'px';
+  wrapper.style.backgroundColor = '#ffffff';
+  wrapper.style.overflow = 'hidden';
+
+  items.forEach((prop) => {
+    // prop 是 ViewProperties，通过 .view 获取 ViewController
+    const vc = prop.view;
+    if (!vc) return;
+    const domEl = vc.getDomWrapper ? vc.getDomWrapper() : null;
+    if (!domEl) return;
+    const clone = domEl.cloneNode(true);
+    const t = prop.transform;
+    clone.style.position = 'absolute';
+    clone.style.left = (t.x - (page.x || 0)) + 'px';
+    clone.style.top = (t.y - (page.y || 0)) + 'px';
+    wrapper.appendChild(clone);
+  });
+
+  document.body.appendChild(wrapper);
+  return wrapper;
+}
+
 export async function setSelfTemplateData(type = 'TEMPLATE') {
   let data = getFirstResponder().properties;
+  let responder = getFirstResponder();
   let template = getSelfTemplateData();
   let item = {};
   let source;
+
   if (data.type !== 'group') {
     // 默认使用rect 包裹
     let child = data;
@@ -116,13 +155,36 @@ export async function setSelfTemplateData(type = 'TEMPLATE') {
     }
     item.page = getClientBoundingRect(source.transform);
   }
+
   item.page.isSingleObject = true;
   source.transform.x = 0;
   source.transform.y = 0;
+
+  // 使用 html2canvas 从 DOM 渲染
+  let element;
+  if (data.isTemporaryGroup) {
+    // 多个选中组件：创建临时容器包裹克隆的 DOM 元素
+    element = createTempExportWrapper(responder.getItems(), item.page);
+  } else {
+    // 单个组件：直接使用其 DOM 元素
+    element = responder.getDomWrapper();
+  }
+
   let canvas = new CanvasRender();
-  await canvas.renderCanvas(source, item.page);
+  await canvas.renderFromDOM(element, {
+    width: item.page.width,
+    height: item.page.height,
+    backgroundColor: '#ffffff',
+  });
+
   item.image = canvas.toImage(0.5);
   canvas.destroy();
+
+  // 清理临时元素
+  if (element.classList && element.classList.contains('temp-export-wrapper')) {
+    element.remove();
+  }
+
   item.data = source;
   item.id = uuid('ad_');
   item.type = 'AdvanceComponent';
@@ -136,8 +198,13 @@ export async function setSelfTemplateData(type = 'TEMPLATE') {
   send.length = 0;
   localStorage.setItem(send._id, JSON.stringify(send));
   Event.dispatch(workspace_save_template_success, { type: type, data: send });
-  message.success('已添成功');
-  return result;
+  message.success('已添加成功');
+
+  if (type === 'TEMPLATE') {
+    let result = await createMaterial(send);
+    return result;
+  }
+  return send;
 }
 
 window._selfTemplateData = globalTempalteData;

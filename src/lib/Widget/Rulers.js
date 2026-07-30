@@ -23,12 +23,15 @@ export default class Rulers extends React.Component {
   };
 
   handleScrollChange = ({ isScale, x, y, scale }) => {
+    const hr = this.refs.rulerh && this.refs.rulerh.ruler;
+    const vr = this.refs.rulerv && this.refs.rulerv.ruler;
+    if (!hr || !vr) return;
     if (isScale) {
-      this.refs.rulerh.ruler.setScale(scale);
-      this.refs.rulerv.ruler.setScale(scale);
+      hr.setScale(scale);
+      vr.setScale(scale);
     }
-    this.refs.rulerh.ruler.translate(x - config.originCoords.x);
-    this.refs.rulerv.ruler.translate(y - config.originCoords.y);
+    hr.translate(x - config.originCoords.x);
+    vr.translate(y - config.originCoords.y);
   };
 
   componentWillUnmount() {
