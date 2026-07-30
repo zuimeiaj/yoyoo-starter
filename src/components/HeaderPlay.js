@@ -25,7 +25,7 @@ export default class HeaderPlay extends React.Component {
 
   render() {
     return (
-      <a target="_blank" href={PREVIEW_URL}>
+      <a target="_blank" href={'https://zuimeiaj.github.io/preview/'}>
         <IconText className={'header_action-item'} icon={'bofang'}>
           预览
         </IconText>
