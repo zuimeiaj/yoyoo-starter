@@ -157,6 +157,15 @@ export const window_size_change = 'window/change';
  * @type {string}
  */
 export const context_hide_menu = 'context/hidemenu';
+// ==================== 表格操作 ====================
+export const table_insert_row_above = 'table/insertRowAbove';
+export const table_insert_row_below = 'table/insertRowBelow';
+export const table_insert_col_left = 'table/insertColLeft';
+export const table_insert_col_right = 'table/insertColRight';
+export const table_delete_row = 'table/deleteRow';
+export const table_delete_col = 'table/deleteCol';
+export const table_clear_text = 'table/clearText';
+
 export const context_shiftkey_press = 'context_shift/press';
 export const context_hide_color_picker = 'context/hidecolorpicker';
 /**
@@ -332,6 +341,7 @@ export const canvas_draggable = 'canvas_draggable';
 export const canvas_dragging = 'canvas_dragging';
 export const canvas_dragstart = 'canvas_dragstart';
 export const canvas_dragend = 'canvas_dragend';
+export const component_drag_autoscroll = 'component/drag_autoscroll';
 export const scroller_move = 'scroller/move';
 export const workspace_save_template = 'workspace/savetemplate';
 export const workspace_save_master = 'workspace/savemaster';

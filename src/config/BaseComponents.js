@@ -90,6 +90,13 @@ export const BaseComponents = [
     height: 80,
     width: 80,
   },
+  {
+    icon: 'table',
+    name: '表格',
+    type: 'table',
+    width: 400,
+    height: 200,
+  },
 ];
 export const ComponentIconMap = {
   select: 'xialaxuanze',
@@ -106,4 +113,5 @@ export const ComponentIconMap = {
   rect: 'juxing',
   icon: 'tubiao',
   block: 'group',
+  table: 'table',
 };

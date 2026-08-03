@@ -18,6 +18,7 @@ import ViewCurve from './ViewCurve';
 import ViewCircle from './ViewCircle';
 import { BlockView, MasterView } from '@/lib/Widget/ViewGroup';
 import CommentView from '@/lib/Widget/Comment';
+import ViewTable from './ViewTable';
 
 const maps = {
   text: Text,
@@ -40,6 +41,7 @@ const maps = {
   circle: ViewCircle,
   master: MasterView,
   comment: CommentView,
+  table: ViewTable,
 };
 export default class View extends React.PureComponent {
   static propTypes = {

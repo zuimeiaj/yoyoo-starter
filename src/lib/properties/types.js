@@ -7,6 +7,7 @@ import SelectProperties from './select';
 import jQuery from 'jquery';
 import { BlockProperties, MasterProperties } from '@/lib/properties/group';
 import { CommentProperties } from '@/lib/properties/text';
+import TableProperties from './table';
 
 const ViewTypes = {
   group: Group,
@@ -26,6 +27,7 @@ const ViewTypes = {
   block: BlockProperties,
   master: MasterProperties,
   comment: CommentProperties,
+  table: TableProperties,
 };
 /**
  *

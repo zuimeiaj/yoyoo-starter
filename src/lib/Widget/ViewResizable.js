@@ -373,6 +373,15 @@ export default class ViewResizable extends NoZoomTransform {
     this.show(true);
     this.transform = target.properties.transform;
     this.setBoundingRect();
+    // 支持组件自定义最小尺寸：实现 getMinSize() 返回 { width, height }
+    // （如表格按行数列数计算内容最小尺寸，避免 resize 后内容溢出不同步）
+    this.minWidth = 1;
+    this.minHeight = 1;
+    if (typeof target.getMinSize === 'function') {
+      let min = target.getMinSize() || {};
+      if (min.width) this.minWidth = min.width;
+      if (min.height) this.minHeight = min.height;
+    }
     let resize = target.properties.settings.resize;
     if (resize === null) resize = gResize;
     resize.forEach((item) => {

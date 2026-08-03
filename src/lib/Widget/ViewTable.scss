@@ -1,0 +1,60 @@
+// 容器 tabindex="-1" 聚焦时去掉默认 focus 轮廓
+.aj-component.view-table-container:focus {
+  outline: none;
+}
+
+.view-table {
+  width: 100%;
+  height: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  background: #fff;
+  // 禁止文本选中（编辑模式框选时 Draggable 因 data-drag="false" 不 preventDefault，
+  // 浏览器默认文本选择会干扰框选视觉效果）；编辑 input 单独恢复可选
+  -webkit-user-select: none;
+  user-select: none;
+
+  td {
+    border: 1px solid #d9d9d9;
+    padding: 4px 8px;
+    box-sizing: border-box;
+    font-size: 12px;
+    line-height: 20px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    height: 24px;
+
+    &.cell-selected {
+      background: rgba(24, 144, 255, 0.15);
+    }
+
+    &.cell-anchor {
+      background: #fff;
+      outline: 2px solid #1890ff;
+      outline-offset: -1px;
+    }
+
+    &.cell-editing {
+      outline: 2px solid #1890ff;
+      outline-offset: -1px;
+      background: #fff;
+      padding: 0;
+    }
+  }
+
+  .cell-input {
+    width: 100%;
+    height: 100%;
+    border: none;
+    outline: none;
+    padding: 4px 8px;
+    font-size: 12px;
+    line-height: 20px;
+    box-sizing: border-box;
+    background: transparent;
+    // 编辑输入框内文本仍可选中（光标/选中文本）
+    -webkit-user-select: text;
+    user-select: text;
+  }
+}

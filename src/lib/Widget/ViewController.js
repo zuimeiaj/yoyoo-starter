@@ -7,6 +7,7 @@ import Draggable from '../Draggable';
 import Event from '../Base/Event';
 import {
   component_drag,
+  component_drag_autoscroll,
   component_drag_before,
   component_dragend,
   component_enter,
@@ -20,13 +21,14 @@ import {
   context_paste_mouse,
   coverage_backward_to_picked,
   coverage_picked_width_mode,
+  editor_scroll_change,
   selection_group,
   workspace_save_template,
 } from '../util/actions';
 import { Dom, isUndefined } from '../util/helper';
 import config, { getSnaplineConfig } from '../util/preference';
 import { getClipboardData, getFirstResponder, getTemporaryGroup, getViewPickedStatus, setFirstResponder } from '../global/instance';
-import { getCanvasDraggable, getCoveragePickeMode, initialCoverageIndex } from '../global';
+import { getCanvasDraggable, getCoveragePickeMode, getScreeTransform, initialCoverageIndex } from '../global';
 import { getFormatShortcutsWithAction } from '../service/KeyboradHandler';
 import Matrix from '../util/Matrix';
 import { getGroupId } from '../global/selection';
@@ -103,6 +105,8 @@ export default class ViewController extends React.Component {
       this._guidesY = 0;
       // 实际接收事件的对象
       this.eventTarget = null;
+      // 是否正在拖拽中
+      this._isDragging = false;
       this._drag = new Draggable(this.refs.container, {
         onDragMove: this._handleDragMove,
         onDragStart: this.onDragStart,
@@ -110,6 +114,8 @@ export default class ViewController extends React.Component {
       });
       // Double click
       this.refs.container.addEventListener('dblclick', this._onDBClick, false);
+      // 拖拽过程中画布滚动时，同步调整组件位置使其保持在鼠标点下
+      Event.listen(editor_scroll_change, this._handleScrollDuringDrag);
     }
     this.initProperties();
   }
@@ -229,6 +235,8 @@ export default class ViewController extends React.Component {
     }
   };
   _handleDragEnd = () => {
+    this._isDragging = false;
+    Event.dispatch(component_drag_autoscroll, { speedX: 0, speedY: 0 });
     this.dragEnd();
     let target = this.eventTarget;
     if (!target) return;
@@ -237,6 +245,62 @@ export default class ViewController extends React.Component {
   _handleDragMove = ({ deltaX, deltaY, mouseX, mouseY }) => {
     window._mouse = { mouseX, mouseY };
     this.setTransformWithSnap(deltaX, deltaY);
+    this._detectDragAutoScroll(mouseX, mouseY);
+  };
+
+  /**
+   * 拖拽过程中画布发生滚动/平移时，同步调整组件位置使其保持在鼠标点下
+   */
+  _handleScrollDuringDrag = ({ panDeltaX, panDeltaY }) => {
+    if (!this._isDragging || !this.eventTarget) return;
+    if (!panDeltaX && !panDeltaY) return;
+
+    let target = this.eventTarget;
+    target._x += panDeltaX;
+    target._y += panDeltaY;
+
+    let t = target.properties.transform;
+    target._setTransform(target._x, target._y, t.width, t.height, t.rotation);
+    Event.dispatch(component_drag, target, { from: 'ScrollAdjust' });
+
+    // 持续边缘检测：即使鼠标静止在边缘不动，没有 mousemove 事件，
+    // 也要利用上一次记录的鼠标位置来维持自动滚动的速度更新
+    if (window._mouse) {
+      this._detectDragAutoScroll(window._mouse.mouseX, window._mouse.mouseY);
+    }
+  };
+
+  /**
+   * 拖拽时检测鼠标是否靠近编辑器视口边缘，触发自动滚动
+   */
+  _detectDragAutoScroll = (mouseX, mouseY) => {
+    if (!this._isDragging) return;
+
+    const { left, right, top, bottom } = config.editorDomRect;
+    const vpLeft = left;
+    const vpRight = window.innerWidth - right;
+    const vpTop = top;
+    const vpBottom = window.innerHeight - (bottom || 0);
+
+    const EDGE_THRESHOLD = 55;
+    const MAX_SPEED = 600; // screen px/s
+
+    const calcAxisSpeed = (pos, edgeStart, edgeEnd, threshold, maxSpeed) => {
+      const distStart = pos - edgeStart;
+      if (distStart >= 0 && distStart < threshold) {
+        return -maxSpeed * (1 - distStart / threshold);
+      }
+      const distEnd = edgeEnd - pos;
+      if (distEnd >= 0 && distEnd < threshold) {
+        return maxSpeed * (1 - distEnd / threshold);
+      }
+      return 0;
+    };
+
+    const speedX = calcAxisSpeed(mouseX, vpLeft, vpRight, EDGE_THRESHOLD, MAX_SPEED);
+    const speedY = calcAxisSpeed(mouseY, vpTop, vpBottom, EDGE_THRESHOLD, MAX_SPEED);
+
+    Event.dispatch(component_drag_autoscroll, { speedX, speedY });
   };
 
   onDragStartBefore() {}
@@ -292,6 +356,7 @@ export default class ViewController extends React.Component {
     }
     setFirstResponder(target);
     this.eventTarget = target;
+    this._isDragging = true;
   };
   onMouseEnter = (e) => {
     e.stopPropagation();
@@ -511,6 +576,8 @@ export default class ViewController extends React.Component {
 
   componentWillUnmount() {
     this.refs.container.removeEventListener('dblclick', this._onDBClick, false);
+    Event.dispatch(component_drag_autoscroll, { speedX: 0, speedY: 0 });
+    Event.destroy(editor_scroll_change, this._handleScrollDuringDrag);
   }
 
   /**

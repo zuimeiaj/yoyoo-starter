@@ -209,6 +209,7 @@ const SerializableKeys = {
   curve: 1,
   circle: 1,
   masterId: 1,
+  tableData: 1,
 };
 export const ViewIconMaps = {
   switch: 'switch',

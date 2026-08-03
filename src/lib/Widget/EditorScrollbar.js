@@ -9,6 +9,7 @@ import PropTypes from 'prop-types';
 import Event from '../Base/Event';
 import {
   canvas_dragging,
+  component_drag_autoscroll,
   context_zoom_in,
   context_zoom_level,
   context_zoom_out,
@@ -51,6 +52,13 @@ export default class EditorScrollbar extends PureComponent {
     this.minScale = 0;
     this.level = DEFAULT_ZOOM_LEVEL;
     this.container = document.querySelector(`#${this.props.containerId}`);
+
+    // 拖拽至边缘自动滚动
+    this._autoscrollSpeedX = 0;
+    this._autoscrollSpeedY = 0;
+    this._autoscrollRAF = null;
+    this._autoscrollLastTime = 0;
+
     this.container.addEventListener('mousewheel', this.handleWheel, false);
     this.container.addEventListener('DOMMouseScroll', this.handleWheel, false);
     Event.listen(window_size_change, this.handleSizeChange);
@@ -59,6 +67,7 @@ export default class EditorScrollbar extends PureComponent {
     Event.listen(workspace_scroll_center, this.handlePanToCenter);
     Event.listen(context_zoom_level, this.zoomWithLevel);
     Event.listen(canvas_dragging, this.handleCanvasDragging);
+    Event.listen(component_drag_autoscroll, this.handleDragAutoscroll);
 
     // 初始同步：Stage 需要收到初始 pan 位置事件才能正确显示
     setTimeout(() => {
@@ -73,6 +82,8 @@ export default class EditorScrollbar extends PureComponent {
     Event.destroy(context_zoom_out, this.zoomOut);
     Event.destroy(context_zoom_level, this.zoomWithLevel);
     Event.destroy(canvas_dragging, this.handleCanvasDragging);
+    Event.destroy(component_drag_autoscroll, this.handleDragAutoscroll);
+    this._stopAutoscrollLoop();
     this.container.removeEventListener('mousewheel', this.handleWheel);
     this.container.removeEventListener('DOMMouseScroll', this.handleWheel);
   }
@@ -84,6 +95,54 @@ export default class EditorScrollbar extends PureComponent {
     this.positionY += realDeltaY / this.scale;
     this.isScale = false;
     this.scroll();
+  };
+
+  // ========= 拖拽组件至边缘自动滚动 ==========
+  handleDragAutoscroll = ({ speedX, speedY }) => {
+    this._autoscrollSpeedX = speedX;
+    this._autoscrollSpeedY = speedY;
+
+    if (speedX !== 0 || speedY !== 0) {
+      if (!this._autoscrollRAF) {
+        this._autoscrollLastTime = performance.now();
+        this._autoscrollRAF = requestAnimationFrame(this._autoscrollLoop);
+      }
+    } else {
+      this._stopAutoscrollLoop();
+    }
+  };
+
+  _autoscrollLoop = (time) => {
+    if (!this._autoscrollRAF) return;
+
+    const dt = Math.min(time - this._autoscrollLastTime, 100); // cap to avoid jumps on tab switch
+    this._autoscrollLastTime = time;
+
+    // screen px/s → workspace units/s (除以 scale 保持视觉速度一致)
+    const panX = (this._autoscrollSpeedX / this.scale) * (dt / 1000);
+    const panY = (this._autoscrollSpeedY / this.scale) * (dt / 1000);
+
+    if (panX !== 0 || panY !== 0) {
+      this.positionX += panX;
+      this.positionY += panY;
+      this.isScale = false;
+      this.scroll();
+    }
+
+    if (this._autoscrollSpeedX !== 0 || this._autoscrollSpeedY !== 0) {
+      this._autoscrollRAF = requestAnimationFrame(this._autoscrollLoop);
+    } else {
+      this._autoscrollRAF = null;
+    }
+  };
+
+  _stopAutoscrollLoop = () => {
+    if (this._autoscrollRAF) {
+      cancelAnimationFrame(this._autoscrollRAF);
+      this._autoscrollRAF = null;
+    }
+    this._autoscrollSpeedX = 0;
+    this._autoscrollSpeedY = 0;
   };
 
   // ========= 滚轮平移 / 缩放 ==========
@@ -190,6 +249,14 @@ export default class EditorScrollbar extends PureComponent {
 
   // ========= 触发全局状态更新 ==========
   scroll = () => {
+    // 计算本次滚动的平移增量，用于拖拽时保持组件跟随鼠标
+    const prevX = this._prevPanX != null ? this._prevPanX : this.positionX;
+    const prevY = this._prevPanY != null ? this._prevPanY : this.positionY;
+    const panDeltaX = this.positionX - prevX;
+    const panDeltaY = this.positionY - prevY;
+    this._prevPanX = this.positionX;
+    this._prevPanY = this.positionY;
+
     Event.dispatch(editor_scroll_change, {
       isScale: this.isScale,
       x: this.positionX,
@@ -197,6 +264,8 @@ export default class EditorScrollbar extends PureComponent {
       scale: this.scale,
       level: this.level,
       maxLevel: this.maxScale,
+      panDeltaX,
+      panDeltaY,
     });
     setScreenTransform(this.positionX, this.positionY, this.scale, this.level);
   };
