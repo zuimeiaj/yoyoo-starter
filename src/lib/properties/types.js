@@ -1,5 +1,5 @@
 import Group from './group';
-import DefaultView, { Bubble, Circle, Curve, Line, Rect, Triangle } from './base';
+import DefaultView, { Bubble, Circle, Curve, Line, Path, Rect, Triangle } from './base';
 import Text, { ButtonProperties, CheckboxProperties, FontIconProperties, InputProperties, RadioProperties, SwitcherProperties, TextAreaProperties } from './text';
 import { isArray, isPlainObject, uuid } from '../util/helper';
 import Image from './image';
@@ -24,6 +24,7 @@ const ViewTypes = {
   bubble: Bubble,
   curve: Curve,
   circle: Circle,
+  path: Path,
   block: BlockProperties,
   master: MasterProperties,
   comment: CommentProperties,

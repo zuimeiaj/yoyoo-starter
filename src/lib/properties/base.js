@@ -142,6 +142,26 @@ export class Curve extends ViewProperties {
   }
 }
 
+export class Path extends ViewProperties {
+  constructor() {
+    super();
+    this.type = 'path';
+    this.alias = '路径';
+    this.transform.width = 200;
+    this.transform.height = 100;
+    this.border.width = 2;
+    this.border.color = 'rgba(33,150,243,1)';
+    // path 数据：points 为局部坐标（相对 transform.x/y），每个锚点 {x,y,inX,inY,outX,outY}
+    // in/out 为相对锚点的偏移（贝塞尔控制手柄），全零表示直线段；closed v1 留字段不做交互
+    this.path = {
+      points: [],
+      closed: false,
+    };
+    delete this.shadow;
+    delete this.corner;
+  }
+}
+
 export class Circle extends ViewProperties {
   constructor() {
     super();
@@ -208,8 +228,13 @@ const SerializableKeys = {
   triangle: 1,
   curve: 1,
   circle: 1,
+  path: 1,
   masterId: 1,
   tableData: 1,
+  rowRatios: 1,
+  colRatios: 1,
+  mergedCells: 1,
+  cellStyles: 1,
 };
 export const ViewIconMaps = {
   switch: 'switch',
@@ -232,4 +257,5 @@ export const ViewIconMaps = {
   buttongroup: '',
   slider: 'slider',
   range: 'slider1',
+  path: 'miaobian',
 };

@@ -16,6 +16,7 @@ import ViewTriangle from './ViewTriangle';
 import ViewPolygon from './ViewPolygon';
 import ViewCurve from './ViewCurve';
 import ViewCircle from './ViewCircle';
+import ViewPath from './ViewPath';
 import { BlockView, MasterView } from '@/lib/Widget/ViewGroup';
 import CommentView from '@/lib/Widget/Comment';
 import ViewTable from './ViewTable';
@@ -39,6 +40,7 @@ const maps = {
   bubble: ViewPolygon,
   curve: ViewCurve,
   circle: ViewCircle,
+  path: ViewPath,
   master: MasterView,
   comment: CommentView,
   table: ViewTable,

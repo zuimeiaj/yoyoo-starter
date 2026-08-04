@@ -110,9 +110,10 @@ Root
 | 原生 DOM 监听 | `addEventListener` 挂载在具体元素上 | Draggable(mousedown)、ViewController(dblclick)、ContextMenu/自定义(contextmenu) |
 | React 合成事件 | 委托在 **document** 上 | onClick / onMouseDown / onBlur / onKeyDown |
 
-**核心陷阱：`Draggable`（src/lib/Draggable.js:41）在组件容器 mousedown 时执行 `stopPropagation + preventDefault`，事件到不了 document，React 合成事件（onClick 等）永远收不到！** 需要响应鼠标操作的组件：
-- 优先 override `onDragStart(options, e)` —— Draggable 在容器上直接同步调用，事件对象带 `e.target`，可用 `e.target.closest('td')` 等解析命中的子元素
-- 或给目标元素加 `data-drag="false"` —— Draggable 直接 `return`（不阻断冒泡），React 委托反而能收到事件，且不会挂 document mousemove 监听（物理上无法拖拽）
+**核心陷阱：`Draggable`（src/lib/Draggable.js:41）在组件容器 mousedown 时执行 `stopPropagation + preventDefault`，事件到不了 document，React 合成事件（onClick 等）永远收不到！** 需要响应鼠标操作的组件，按优先级：
+- **首选：组件自身挂原生监听 + capture 阶段**（`addEventListener('mousedown', handler, true)` 挂容器上）—— capture 先于 Draggable（容器冒泡监听）执行，`stopPropagation()` 后 Draggable / 画布框选 / document 级监听（Root 的 onClick 等）全部收不到，编辑模式内的交互完全由自身处理。参照 `ViewTable.js` 的 `_handleContainerMouseDown` / `_handleContainerClick`：非编辑态 return 放行；编辑态 stopPropagation 后自行处理；`preventDefault` 取舍——非 input 目标 preventDefault（防框选选中文本、防 blur 时序竞争），input 本身不 preventDefault（保光标定位），右键不 preventDefault（保 contextmenu）
+- 或 override `onDragStart(options, e)` —— Draggable 在容器上直接同步调用，事件对象带 `e.target`，可用 `e.target.closest('td')` 等解析命中的子元素（**必须调 super**，否则 setFirstResponder 不执行、组件无法选中）
+- 或给目标元素加 `data-drag="false"` —— Draggable 直接 `return`（不阻断冒泡），React 委托反而能收到事件，且不会挂 document mousemove 监听。注意 `Draggable.js:39` 只检查 `e.target.dataset.drag` 不查 closest，子元素（如 `.cell-content` div）无 data-drag 照样触发拖拽；此方案在编辑模式会与 document 级监听冲突，仅建议作为 touchstart 路径（不受 mousedown capture 影响）的兜底
 
 ### 鼠标事件时序
 

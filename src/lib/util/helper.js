@@ -26,6 +26,107 @@ export const waitForSenconds = (s) => {
     setTimeout(resolve, s * 1000);
   });
 };
+/**
+ * 由锚点数组生成 SVG path d 串（ViewPath 与 PenTool 预览共用，避免两处漂移）
+ * 每个锚点 {x, y, inX, inY, outX, outY, arc}：
+ *   in/out 为相对锚点的贝塞尔控制点偏移（全零为直线段）
+ *   arc 为带符号拱高（上一锚点到本锚点之间为圆弧段，A 命令；undefined/null 为贝塞尔段）
+ * @param {Array} points 局部坐标锚点
+ * @param {Boolean} closed 是否闭合
+ */
+export const buildPathD = (points, closed = false) => {
+  if (!points || points.length < 1) return '';
+  const round = (n) => Math.round(n);
+  let d = `M${round(points[0].x)} ${round(points[0].y)}`;
+  for (let i = 1; i < points.length; i++) {
+    let prev = points[i - 1];
+    let cur = points[i];
+    if (cur.arc) {
+      let arc = buildArcSegment(prev, cur, cur.arc);
+      if (arc) {
+        d += ' ' + arc;
+        continue;
+      }
+    }
+    let hasHandles = prev.outX !== 0 || prev.outY !== 0 || cur.inX !== 0 || cur.inY !== 0;
+    if (hasHandles) {
+      d += ` C${round(prev.x + prev.outX)} ${round(prev.y + prev.outY)},${round(cur.x + cur.inX)} ${round(cur.y + cur.inY)},${round(cur.x)} ${round(cur.y)}`;
+    } else {
+      d += ` L${round(cur.x)} ${round(cur.y)}`;
+    }
+  }
+  if (closed) d += ' Z';
+  return d;
+};
+
+/**
+ * 两点 + 带符号拱高 → SVG 圆弧段（A 命令）
+ * 弦为 prev→cur，拱顶在弦中点沿法向（-uy, ux）偏移 h 处；|h| > 弦长/2 为优弧（large-arc）
+ * @param {{x:number,y:number}} prev 起点
+ * @param {{x:number,y:number}} cur 终点
+ * @param {number} h 带符号拱高（0 或空返回 null 表示直线段）
+ * @returns {string|null} 形如 `Ar r 0 large sweep x y`，或 null
+ */
+export const buildArcSegment = (prev, cur, h) => {
+  const dx = cur.x - prev.x;
+  const dy = cur.y - prev.y;
+  const d = Math.hypot(dx, dy);
+  if (!d || !h) return null;
+  const hh = Math.abs(h);
+  // 半径：r = (d²/4 + h²) / (2|h|)；圆心在弦中点沿 -n 方向偏移 k = (d²/4 - h²)/(2h)
+  const r = (d * d / 4 + hh * hh) / (2 * hh);
+  const nx = -dy / d;
+  const ny = dx / d;
+  const midX = (prev.x + cur.x) / 2;
+  const midY = (prev.y + cur.y) / 2;
+  const k = (d * d / 4 - hh * hh) / (2 * hh);
+  const sign = h > 0 ? 1 : -1;
+  const ox = midX - sign * k * nx;
+  const oy = midY - sign * k * ny;
+  const a1x = prev.x - ox;
+  const a1y = prev.y - oy;
+  const a2x = cur.x - ox;
+  const a2y = cur.y - oy;
+  const tx = midX + sign * hh * nx;
+  const ty = midY + sign * hh * ny;
+  const atx = tx - ox;
+  const aty = ty - oy;
+  // 以起点角为基准，判断拱顶 T 与终点 P2 的相对绕向，弧必须经过 T：
+  // t1 = 起点→拱顶的夹角，t2 = 起点→终点的夹角（同方向量度）
+  let theta1 = Math.atan2(a1y, a1x);
+  let t1 = (Math.atan2(aty, atx) - theta1 + 2 * Math.PI) % (2 * Math.PI);
+  let t2 = (Math.atan2(a2y, a2x) - theta1 + 2 * Math.PI) % (2 * Math.PI);
+  let sweep, extent;
+  if (t1 < t2) {
+    sweep = 0; // 逆时针（y 向下坐标系）
+    extent = t2;
+  } else {
+    sweep = 1; // 顺时针
+    extent = 2 * Math.PI - t2;
+  }
+  const large = extent > Math.PI ? 1 : 0;
+  const round = (n) => Math.round(n);
+  return `A${round(r)} ${round(r)} 0 ${large} ${sweep} ${round(cur.x)} ${round(cur.y)}`;
+};
+
+/**
+ * 弧段的拱顶点（局部坐标）——ViewPath 编辑模式控制点位置用，与 buildArcSegment 同一几何
+ * @param {{x:number,y:number}} prev
+ * @param {{x:number,y:number}} cur
+ * @param {number} h 带符号拱高
+ * @returns {{x:number,y:number}}
+ */
+export const arcTopPoint = (prev, cur, h) => {
+  const dx = cur.x - prev.x;
+  const dy = cur.y - prev.y;
+  const d = Math.hypot(dx, dy);
+  if (!d || !h) return { x: (prev.x + cur.x) / 2, y: (prev.y + cur.y) / 2 };
+  const sign = h > 0 ? 1 : -1;
+  return {
+    x: (prev.x + cur.x) / 2 + sign * Math.abs(h) * (-dy / d),
+    y: (prev.y + cur.y) / 2 + sign * Math.abs(h) * (dx / d),
+  };
+};
 export const getZooms = (n, bounce = 1) => {
   let result = [];
   for (let i = 0; i < n; i++) {

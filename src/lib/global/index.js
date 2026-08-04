@@ -56,6 +56,17 @@ export function getCanvasDraggable() {
   return globalCanvasDraggable;
 }
 
+var globalPenToolMode = false;
+
+export function setPenToolMode(mode) {
+  globalPenToolMode = mode;
+  document.body.style.cursor = mode ? 'crosshair' : 'default';
+}
+
+export function getPenToolMode() {
+  return globalPenToolMode;
+}
+
 export function setScreenTransform(x, y, scale, level) {
   window[globalKey].screen = {
     x,

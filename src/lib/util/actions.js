@@ -52,6 +52,21 @@ export const component_picker_picked = 'component/picker_picked';
  */
 export const component_picker_mode_close = 'component/close_picker_mode';
 /**
+ * 开启钢笔工具模式
+ * @type {string}
+ */
+export const pen_tool_active = 'pen/active';
+/**
+ * 关闭钢笔工具模式
+ * @type {string}
+ */
+export const pen_tool_close = 'pen/close';
+/**
+ * 切换钢笔工具模式（按钮/快捷键）
+ * @type {string}
+ */
+export const pen_tool_toggle = 'pen/toggle';
+/**
  * component props change
  * @type {string}
  */
@@ -165,6 +180,9 @@ export const table_insert_col_right = 'table/insertColRight';
 export const table_delete_row = 'table/deleteRow';
 export const table_delete_col = 'table/deleteCol';
 export const table_clear_text = 'table/clearText';
+export const table_merge_cells = 'table/mergeCells';
+export const table_unmerge_cells = 'table/unmergeCells';
+export const table_cell_selection_change = 'table/cellSelectionChange';
 
 export const context_shiftkey_press = 'context_shift/press';
 export const context_hide_color_picker = 'context/hidecolorpicker';

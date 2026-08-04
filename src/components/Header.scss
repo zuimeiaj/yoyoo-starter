@@ -49,6 +49,25 @@ $header_height: 50px;
     flex: 1;
     display: flex;
     justify-content: flex-start;
+    .header_mode-switch {
+      display: flex;
+      align-items: center;
+      border: 1px solid #d9d9d9;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-right: 15px;
+      .mode-btn {
+        padding: 1px 12px;
+        font-size: 12px;
+        line-height: 20px;
+        color: rgba(0, 0, 0, 0.65);
+        cursor: pointer;
+        &.active {
+          background: #1890ff;
+          color: #fff;
+        }
+      }
+    }
   }
   .header_action-item {
     margin-right: 15px;

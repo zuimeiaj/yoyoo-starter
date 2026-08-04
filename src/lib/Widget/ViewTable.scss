@@ -15,15 +15,11 @@
   user-select: none;
 
   td {
+    position: relative;
     border: 1px solid #d9d9d9;
-    padding: 4px 8px;
     box-sizing: border-box;
     font-size: 12px;
-    line-height: 20px;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    height: 24px;
+    line-height: 1;
 
     &.cell-selected {
       background: rgba(24, 144, 255, 0.15);
@@ -39,11 +35,34 @@
       outline: 2px solid #1890ff;
       outline-offset: -1px;
       background: #fff;
-      padding: 0;
     }
   }
 
+  // 显示内容：绝对定位填充 td，不参与 td/行尺寸计算（CSS 表格行高永远 ≥ 内容高度，
+  // 内容参与布局会把行撑高），行高严格由 tr 百分比均分决定，超出部分裁剪；
+  // flex 居中显示
+  .cell-content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    line-height: 1;
+  }
+
+  // input 绝对定位填充 td，不参与 td 尺寸计算（避免 height:100% 与行高的循环依赖撑爆行）
   .cell-input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     width: 100%;
     height: 100%;
     border: none;
@@ -56,5 +75,127 @@
     // 编辑输入框内文本仍可选中（光标/选中文本）
     -webkit-user-select: text;
     user-select: text;
+  }
+}
+
+// 表格 wrap：作为拖线手柄层的定位上下文（HTML 不允许 table 直接子元素为 div，手柄必须放 table 外）
+.view-table-wrap {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+// 分隔线拖动手柄层：覆盖层本身不拦截事件（pointer-events: none），
+// 只有手柄元素（pointer-events: auto）响应，cell 交互不受影响
+.table-resize-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.table-resize-line {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+
+  // 默认淡蓝细线提示可拖，hover 高亮
+  .resize-line-bar {
+    background: rgba(24, 144, 255, 0.25);
+    pointer-events: none;
+  }
+
+  &:hover .resize-line-bar {
+    background: #1890ff;
+  }
+
+  &.row-line {
+    left: 0;
+    right: 0;
+    height: 6px;
+    transform: translateY(-50%);
+    cursor: row-resize;
+
+    .resize-line-bar {
+      width: 100%;
+      height: 1px;
+    }
+  }
+
+  &.col-line {
+    top: 0;
+    bottom: 0;
+    width: 6px;
+    transform: translateX(-50%);
+    cursor: col-resize;
+
+    .resize-line-bar {
+      width: 1px;
+      height: 100%;
+    }
+  }
+}
+
+// 快速插入按钮：行左侧 +（该行上方插入行）、第一行上方每列 +（该列左侧插入列）。
+// 位于表格外 20px（组件容器无 overflow 裁剪，按钮可见可点），半透明常显，hover 高亮
+.quick-insert-btn {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+  background: rgba(24, 144, 255, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  pointer-events: auto;
+  transition: background 0.15s;
+
+  &:hover {
+    background: #1890ff;
+  }
+
+  &.row {
+    left: -20px;
+    transform: translateY(-50%);
+  }
+
+  &.col {
+    top: -20px;
+    transform: translateX(-50%);
+  }
+
+  // CSS 加号：横竖两条
+  .quick-insert-icon {
+    position: relative;
+    width: 10px;
+    height: 10px;
+    pointer-events: none;
+
+    &::before,
+    &::after {
+      content: '';
+      position: absolute;
+      background: #fff;
+    }
+
+    &::before {
+      left: 0;
+      top: 4px;
+      width: 10px;
+      height: 2px;
+    }
+
+    &::after {
+      top: 0;
+      left: 4px;
+      width: 2px;
+      height: 10px;
+    }
   }
 }

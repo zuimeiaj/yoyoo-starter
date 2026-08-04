@@ -21,6 +21,7 @@ import {
   InspectorSpacing,
   InspectorTransform,
 } from '../lib/ui/InspectorControls';
+import InspectorTableCell from '../lib/ui/InspectorTableCell';
 import { getFirstResponder } from '../lib/global/instance';
 import Types from 'prop-types';
 import deepEqual from 'fast-deep-equal';
@@ -277,6 +278,7 @@ const LABELS = {
   fontStyle: ['样式', 'xieti'],
   decorator: ['装饰', 'xiahuaxian'],
   font: ['字体', 'wenben1'],
+  cellStyles: ['单元格样式', 'beijingyanse'],
   animations: ['动画', 'donghua'],
   interactions: ['交互', 'shoushidianji', 'controlled'],
 };
@@ -296,6 +298,7 @@ const InspectorControls = {
   fontStyle: InspectorFontStyle,
   decorator: InspectorFontDecorator,
   font: InspectorFont,
+  cellStyles: InspectorTableCell,
   animations: InspectorAnimation,
   interactions: InspectorInteraction,
 };
@@ -313,4 +316,5 @@ const Order = {
   icon: 11,
   animations: 12,
   interactions: 13,
+  cellStyles: 14,
 };

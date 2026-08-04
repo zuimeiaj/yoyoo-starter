@@ -371,6 +371,9 @@ export default class ViewResizable extends NoZoomTransform {
   onComponentActive = (target) => {
     this.target = target;
     this.show(true);
+    // 恢复 resizeWrapper：编辑模式可能通过 component_edit_mode 隐藏过它，
+    // 无论编辑模式如何退出（inactive / empty），组件激活时都应恢复显示手柄
+    Dom.of(this.refs.resizeWrapper).show();
     this.transform = target.properties.transform;
     this.setBoundingRect();
     // 支持组件自定义最小尺寸：实现 getMinSize() 返回 { width, height }

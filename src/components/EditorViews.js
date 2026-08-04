@@ -8,6 +8,7 @@ import EditorControllers from './EditorControllers';
 import ContextMenu from '../lib/Widget/ContextMenu';
 import EditorScrollbar from '../lib/Widget/EditorScrollbar';
 import FirstResponder from '../lib/Widget/FirstResponder';
+import PenTool from '../lib/Widget/PenTool';
 import NoZoomAreaHighIndex from './NoZoomAreaHighIndex';
 import Stage from './Stage';
 import NoZoomAreaLowIndex from './NoZoomAreaLowIndex';
@@ -118,6 +119,8 @@ export default class EditorViews extends React.Component {
         <Selection containerId={this.containerId} />
         {/* Custom context menu */}
         <ContextMenu containerId={this.containerId} />
+        {/* Pen tool mask (钢笔工具遮罩，必须最后渲染在最上层) */}
+        <PenTool />
       </div>
     );
   }

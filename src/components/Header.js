@@ -16,6 +16,7 @@ import { updateProject } from '../api/project'
 import qs from 'query-string'
 import HeaderExport from '@/components/HeaderExport'
 import HeaderGroupControl from '@/components/HeaderGroupControl'
+import HeaderToolbar from '@/components/HeaderToolbar'
 import HeaderSettings, { Settings } from './HeaderSettings'
 import HeaderPlay from './HeaderPlay'
 
@@ -61,6 +62,7 @@ export default class Header extends React.Component {
         </div>
         <div className={'header_functions text-left'}>
           <HistoryControl />
+          <HeaderToolbar />
         </div>
         <div className={'header_functions'}>
           <HeaderGroupControl />

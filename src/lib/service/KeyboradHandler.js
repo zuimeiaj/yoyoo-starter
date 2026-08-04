@@ -18,6 +18,7 @@ import {
   coverage_forward,
   coverage_front,
   guide_toggle,
+  pen_tool_toggle,
   workspace_scroll_center,
 } from '../util/actions';
 import Event from '../Base/Event';
@@ -67,6 +68,7 @@ const ActionKeyMaps = {
   hide: [4, KeyEvent.DOM_VK_H],
   lock: [4, KeyEvent.DOM_VK_L],
   canvas_draggable: [0, KeyEvent.DOM_VK_SPACE],
+  pen_tool: [0, KeyEvent.DOM_VK_P],
   delete: [0, KeyEvent.DOM_VK_BACK_SPACE],
   redo: [4 | 1, KeyEvent.DOM_VK_Z],
   undo: [4, KeyEvent.DOM_VK_Z],
@@ -135,6 +137,7 @@ export const KeyboardActionNameMap = {
   COVERAGE_FRONT: 'coverage_front',
   COVERAGE_BACK: 'coverage_back',
   CANVAS_DRAGGABLE: 'canvas_draggable',
+  PEN_TOOL: 'pen_tool',
 };
 /**
  * @description  快捷键对应操作的别名
@@ -174,6 +177,7 @@ export const ActionNames = {
   [KeyboardActionNameMap.COVERAGE_BACK]: '置为底层',
   [KeyboardActionNameMap.COVERAGE_BACKWARD]: '下移一层',
   [KeyboardActionNameMap.CANVAS_DRAGGABLE]: '拖拽画布',
+  [KeyboardActionNameMap.PEN_TOOL]: '钢笔工具',
 };
 /**
  * @description 配置该事件后，将会直接Dispatch该 键盘事件所对应的 Event 事件
@@ -201,6 +205,7 @@ export const KeyboradEvents = {
   [KeyboardActionNameMap.COVERAGE_FORWARD]: coverage_forward,
   [KeyboardActionNameMap.COVERAGE_FRONT]: coverage_front,
   [KeyboardActionNameMap.CANVAS_DRAGGABLE]: canvas_draggable,
+  [KeyboardActionNameMap.PEN_TOOL]: pen_tool_toggle,
 };
 /**
  * @description  该事件需要一个选中的组件，

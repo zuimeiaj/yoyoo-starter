@@ -1,0 +1,35 @@
+.view-path {
+  overflow: visible;
+}
+
+.view-path-edit {
+  .vp-anchor {
+    fill: #ffffff;
+    stroke: rgba(33, 150, 243, 1);
+    stroke-width: 2;
+    cursor: move;
+  }
+  .vp-handle {
+    fill: #ffffff;
+    stroke: rgba(82, 196, 26, 1);
+    stroke-width: 1.5;
+    cursor: crosshair;
+    &:hover {
+      fill: rgba(82, 196, 26, 1);
+    }
+  }
+  .vp-handle-line {
+    stroke: rgba(33, 150, 243, 0.8);
+    stroke-width: 1;
+    stroke-dasharray: 4 3;
+  }
+  .vp-arc {
+    fill: #ffffff;
+    stroke: rgba(250, 173, 20, 1);
+    stroke-width: 2;
+    cursor: crosshair;
+    &:hover {
+      fill: rgba(250, 173, 20, 1);
+    }
+  }
+}
