@@ -5,12 +5,13 @@
  *  按钮只发事件，模式单一事实来源是 PenTool。
  */
 import React from 'react';
+import { Radio } from 'antd';
 import Event from '../lib/Base/Event';
 import { pen_tool_active, pen_tool_close } from '../lib/util/actions';
 
 export default class HeaderToolbar extends React.Component {
   state = {
-    penActive: false, // 默认选中设计
+    mode: 'design', // 默认选中设计；单一事实来源是 PenTool，这里只做展示
   };
 
   componentWillMount() {
@@ -24,29 +25,26 @@ export default class HeaderToolbar extends React.Component {
   }
 
   handlePenActive = () => {
-    this.setState({ penActive: true });
+    this.setState({ mode: 'pen' });
   };
   handlePenInactive = () => {
-    this.setState({ penActive: false });
+    this.setState({ mode: 'design' });
   };
-  handleDesign = () => {
-    Event.dispatch(pen_tool_close);
-  };
-  handlePen = () => {
-    Event.dispatch(pen_tool_active);
+  handleModeChange = (e) => {
+    // 只发命令，选中态由 PenTool 的 active/close 事件回写（防重入由工具内部处理）
+    if (e.target.value === 'pen') {
+      Event.dispatch(pen_tool_active);
+    } else {
+      Event.dispatch(pen_tool_close);
+    }
   };
 
   render() {
-    let { penActive } = this.state;
     return (
-      <div className={'header_mode-switch'}>
-        <span className={`mode-btn ${penActive ? '' : 'active'}`} onClick={this.handleDesign}>
-          设计
-        </span>
-        <span className={`mode-btn ${penActive ? 'active' : ''}`} onClick={this.handlePen}>
-          钢笔
-        </span>
-      </div>
+      <Radio.Group className={'header_mode-switch'} size={'small'} value={this.state.mode} onChange={this.handleModeChange}>
+        <Radio.Button value="design">设计</Radio.Button>
+        <Radio.Button value="pen">钢笔</Radio.Button>
+      </Radio.Group>
     );
   }
 }

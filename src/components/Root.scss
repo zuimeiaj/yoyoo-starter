@@ -8,6 +8,11 @@ body,
   padding: 0;
 }
 
+// 苹果毛玻璃底色：细腻蓝灰渐变，作为面板半透明模糊的内容源
+body {
+  background: linear-gradient(135deg, #e8edf4 0%, #f6f8fb 45%, #e9eef5 100%);
+}
+
 $inspectorWith: 260px;
 $siderWidth: 260px;
 * {
@@ -63,7 +68,15 @@ ul li {
     border: none;
     background: none;
     display: flex;
-    height: 100%;
+    // min-height 替代 height：内容超出组件高度时自然撑开，
+    // 内容不足时仍占满组件高度（保留 alignItems 垂直居中）
+    min-height: 100%;
+    > div {
+      // measure：自然块级内容（flex item fit-content 宽度，max-width 限制后换行）。
+      // 高度测量与编辑（contenteditable）都针对它，避免 flex 容器测量的误差
+      word-break: break-all;
+      max-width: 100%;
+    }
   }
 }
 
@@ -109,6 +122,17 @@ ul li {
   position: absolute;
   top: 50%;
   width: 100%;
+  // 端点控制点（组件自绘）：拖动绕对侧端点旋转
+  .view-line-handle {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #fff;
+    border: 2px solid #1890ff;
+    cursor: crosshair;
+    z-index: 2;
+  }
 }
 
 // common

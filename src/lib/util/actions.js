@@ -67,6 +67,16 @@ export const pen_tool_close = 'pen/close';
  */
 export const pen_tool_toggle = 'pen/toggle';
 /**
+ * 开启画笔工具模式
+ * @type {string}
+ */
+export const brush_tool_active = 'brush/active';
+/**
+ * 关闭画笔工具模式
+ * @type {string}
+ */
+export const brush_tool_close = 'brush/close';
+/**
  * component props change
  * @type {string}
  */

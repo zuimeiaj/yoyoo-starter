@@ -67,6 +67,17 @@ export function getPenToolMode() {
   return globalPenToolMode;
 }
 
+var globalBrushToolMode = false;
+
+export function setBrushToolMode(mode) {
+  globalBrushToolMode = mode;
+  document.body.style.cursor = mode ? 'crosshair' : 'default';
+}
+
+export function getBrushToolMode() {
+  return globalBrushToolMode;
+}
+
 export function setScreenTransform(x, y, scale, level) {
   window[globalKey].screen = {
     x,
@@ -79,6 +90,7 @@ export function setScreenTransform(x, y, scale, level) {
 export const pointToWorkspaceCoords = (e) => {
   let { x, y, scale } = getScreeTransform();
   let { viewport } = getScreenOffset();
+  if (!viewport) viewport = { x: 0, y: 0 }; // 兜底：offset.viewport 未初始化时按 0 处理，避免 undefined*scale 产生 NaN
   y = (y - config.originCoords.y) * scale + e.pageY - viewport.y * scale;
   x = (x - config.originCoords.x) * scale + e.pageX - viewport.x * scale;
   x = (x - config.editorDomRect.left) / scale;

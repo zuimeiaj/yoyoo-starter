@@ -8,8 +8,12 @@
   .root-layout-side-menu {
     width: 50px;
     padding-top: 10px;
-    border-right: 1px solid $primary-border;
-    background: $primary-alpha;
+    // 苹果毛玻璃：半透明白 + 背景模糊 + 高光右边
+    border-right: 1px solid rgba(255, 255, 255, 0.65);
+    background: rgba(255, 255, 255, 0.55);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    backdrop-filter: blur(24px) saturate(180%);
+    box-shadow: inset -1px 0 0 rgba(255, 255, 255, 0.5);
     height: 100%;
     margin-bottom: 0;
 
@@ -52,7 +56,8 @@
   .root-layout-side-content {
     flex: 1;
     overflow-y: auto;
-    background: $primary-alpha;
+    // 半透明透出外层菜单栏的模糊背景，保持玻璃感统一
+    background: rgba(255, 255, 255, 0.35);
     .aj-ui-search {
       width: 100%;
       margin-bottom: 10px;
@@ -83,11 +88,11 @@
     align-items: center;
     overflow: hidden;
     position: relative;
-    border: 1px solid #ececec;
+    border: 1px solid rgba(255, 255, 255, 0.7);
     padding: 6px 6px;
     margin-top: 10px;
-    border-radius: 5px;
-    background: #fcfcfc;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.6);
     width: 45%;
     &:hover {
       z-index: 10;

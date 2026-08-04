@@ -40,7 +40,7 @@ let config = {
     x: {},
     y: {},
   },
-  autoAlign: 1,
+  autoAlign: 5, // 吸附阈值（px）：Figma 风格 5px 内触发对齐辅助线
 };
 window._config = config;
 export const getSnaplineConfig = () => {

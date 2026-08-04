@@ -83,6 +83,12 @@ export default class Snapline extends NoZoomTransform {
      * @type {Dom}
      */
     this.vrline = null;
+    /**
+     * 间距标注（Figma 风格距离数字）
+     * @type {Dom}
+     */
+    this.hlabel = null;
+    this.vlabel = null;
     Event.listen(guide_ready, this.onGuideReady);
     Event.listen(controllers_ready, this.onControllersReady);
     Event.listen(component_active, this.onComponentActive);
@@ -98,8 +104,87 @@ export default class Snapline extends NoZoomTransform {
     this.vlline = Dom.of(this.refs.vl);
     this.vcline = Dom.of(this.refs.vc);
     this.vrline = Dom.of(this.refs.vr);
+    this.hlabel = Dom.of(this.refs.hlabel);
+    this.vlabel = Dom.of(this.refs.vlabel);
+    this.hline = Dom.of(this.refs.hline);
+    this.vline = Dom.of(this.refs.vline);
     this.setLineSize();
   }
+
+  // ==================== 间距标注（Figma 风格） ====================
+
+  // 水平间距标注：连接线从 t1 右缘连到 t2 左缘，数字在间隙中心
+  showHDist = (t1, t2, dx) => {
+    let scale = getScreeTransform().scale;
+    let cx = (t1.x + t1.width + t2.x) / 2; // 间隙中点 x（工作区）
+    let cy = (t1.y + t1.height / 2 + t2.y + t2.height / 2) / 2; // 两组件垂直中心中点
+    this.refs.hlabel.innerHTML = Math.round(Math.abs(dx));
+    this.hlabel.left(cx * scale).top(cy * scale).show();
+    // 连接线：从 t1 右缘到 t2 左缘（间隙宽度），位于两组件垂直中心
+    this.hline
+      .left((t1.x + t1.width) * scale)
+      .top(cy * scale)
+      .width(Math.abs(dx) * scale)
+      .show();
+  };
+
+  // 垂直间距标注：连接线从 t1 底缘连到 t2 顶缘，数字在间隙中心
+  showVDist = (t1, t2, dy) => {
+    let scale = getScreeTransform().scale;
+    let cy = (t1.y + t1.height + t2.y) / 2; // 间隙中点 y（工作区）
+    let cx = (t1.x + t1.width / 2 + t2.x + t2.width / 2) / 2; // 两组件水平中心中点
+    this.refs.vlabel.innerHTML = Math.round(Math.abs(dy));
+    this.vlabel.left(cx * scale).top(cy * scale).show();
+    // 连接线：从 t1 底缘到 t2 顶缘（间隙高度），位于两组件水平中心
+    this.vline
+      .left(cx * scale)
+      .top((t1.y + t1.height) * scale)
+      .height(Math.abs(dy) * scale)
+      .show();
+  };
+
+  hideDist = () => {
+    this.hlabel.hide();
+    this.vlabel.hide();
+    this.hline.hide();
+    this.vline.hide();
+  };
+
+  // 相邻间隙检测（Figma 风格间距标注，与吸附解耦）：
+  // 与目标在垂直/水平方向重叠的组件，若间隙在 DIST_MAX 内则显示间距数字
+  checkDistances = (t2) => {
+    let items = this.arrayItems;
+    let DIST_MAX = 60; // 显示间距标注的最大间隙（px）
+    for (let i = 0, j = items.length; i < j; i++) {
+      let t1 = items[i];
+      // 垂直重叠 → 水平间隙（t1 在左或右）
+      if (t1.y < t2.y + t2.height && t1.y + t1.height > t2.y) {
+        let gap = t2.x - (t1.x + t1.width);
+        if (gap > 0 && gap <= DIST_MAX) {
+          this.showHDist(t1, t2, gap);
+          return;
+        }
+        gap = t1.x - (t2.x + t2.width);
+        if (gap > 0 && gap <= DIST_MAX) {
+          this.showHDist(t2, t1, gap);
+          return;
+        }
+      }
+      // 水平重叠 → 垂直间隙（t1 在上或下）
+      if (t1.x < t2.x + t2.width && t1.x + t1.width > t2.x) {
+        let gap = t2.y - (t1.y + t1.height);
+        if (gap > 0 && gap <= DIST_MAX) {
+          this.showVDist(t1, t2, gap);
+          return;
+        }
+        gap = t1.y - (t2.y + t2.height);
+        if (gap > 0 && gap <= DIST_MAX) {
+          this.showVDist(t2, t1, gap);
+          return;
+        }
+      }
+    }
+  };
 
   setLineSize = (scale = 1) => {
     let view = config.viewport;
@@ -126,8 +211,11 @@ export default class Snapline extends NoZoomTransform {
         if (item.type === 'block') {
           treeToArray(item.items);
         } else {
-          let t = item.view.getOffsetTransform();
-          t._originTransform = item.view.getOffsetRect();
+          // 用未旋转边缘（getOffsetRect）：辅助线贴组件真实边缘，
+          // 旋转组件用 getOffsetTransform 会得到膨胀包围盒导致线离组件有空隙
+          let rect = item.view.getOffsetRect();
+          let t = { x: rect.x, y: rect.y, width: rect.width, height: rect.height };
+          t._originTransform = rect;
           arrayItems.push(t);
         }
       }
@@ -136,78 +224,123 @@ export default class Snapline extends NoZoomTransform {
     treeToArray(this.controller.state.items);
     this.arrayItems = arrayItems;
   };
-  // Display line
-  showHTLine = (t, target) => {
-    console.log(target);
-    this.htline.top(t.y * getScreeTransform().scale).show();
+  // 组件间对齐线：定位在对齐位置（拖动组件的边缘/中心），长度只覆盖两组件范围（不贯穿全屏）；
+  // 画布对齐（无 t1）保持贯穿
+  showHTLine = (t, t1) => {
+    let line = this.htline;
+    let scale = getScreeTransform().scale;
+    line.top(t.y * scale); // 水平对齐线：y = 拖动组件顶缘
+    if (t1) {
+      let left = Math.min(t1.x, t.x) * scale;
+      let right = Math.max(t1.x + t1.width, t.x + t.width) * scale;
+      line.left(left).width(right - left).show();
+    } else {
+      line.left(0).width(10000).show();
+    }
   };
-  showHBLine = (t) => {
-    this.hbline.top(t.y * getScreeTransform().scale + t.height * getScreeTransform().scale).show();
+  showHBLine = (t, t1) => {
+    let line = this.hbline;
+    let scale = getScreeTransform().scale;
+    line.top(t.y * scale + t.height * scale); // y = 拖动组件底缘
+    if (t1) {
+      let left = Math.min(t1.x, t.x) * scale;
+      let right = Math.max(t1.x + t1.width, t.x + t.width) * scale;
+      line.left(left).width(right - left).show();
+    } else {
+      line.left(0).width(10000).show();
+    }
   };
 
-  showHCLine(t) {
-    this.hcline.top(t.y * getScreeTransform().scale + (t.height * getScreeTransform().scale) / 2).show();
+  showHCLine(t, t1) {
+    let line = this.hcline;
+    let scale = getScreeTransform().scale;
+    line.top(t.y * scale + (t.height * scale) / 2); // y = 拖动组件垂直中心
+    if (t1) {
+      let left = Math.min(t1.x, t.x) * scale;
+      let right = Math.max(t1.x + t1.width, t.x + t.width) * scale;
+      line.left(left).width(right - left).show();
+    } else {
+      line.left(0).width(10000).show();
+    }
   }
 
-  showVCLine(t) {
-    this.vcline.left(t.x * getScreeTransform().scale + (t.width * getScreeTransform().scale) / 2).show();
+  showVCLine(t, t1) {
+    let line = this.vcline;
+    let scale = getScreeTransform().scale;
+    line.left(t.x * scale + (t.width * scale) / 2); // 垂直对齐线：x = 拖动组件水平中心
+    if (t1) {
+      let top = Math.min(t1.y, t.y) * scale;
+      let bottom = Math.max(t1.y + t1.height, t.y + t.height) * scale;
+      line.top(top).height(bottom - top).show();
+    } else {
+      line.top(0).height(10000).show();
+    }
   }
 
-  showVLLine(t) {
-    this.vlline.left(t.x * getScreeTransform().scale).show();
+  showVLLine(t, t1) {
+    let line = this.vlline;
+    let scale = getScreeTransform().scale;
+    line.left(t.x * scale); // x = 拖动组件左缘
+    if (t1) {
+      let top = Math.min(t1.y, t.y) * scale;
+      let bottom = Math.max(t1.y + t1.height, t.y + t.height) * scale;
+      line.top(top).height(bottom - top).show();
+    } else {
+      line.top(0).height(10000).show();
+    }
   }
 
-  showVRLine(t) {
-    this.vrline.left(t.x * getScreeTransform().scale + t.width * getScreeTransform().scale).show();
+  showVRLine(t, t1) {
+    let line = this.vrline;
+    let scale = getScreeTransform().scale;
+    line.left(t.x * scale + t.width * scale); // x = 拖动组件右缘
+    if (t1) {
+      let top = Math.min(t1.y, t.y) * scale;
+      let bottom = Math.max(t1.y + t1.height, t.y + t.height) * scale;
+      line.top(top).height(bottom - top).show();
+    } else {
+      line.top(0).height(10000).show();
+    }
   }
 
   onComponentDrag = (target, options = {}) => {
     if (options.hideGuides) return;
     if (options.from === 'Snapline') return;
+    this.hideDist(); // 每帧先隐藏间距标注，匹配到再显示
     // Refresh current position
     this.setBoundingRect();
-    let t2 = this.target.getOffsetTransform();
-    let matched = this.checkComponentDistance(t2);
+    // 未旋转边缘：与 arrayItems 同一坐标系，线贴组件真实边缘
+    let t2 = this.target.getOffsetRect();
+    let slots = this.checkComponentDistance(t2);
     let cmatched = this.alignParent();
-    // Fix BUG : 2019-02-01 22:00,根据父元素没有匹配到时把其他对齐线隐藏了
-    if (cmatched[0] !== void 0) {
-      this.showVLLine(t2, cmatched[0]);
-    } else if (!matched[3]) {
-      this.vlline.hide();
-    }
-    if (cmatched[1] !== void 0) {
-      this.showVCLine(t2, cmatched[1]);
-    } else if (!matched[4]) {
-      this.vcline.hide();
-    }
-    if (cmatched[2] !== void 0) {
-      this.showVRLine(t2, cmatched[2]);
-    } else if (!matched[5]) {
-      this.vrline.hide();
-    }
-    if (cmatched[3] !== void 0) {
-      this.showHTLine(t2, cmatched[3]);
-    } else if (!matched[0]) {
-      this.htline.hide();
-    }
-    if (cmatched[4] !== void 0) {
-      this.showHCLine(t2, cmatched[4]);
-    } else if (!matched[1]) {
-      this.hcline.hide();
-    }
-    if (cmatched[5] !== void 0) {
-      this.showHBLine(t2, cmatched[5]);
-    } else if (!matched[2]) {
-      this.hbline.hide();
-    }
-    for (let i = 0; i < matched.length; i += 1) {
-      if (matched[i]) {
-        Event.dispatch(component_snap_change, matched[i]._originTransform, i);
+    // 6 个方向（snap index 0-5 = ht,hc,hb,vl,vc,vr，与既有 Highlight 映射保持一致）
+    let order = ['ht', 'hc', 'hb', 'vl', 'vc', 'vr'];
+    let showFns = {
+      vl: (a, b) => this.showVLLine(a, b),
+      vc: (a, b) => this.showVCLine(a, b),
+      vr: (a, b) => this.showVRLine(a, b),
+      ht: (a, b) => this.showHTLine(a, b),
+      hc: (a, b) => this.showHCLine(a, b),
+      hb: (a, b) => this.showHBLine(a, b),
+    };
+    let lines = { ht: this.htline, hc: this.hcline, hb: this.hbline, vl: this.vlline, vc: this.vcline, vr: this.vrline };
+    // 先全部隐藏（组件间短线段 ↔ 画布贯穿线切换时不残留）
+    Object.keys(lines).forEach((k) => lines[k].hide());
+    // 逐方向渲染：组件匹配优先（两组件范围），画布对齐兜底（贯穿线）
+    for (let i = 0; i < order.length; i++) {
+      let k = order[i];
+      let t1 = slots[k];
+      if (t1) {
+        showFns[k](t2, t1);
+        Event.dispatch(component_snap_change, t1._originTransform, i);
+      } else if (cmatched[i] !== undefined) {
+        showFns[k](t2);
       } else {
         Event.dispatch(component_snap_change_end, i);
       }
     }
-    this.matched = matched;
+    this.checkDistances(t2); // 相邻间隙间距标注（与吸附独立）
+    this.matched = slots;
     this.cmatched = cmatched;
   };
   /**
@@ -244,113 +377,91 @@ export default class Snapline extends NoZoomTransform {
     return matched;
   };
   /**
-   * 返回匹配的 元素
-   * @param items {Array<ViewProperties>}
-   * @return {Array<ViewProperties>}
+   * 返回匹配的 元素（slots 收集模式：6 个方向各自独立找最近匹配，可同时显示多条辅助线）
+   * @return {{vl:*, vc:*, vr:*, ht:*, hc:*, hb:*}}
    */
   checkComponentDistance = (t2) => {
+    let slots = { vl: null, vc: null, vr: null, ht: null, hc: null, hb: null };
     let items = this.arrayItems;
-    let ht, hc, hb, vl, vc, vr;
     for (let i = 0, j = items.length; i < j; i++) {
       let t1 = items[i];
-      if (!ht) ht = this.matchHT(t1, t2);
-      if (!hc) hc = this.matchHC(t1, t2);
-      if (!hb) hb = this.matchHB(t1, t2);
-      if (!vl) vl = this.matchVL(t1, t2);
-      if (!vc) vc = this.matchVC(t1, t2);
-      if (!vr) vr = this.matchVR(t1, t2);
+      this.matchVL(t1, t2, slots);
+      this.matchVC(t1, t2, slots);
+      this.matchVR(t1, t2, slots);
+      this.matchHT(t1, t2, slots);
+      this.matchHC(t1, t2, slots);
+      this.matchHB(t1, t2, slots);
     }
-    return [ht, hc, hb, vl, vc, vr];
+    return slots;
   };
-  matchVL = (t1, t2) => {
+  // 每个 match 只记录最近匹配到 slots，不再直接渲染（渲染统一在 onComponentDrag 逐方向处理）
+  matchVL = (t1, t2, slots) => {
     let dx = t1.x - t2.x,
       dx2 = t1.x + t1.width - t2.x;
-    // v left
     if (Math.abs(dx) < P) {
       t1._alignType_v_left = true;
       t1._alignDiff_v_left = dx;
-      this.showVLLine(t2);
-      return t1;
+      if (!slots.vl || Math.abs(dx) < Math.abs(slots.vl._alignDiff_v_left)) slots.vl = t1;
     } else if (Math.abs(dx2) < P) {
       t1._alignType_v_right_left = true;
       t1._alignDiff_v_right_left = dx2;
-      this.showVLLine(t2);
-      return t1;
+      if (!slots.vl || Math.abs(dx2) < Math.abs(slots.vl._alignDiff_v_right_left)) slots.vl = t1;
     }
   };
-  matchVC = (t1, t2) => {
+  matchVC = (t1, t2, slots) => {
     let dx = t1.x + t1.width / 2 - (t2.x + t2.width / 2);
-    // v center
     if (Math.abs(dx) < P) {
       t1._alignType_v_center = true;
       t1._alignDiff_v_center = dx;
-      this.showVCLine(t2);
-      return t1;
+      if (!slots.vc || Math.abs(dx) < Math.abs(slots.vc._alignDiff_v_center)) slots.vc = t1;
     }
   };
-  matchVR = (t1, t2) => {
+  matchVR = (t1, t2, slots) => {
     let dx = t1.x + t1.width - (t2.x + t2.width),
       dx2 = t1.x - (t2.x + t2.width);
-    // v right
     if (Math.abs(dx) < P) {
       t1._alignType_v_right = true;
       t1._alignDiff_v_right = dx;
-      this.showVRLine(t2);
-      return t1;
+      if (!slots.vr || Math.abs(dx) < Math.abs(slots.vr._alignDiff_v_right)) slots.vr = t1;
     } else if (Math.abs(dx2) < P) {
       t1._alignType_v_left_right = true;
       t1._alignDiff_v_left_right = dx2;
-      this.showVRLine(t2);
-      return t1;
+      if (!slots.vr || Math.abs(dx2) < Math.abs(slots.vr._alignDiff_v_left_right)) slots.vr = t1;
     }
   };
-  matchHT = (t1, t2) => {
-    let ht,
-      dx = t1.y - t2.y,
+  matchHT = (t1, t2, slots) => {
+    let dx = t1.y - t2.y,
       dx2 = t1.height + t1.y - t2.y;
-    //h top
     if (Math.abs(dx) < P) {
-      ht = t1;
-      ht._alignType_h_top = true;
-      ht._alignDiff_h_top = dx;
-      this.showHTLine(t2, ht);
+      t1._alignType_h_top = true;
+      t1._alignDiff_h_top = dx;
+      if (!slots.ht || Math.abs(dx) < Math.abs(slots.ht._alignDiff_h_top)) slots.ht = t1;
     } else if (Math.abs(dx2) < P) {
-      ht = t1;
-      ht._alignType_h_bottom_top = true;
-      ht._alignDiff_h_bottom_top = dx2;
-      this.showHTLine(t2, ht);
+      t1._alignType_h_bottom_top = true;
+      t1._alignDiff_h_bottom_top = dx2;
+      if (!slots.ht || Math.abs(dx2) < Math.abs(slots.ht._alignDiff_h_bottom_top)) slots.ht = t1;
     }
-    return ht;
   };
-  matchHC = (t1, t2) => {
-    // h center
-    let hc,
-      dx = t1.y + t1.height / 2 - (t2.y + t2.height / 2);
+  matchHC = (t1, t2, slots) => {
+    let dx = t1.y + t1.height / 2 - (t2.y + t2.height / 2);
     if (Math.abs(dx) < P) {
-      hc = t1;
-      hc._alignType_h_center = true;
-      hc._alignDiff_h_center = dx;
-      this.showHCLine(t2, hc);
+      t1._alignType_h_center = true;
+      t1._alignDiff_h_center = dx;
+      if (!slots.hc || Math.abs(dx) < Math.abs(slots.hc._alignDiff_h_center)) slots.hc = t1;
     }
-    return hc;
   };
-  matchHB = (t1, t2) => {
-    var hb,
-      dx = t1.y + t1.height - (t2.y + t2.height),
+  matchHB = (t1, t2, slots) => {
+    let dx = t1.y + t1.height - (t2.y + t2.height),
       dx2 = t1.y - (t2.y + t2.height);
-    // h bottom
     if (Math.abs(dx) < P) {
-      hb = t1;
-      hb._alignType_h_bottom = true;
-      hb._alignDiff_h_bottom = dx;
-      this.showHBLine(t2, hb);
+      t1._alignType_h_bottom = true;
+      t1._alignDiff_h_bottom = dx;
+      if (!slots.hb || Math.abs(dx) < Math.abs(slots.hb._alignDiff_h_bottom)) slots.hb = t1;
     } else if (Math.abs(dx2) < P) {
-      hb = t1;
-      hb._alignType_h_top_bottom = true;
-      hb._alignDiff_h_top_bottom = dx2;
-      this.showHBLine(t2, hb);
+      t1._alignType_h_top_bottom = true;
+      t1._alignDiff_h_top_bottom = dx2;
+      if (!slots.hb || Math.abs(dx2) < Math.abs(slots.hb._alignDiff_h_top_bottom)) slots.hb = t1;
     }
-    return hb;
   };
   checkGuidesDistance = () => {};
   _getRectWithParent = () => {
@@ -370,16 +481,17 @@ export default class Snapline extends NoZoomTransform {
     this.vlline.hide();
     this.vrline.hide();
     this.vcline.hide();
+    this.hideDist();
     let matched = this.matched;
     let cmatched = this.cmatched;
     if (!matched) return;
     if (!cmatched) return;
-    let ht = matched[0],
-      hc = matched[1],
-      hb = matched[2];
-    let vl = matched[3],
-      vc = matched[4],
-      vr = matched[5];
+    let ht = matched.ht,
+      hc = matched.hc,
+      hb = matched.hb;
+    let vl = matched.vl,
+      vc = matched.vc,
+      vr = matched.vr;
     let t2 = this.target.properties.transform;
     let parent = this.target.properties.parent;
     let pRect = this._getRectWithParent();
@@ -523,6 +635,11 @@ export default class Snapline extends NoZoomTransform {
           {/**/}
           <div className={'snapline snapline-v'} ref={'vr'}></div>
         </div>
+        {/* 间距标注（Figma 风格：连接线 + 距离数字） */}
+        <div ref={'hline'} className={'snapline-connect snapline-connect-h'}></div>
+        <div ref={'vline'} className={'snapline-connect snapline-connect-v'}></div>
+        <div ref={'hlabel'} className={'snapline-label'}></div>
+        <div ref={'vlabel'} className={'snapline-label'}></div>
       </Fragment>
     );
   }

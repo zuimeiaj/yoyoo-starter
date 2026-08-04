@@ -11,6 +11,7 @@ import {
   InspectorAnimation,
   InspectorBorder,
   InspectorCorner,
+  InspectorDirection,
   InspectorFill,
   InspectorFont,
   InspectorFontContent,
@@ -268,6 +269,7 @@ export default class RightLayout extends InspectorProps {
 }
 const LABELS = {
   transform: ['位置', 'ziyoubianhuan'],
+  direction: ['方向', 'juzhongduiqi'],
   shadow: ['阴影', '-'],
   border: ['边框', 'wubiankaung'],
   bg: ['填充', 'beijingyanse'],
@@ -288,6 +290,7 @@ const Trigger = {
 };
 const InspectorControls = {
   transform: InspectorTransform,
+  direction: InspectorDirection,
   shadow: InspectorShadow,
   border: InspectorBorder,
   bg: InspectorFill,
@@ -304,6 +307,7 @@ const InspectorControls = {
 };
 const Order = {
   transform: 1,
+  direction: 2,
   border: 2,
   shadow: 3,
   corner: 4,

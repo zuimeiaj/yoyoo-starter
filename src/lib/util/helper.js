@@ -36,7 +36,11 @@ export const waitForSenconds = (s) => {
  */
 export const buildPathD = (points, closed = false) => {
   if (!points || points.length < 1) return '';
-  const round = (n) => Math.round(n);
+  // NaN 防护：数据异常（如历史遗留的 NaN 手柄）时回退 0，避免 d 串非法值导致 SVG 报错刷屏
+  const round = (n) => {
+    let r = Math.round(n);
+    return Number.isFinite(r) ? r : 0;
+  };
   let d = `M${round(points[0].x)} ${round(points[0].y)}`;
   for (let i = 1; i < points.length; i++) {
     let prev = points[i - 1];

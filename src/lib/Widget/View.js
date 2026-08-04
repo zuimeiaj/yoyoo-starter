@@ -11,10 +11,11 @@ import Image from './ViewImage';
 import ViewIcon from './ViewIcon';
 import ViewInput, { ViewTextArea } from './ViewInput';
 import ViewSelect from './ViewSelect';
+import ViewRadio from './ViewRadio';
+import ViewCheckbox from './ViewCheckbox';
 import ViewLine from './ViewLine';
 import ViewTriangle from './ViewTriangle';
 import ViewPolygon from './ViewPolygon';
-import ViewCurve from './ViewCurve';
 import ViewCircle from './ViewCircle';
 import ViewPath from './ViewPath';
 import { BlockView, MasterView } from '@/lib/Widget/ViewGroup';
@@ -31,14 +32,13 @@ const maps = {
   input: ViewInput,
   textarea: ViewTextArea,
   button: Text,
-  radio: ViewIcon,
-  checkbox: ViewIcon,
+  radio: ViewRadio,
+  checkbox: ViewCheckbox,
   switch: ViewIcon,
   select: ViewSelect,
   line: ViewLine,
   triangle: ViewTriangle,
   bubble: ViewPolygon,
-  curve: ViewCurve,
   circle: ViewCircle,
   path: ViewPath,
   master: MasterView,

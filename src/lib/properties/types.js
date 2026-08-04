@@ -1,9 +1,11 @@
 import Group from './group';
-import DefaultView, { Bubble, Circle, Curve, Line, Path, Rect, Triangle } from './base';
-import Text, { ButtonProperties, CheckboxProperties, FontIconProperties, InputProperties, RadioProperties, SwitcherProperties, TextAreaProperties } from './text';
+import DefaultView, { Bubble, Circle, Line, Path, Rect, Triangle } from './base';
+import Text, { ButtonProperties, FontIconProperties, InputProperties, TextAreaProperties } from './text';
 import { isArray, isPlainObject, uuid } from '../util/helper';
 import Image from './image';
 import SelectProperties from './select';
+import RadioProperties from './radio';
+import CheckboxProperties from './checkbox';
 import jQuery from 'jquery';
 import { BlockProperties, MasterProperties } from '@/lib/properties/group';
 import { CommentProperties } from '@/lib/properties/text';
@@ -19,10 +21,11 @@ const ViewTypes = {
   textarea: TextAreaProperties,
   button: ButtonProperties,
   select: SelectProperties,
+  radio: RadioProperties,
+  checkbox: CheckboxProperties,
   line: Line,
   triangle: Triangle,
   bubble: Bubble,
-  curve: Curve,
   circle: Circle,
   path: Path,
   block: BlockProperties,

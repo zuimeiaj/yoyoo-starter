@@ -124,24 +124,6 @@ export class Triangle extends ViewProperties {
   }
 }
 
-export class Curve extends ViewProperties {
-  constructor() {
-    super();
-    this.type = 'curve';
-    this.alias = '曲线';
-    this.transform.width = 200;
-    this.transform.height = 100;
-    this.border.width = 1;
-    // 二次贝塞尔曲线控制点
-    this.curve = {
-      x: 100,
-      y: 10,
-    };
-    delete this.shadow;
-    delete this.corner;
-  }
-}
-
 export class Path extends ViewProperties {
   constructor() {
     super();
@@ -225,6 +207,9 @@ const SerializableKeys = {
   image: 1,
   bubble: 1,
   selectOptions: 1,
+  radioOptions: 1,
+  checkboxOptions: 1,
+  direction: 1,
   triangle: 1,
   curve: 1,
   circle: 1,

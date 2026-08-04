@@ -385,8 +385,20 @@ export default class ViewResizable extends NoZoomTransform {
       if (min.width) this.minWidth = min.width;
       if (min.height) this.minHeight = min.height;
     }
-    let resize = target.properties.settings.resize;
-    if (resize === null) resize = gResize;
+    let resize;
+    if (typeof target.getResizeHandles === 'function') {
+      // 组件实例自定义手柄白名单（如单选/多选禁用缩放旋转，只显示包裹边框）；
+      // 放实例属性而非 properties，不随序列化/历史数据丢失
+      resize = target.getResizeHandles();
+    } else {
+      resize = target.properties.settings.resize;
+      if (resize === null) resize = gResize;
+    }
+    // 先全隐藏再按白名单显示：resize 白名单是唯一控制源，不依赖 inactive 清场
+    // （否则普通组件残留显示的圆点/旋转手柄会出现在白名单排除它们的组件上）
+    gResize.forEach((item) => {
+      Dom.of(this.refs[item]).hide();
+    });
     resize.forEach((item) => {
       Dom.of(this.refs[item]).show();
     });

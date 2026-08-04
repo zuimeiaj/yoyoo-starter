@@ -9,9 +9,10 @@
   width: 0;
   top: 0;
 }
+// Figma 风格辅助线：半透明红实线（与间距连接线统一），细且醒目
 .snapline-h {
   height: 1px;
-  border-top: 1px dashed $primary-bg;
+  border-top: 1px solid rgba(255, 59, 48, 0.8);
   width: 10000px;
   transform: translateX(-50%);
 }
@@ -19,5 +20,34 @@
   height: 10000px;
   transform: translateY(-50%);
   width: 1px;
-  border-left: 1px dashed $primary-bg;
+  border-left: 1px solid rgba(255, 59, 48, 0.8);
+}
+// 间距连接线：从组件边缘连到移动组件边缘（间隙宽度/高度动态）
+.snapline-connect {
+  position: absolute;
+  display: none;
+  background: rgba(255, 59, 48, 0.8);
+  pointer-events: none;
+  z-index: 10;
+}
+.snapline-connect-h {
+  height: 1px;
+}
+.snapline-connect-v {
+  width: 1px;
+}
+// 间距标注：组件间对齐时显示的距离数字（Figma 风格小标签）
+.snapline-label {
+  position: absolute;
+  display: none;
+  background: rgba(255, 59, 48, 0.9);
+  color: #fff;
+  font-size: 10px;
+  line-height: 14px;
+  padding: 0 5px;
+  border-radius: 3px;
+  white-space: nowrap;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  pointer-events: none;
 }

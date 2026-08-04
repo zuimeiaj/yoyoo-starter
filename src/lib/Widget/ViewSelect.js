@@ -18,9 +18,13 @@ export default class ViewSelect extends ViewController {
       super.onDBClick(e);
     } else {
       e.stopPropagation();
-      Dom.of(this.refs.poplist)
+      let poplist = this.refs.poplist;
+      // 回显当前选项值并聚焦，blur 写回（非受控 textarea，直接设 DOM value）
+      poplist.value = this.properties.selectOptions || '';
+      Dom.of(poplist)
         .show()
         .top(this.properties.transform.height + 3);
+      poplist.focus();
       setCurrentEditor(this);
       Event.dispatch(component_edit_mode);
     }

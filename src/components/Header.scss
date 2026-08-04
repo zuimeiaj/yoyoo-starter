@@ -4,9 +4,12 @@ $header_height: 50px;
   height: $header_height;
   display: flex;
   align-items: center;
-  background: $primary-alpha;
-  border-bottom: 1px solid #f1f1f1;
-  box-shadow: 0 0 10px 5px rgba(0, 0, 0, 0.05);
+  // 苹果毛玻璃：半透明白 + 背景模糊 + 高光底边
+  background: rgba(255, 255, 255, 0.62);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  backdrop-filter: blur(24px) saturate(180%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.65);
+  box-shadow: 0 4px 20px rgba(31, 45, 61, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.8);
   display: flex;
   position: relative;
   color: #666;
@@ -52,21 +55,7 @@ $header_height: 50px;
     .header_mode-switch {
       display: flex;
       align-items: center;
-      border: 1px solid #d9d9d9;
-      border-radius: 4px;
-      overflow: hidden;
       margin-right: 15px;
-      .mode-btn {
-        padding: 1px 12px;
-        font-size: 12px;
-        line-height: 20px;
-        color: rgba(0, 0, 0, 0.65);
-        cursor: pointer;
-        &.active {
-          background: #1890ff;
-          color: #fff;
-        }
-      }
     }
   }
   .header_action-item {
@@ -115,12 +104,15 @@ $header_height: 50px;
 }
 
 .header_settings-panel {
-  background: #ffffff;
-  box-shadow: 3px 3px 10px 5px rgba(0, 0, 0, 0.05);
+  background: rgba(255, 255, 255, 0.72);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow: 0 8px 32px rgba(31, 45, 61, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.8);
   width: 800px;
   position: fixed;
   right: 10px;
-  border-radius: 4px;
+  border-radius: 12px;
   z-index: 1000000000;
   padding: 10px 20px;
   height: calc(100% - 100px);

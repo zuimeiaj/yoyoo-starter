@@ -23,7 +23,7 @@ import {
 import './PenTool.scss';
 
 const PREVIEW_COLOR = 'rgba(33,150,243,1)';
-const CLICK_THRESHOLD = 3; // 屏幕像素：手抖容差，超过才算拖动拉手柄
+const CLICK_THRESHOLD = 5; // 屏幕像素：按住移动超过才算拖动拉手柄，否则视为单击落点
 
 export default class PenTool extends React.Component {
   constructor(props) {
@@ -58,6 +58,7 @@ export default class PenTool extends React.Component {
     mask.addEventListener('dragover', this._handleDragOver, false);
     mask.addEventListener('drop', this._handleDrop, false);
     document.addEventListener('mousemove', this._handleMouseMove);
+    document.addEventListener('mouseup', this._handleMouseUp);
     document.addEventListener('keydown', this._handleKeyDown, true);
     let { x, y, scale } = getScreeTransform();
     this._matrix = `matrix(${scale},0,0,${scale},${-x * scale},${-y * scale})`;
@@ -73,6 +74,7 @@ export default class PenTool extends React.Component {
     Event.destroy(canvas_draggable, this._onOtherTool);
     Event.destroy(component_picker_mode, this._onOtherTool);
     document.removeEventListener('mousemove', this._handleMouseMove);
+    document.removeEventListener('mouseup', this._handleMouseUp);
     document.removeEventListener('keydown', this._handleKeyDown, true);
     setPenToolMode(false); // 兜底复位光标
   }
@@ -128,20 +130,8 @@ export default class PenTool extends React.Component {
     e.stopPropagation();
     e.preventDefault();
     let p = pointToWorkspaceCoords(e);
-    let prev = this._points[this._points.length - 1];
-    let inX = 0;
-    let inY = 0;
-    if (prev) {
-      // 单击落点 = 固定悬停预览的曲线：上一锚点 out 取自动半距（已有拖动手柄则保留原值），
-      // 新锚点 in 镜像对称——固定结果与预览虚线完全一致（所见即所得），悬停不再改数据
-      if (!prev.outX && !prev.outY) {
-        prev.outX = (p.x - prev.x) * 0.5;
-        prev.outY = (p.y - prev.y) * 0.5;
-      }
-      inX = -prev.outX;
-      inY = -prev.outY;
-    }
-    this._points.push({ x: p.x, y: p.y, inX, inY, outX: 0, outY: 0 });
+    // 单击落点：完全干净（无任何手柄）——段为直线；曲线只由拖动拉出的对称手柄产生
+    this._points.push({ x: p.x, y: p.y, inX: 0, inY: 0, outX: 0, outY: 0 });
     this._dragIndex = this._points.length - 1;
     this._downClient = { x: e.clientX, y: e.clientY };
     this._dragged = false;
@@ -189,7 +179,8 @@ export default class PenTool extends React.Component {
   };
 
   _handleMouseUp = () => {
-    // 松开：单击的镜像手柄已在 mousedown 捕获、拖动的手柄已落在数据里，这里只收尾
+    // 松开收尾：拖动拉出的手柄已落在锚点数据里（固定不动），这里只清空拖拽状态；
+    // 单击落点无手柄 → 直线段固定。之后移动鼠标仅触发橡皮筋预览，不再改数据
     this._dragIndex = null;
     this._downClient = null;
     this._dragged = false;
@@ -327,19 +318,13 @@ export default class PenTool extends React.Component {
       // 已固定路径（实线）——悬停预览不再写回锚点数据，固定曲线保持原样
       let d = buildPathD(this._points, false);
       // 橡皮筋预览（虚线/半透明，未按下时从最后一个锚点连到鼠标）。
-      // 用虚拟副本计算：上一锚点 out 取自动半距（已有拖动手柄则沿用原值）、鼠标点 in 取镜像，
-      // 与单击落点固定出的曲线完全一致（所见即所得）
+      // 用虚拟副本计算，不改已固定锚点数据：上一锚点有拖出手柄 → 曲线延续切线；
+      // 干净锚点 → 直线（与单击落点固定出的直线段一致，所见即所得）
       let rubber = null;
       let last = this._points[this._points.length - 1];
       if (this._dragIndex == null && this._mouse) {
-        let ox = last.outX;
-        let oy = last.outY;
-        if (!ox && !oy) {
-          ox = (this._mouse.x - last.x) * 0.5;
-          oy = (this._mouse.y - last.y) * 0.5;
-        }
-        let lastV = { x: last.x, y: last.y, inX: 0, inY: 0, outX: ox, outY: oy };
-        let virtual = { x: this._mouse.x, y: this._mouse.y, inX: -ox, inY: -oy, outX: 0, outY: 0 };
+        let lastV = { ...last, inX: 0, inY: 0 };
+        let virtual = { x: this._mouse.x, y: this._mouse.y, inX: 0, inY: 0, outX: 0, outY: 0 };
         rubber = buildPathD([lastV, virtual], false);
       }
       preview = (
@@ -373,11 +358,6 @@ export default class PenTool extends React.Component {
     return (
       <div ref={'mask'} data-event="ignore" className={'pen-tool-mask'} style={{ display: show ? 'block' : 'none' }}>
         {preview}
-        {show ? (
-          <div className={'pen-tool-hint'}>
-            点击放锚点（移动鼠标曲线预览） · 拖动调手柄 · <b>Alt/Option+拖动画圆弧</b> · 双击/Enter 完成 · Esc 取消
-          </div>
-        ) : null}
       </div>
     );
   }

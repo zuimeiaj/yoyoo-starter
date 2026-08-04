@@ -403,6 +403,25 @@ export class InspectorAlign extends InspectorBase {
     }
 }
 
+export class InspectorDirection extends InspectorBase {
+    updateValues = (value) =>{
+        if (this.refs.direction) this.refs.direction.setValue(value)
+    }
+
+
+    render(){
+        return <InspectorControl label={'方向'}>
+            <div className={'control-items'}>
+                <ButtonGroup ref={'direction'} defaultChecked={this.props.value}
+                             onClick={(value) => this.handleChange('direction', value || 'vertical')}>
+                    <Button key={'vertical'}>垂直</Button>
+                    <Button key={'horizontal'}>水平</Button>
+                </ButtonGroup>
+            </div>
+        </InspectorControl>
+    }
+}
+
 export class InspectorSpacing extends InspectorBase {
     updateValues = ({width, height}) =>{
         const {lineHeight, letterSpacing} = this.refs

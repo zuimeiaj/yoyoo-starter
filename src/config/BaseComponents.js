@@ -49,13 +49,6 @@ export const BaseComponents = [
     height: 1,
   },
   {
-    icon: 'xianduan',
-    name: '曲线',
-    type: 'curve',
-    width: 200,
-    height: 100,
-  },
-  {
     icon: 'icon_yuanxing',
     name: '圆',
     type: 'circle',
@@ -84,6 +77,20 @@ export const BaseComponents = [
     width: 180,
   },
   {
+    icon: 'radio',
+    name: '单选',
+    type: 'radio',
+    height: 66,
+    width: 180,
+  },
+  {
+    icon: 'checkboxlist',
+    name: '多选',
+    type: 'checkbox',
+    height: 66,
+    width: 180,
+  },
+  {
     icon: 'tupian-copy-copy',
     name: '图片',
     type: 'image',
@@ -91,7 +98,8 @@ export const BaseComponents = [
     width: 80,
   },
   {
-    icon: 'table',
+    // iconfont 无表格字形，用自绘 SVG（Icon 组件 svg: 前缀）：外框 + 表头横线 + 纵向分列线
+    icon: 'svg:<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18"/>',
     name: '表格',
     type: 'table',
     width: 400,
@@ -100,10 +108,11 @@ export const BaseComponents = [
 ];
 export const ComponentIconMap = {
   select: 'xialaxuanze',
+  radio: 'radio',
+  checkbox: 'checkboxlist',
   textarea: 'fuhao-duohangshurukuang',
   input: 'danhangshuru',
   circle: 'icon_yuanxing',
-  curve: 'xianduan',
   line: 'xianduanceliang',
   bubble: 'qipao',
   text: 'text',
