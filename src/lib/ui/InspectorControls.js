@@ -5,6 +5,7 @@
 
 import React, {Component} from "react";
 import Types from 'prop-types'
+import TextInput from "./TextInput";
 import NumberInput from "./NumberInput";
 import Select from "./Select";
 import ColorInput from "./ColorInput";
@@ -20,6 +21,7 @@ import {component_drag, component_stroke_change} from "../util/actions";
 import {ANIMATIONS, isPlainObject} from "../util/helper";
 import jQuery from 'jquery'
 import {getPageDataWithId} from "../util/page";
+import { Input } from 'antd'
 
 
 
@@ -646,18 +648,21 @@ export class InspectorInteraction extends InspectorBase {
     
     
     handleDrop = (id) =>{
-        if (id.startsWith('page')) {
+        // 页面判定：直接查页面数据。不能用 id.startsWith('page') ——
+        // 框架生成的页面 id 是数字（Date.now），字符串化后不匹配任何前缀
+        let page = getPageDataWithId(id)
+        if (page) {
             // page
             let current = jQuery.extend(true, {}, this.state.current)
-            let page = getPageDataWithId(id)
             current.t = [{id, alias : page.alias}]
             current.o = 'jump'
             current.a = ''
-            console.log(current)
             this.setState({current, type : 'p'})
         } else {
             //view
-            let alias = window.allWidgets[id].alias
+            let view = window.allWidgets[id]
+            if (!view) return // 未注册的组件（如 group 子节点不在 allWidgets 索引中）直接忽略，防止崩溃
+            let alias = view.alias
             let current = Object.assign({}, this.state.current)
             if (this.state.type == 'p') {
                 current.t = [{id, alias}]
@@ -873,5 +878,105 @@ export class InspectorChartConfig extends InspectorBase {
             ))}
             {!series.length && <div className={'chart-color-empty'}>暂无系列数据（双击图表添加）</div>}
         </InspectorControl>)
+    }
+}
+
+/**
+ * 数据展示组件（antd 封装）专有配置字段定义
+ * type: number → NumberInput / color → ColorInput / select → Select / text → TextInput / textarea → antd Input.TextArea（受控）
+ * field: properties 上的配置对象字段名（如 rateConfig），handleChange 增量合并（mergeProps）
+ */
+const FIELD_DEFS = {
+    tagConfig: {label : '标签', fields : [
+        {key : 'text', label : '文本', type : 'text'},
+    ]},
+    rateConfig: {label : '评分', fields : [
+        {key : 'count', label : '个数', type : 'number'},
+        {key : 'value', label : '默认值', type : 'number'},
+        {key : 'size', label : '大小', type : 'number'},
+        {key : 'color', label : '颜色', type : 'color'},
+    ]},
+    progressConfig: {label : '进度条', fields : [
+        {key : 'percent', label : '百分比', type : 'number'},
+        {key : 'color', label : '进度颜色', type : 'color'},
+        {key : 'showText', label : '显示文字', type : 'select', options : [
+            {label : '显示', key : true}, {label : '隐藏', key : false},
+        ]},
+    ]},
+    statisticConfig: {label : '统计数值', fields : [
+        {key : 'title', label : '标题', type : 'text'},
+        {key : 'value', label : '数值', type : 'text'},
+    ]},
+    badgeConfig: {label : '徽标', fields : [
+        {key : 'count', label : '数量', type : 'number'},
+        {key : 'color', label : '颜色', type : 'color'},
+    ]},
+    avatarConfig: {label : '头像', fields : [
+        {key : 'text', label : '文字', type : 'text'},
+        {key : 'color', label : '背景色', type : 'color'},
+        {key : 'shape', label : '形状', type : 'select', options : [
+            {label : '圆形', key : 'circle'}, {label : '方形', key : 'square'},
+        ]},
+    ]},
+    alertConfig: {label : '警告提示', fields : [
+        {key : 'type', label : '类型', type : 'select', options : [
+            {label : '信息', key : 'info'}, {label : '成功', key : 'success'},
+            {label : '警告', key : 'warning'}, {label : '错误', key : 'error'},
+        ]},
+        {key : 'title', label : '标题', type : 'text'},
+        {key : 'description', label : '描述', type : 'textarea'},
+    ]},
+    stepsConfig: {label : '步骤条', fields : [
+        {key : 'stepsOptions', label : '步骤（换行分隔）', type : 'textarea'},
+        {key : 'current', label : '当前步骤', type : 'number'},
+    ]},
+}
+
+/**
+ * 通用配置面板：渲染一组字段（文本/数字/颜色/下拉/多行），
+ * 编辑结果写入 properties[this.props.field] 对象（mergeProps 增量合并）
+ */
+export class InspectorFields extends InspectorBase {
+    updateValues(value){
+        let def = FIELD_DEFS[this.props.field]
+        if (!def || !value) return
+        def.fields.forEach((f) =>{
+            let ref = this.refs[f.key]
+            if (ref && typeof ref.setValue === 'function') ref.setValue(value[f.key])
+        })
+    }
+
+
+    handleFieldChange = (key, value) =>{
+        this.handleChange(key, value)
+    }
+
+
+    renderField(f){
+        let defaultValue = this.props.value ? this.props.value[f.key] : undefined
+        if (f.type === 'number') return <NumberInput ref={f.key} defaultValue={defaultValue}
+                                                     onChange={(v) => this.handleFieldChange(f.key, v)}/>
+        if (f.type === 'color') return <ColorInput ref={f.key} defaultValue={defaultValue}
+                                                   onChange={(v) => this.handleFieldChange(f.key, v)}/>
+        if (f.type === 'select') return <Select ref={f.key} defaultValue={defaultValue} options={f.options}
+                                                onChange={(v) => this.handleFieldChange(f.key, v)}/>
+        if (f.type === 'textarea') return <Input.TextArea data-event='ignore'
+                                                          value={defaultValue || ''}
+                                                          onChange={(e) => this.handleFieldChange(f.key, e.target.value)}
+                                                          autosize={{minRows : 2, maxRows : 6}} style={{fontSize : 12, padding : '4px 8px'}}/>
+        return <TextInput ref={f.key} defaultValue={defaultValue}
+                          onChange={(v) => this.handleFieldChange(f.key, v)}/>
+    }
+
+
+    render(){
+        let def = FIELD_DEFS[this.props.field]
+        if (!def) return null
+        return <InspectorControl label={def.label} className={'ins-control_fields'}>
+            {def.fields.map((f) => <div className={'ins-content_control-item'} key={f.key}>
+                <div className={'ins-content_control-label'}>{f.label}</div>
+                {this.renderField(f)}
+            </div>)}
+        </InspectorControl>
     }
 }

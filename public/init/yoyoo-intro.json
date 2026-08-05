@@ -1,0 +1,433 @@
+{
+  "type": "PAGE",
+  "alias": "yoyoo 介绍页",
+  "id": "page_yoyoo_intro",
+  "width": 800,
+  "height": 1120,
+  "bg": "rgba(255,255,255,1)",
+  "parentid": null,
+  "projectid": "testid",
+  "guides": { "x": [], "y": [] },
+  "nodes": [
+    {
+      "type": "rect",
+      "alias": "Hero 背景",
+      "id": "sb_101",
+      "transform": { "x": 0, "y": 0, "width": 800, "height": 330 },
+      "bg": "rgba(0,105,95,1)"
+    },
+    {
+      "type": "rect",
+      "alias": "Hero 下边框",
+      "id": "sb_102",
+      "transform": { "x": 0, "y": 330, "width": 800, "height": 4 },
+      "bg": "rgba(0,220,190,1)"
+    },
+    {
+      "type": "rect",
+      "alias": "Logo 色块",
+      "id": "sb_103",
+      "transform": { "x": 56, "y": 46, "width": 8, "height": 40 },
+      "bg": "rgba(0,220,190,1)"
+    },
+    {
+      "type": "text",
+      "alias": "Logo",
+      "id": "sb_104",
+      "transform": { "x": 74, "y": 46, "width": 150, "height": 40 },
+      "fontData": "yoyoo",
+      "font": { "size": 34, "color": "rgba(255,255,255,1)" },
+      "fontStyle": ["bold"],
+      "align": { "x": "flex-start", "y": "center" },
+      "spacing": { "height": 1.2, "width": 0 }
+    },
+    {
+      "type": "text",
+      "alias": "主标语",
+      "id": "sb_105",
+      "transform": { "x": 56, "y": 108, "width": 400, "height": 32 },
+      "fontData": "在线可视化页面设计器",
+      "font": { "size": 24, "color": "rgba(255,255,255,1)" },
+      "fontStyle": ["bold"],
+      "align": { "x": "flex-start", "y": "center" }
+    },
+    {
+      "type": "text",
+      "alias": "能力标签",
+      "id": "sb_106",
+      "transform": { "x": 56, "y": 154, "width": 420, "height": 20 },
+      "fontData": "拖拽编排 · 组件丰富 · 数据可视化 · 图片导出",
+      "font": { "size": 13, "color": "rgba(255,255,255,1)" },
+      "align": { "x": "flex-start", "y": "center" }
+    },
+    {
+      "type": "text",
+      "alias": "口号",
+      "id": "sb_107",
+      "transform": { "x": 56, "y": 180, "width": 420, "height": 20 },
+      "fontData": "无需代码，像搭积木一样完成页面设计",
+      "font": { "size": 12, "color": "rgba(255,255,255,0.72)" },
+      "align": { "x": "flex-start", "y": "center" }
+    },
+    {
+      "type": "button",
+      "alias": "开始创作",
+      "id": "sb_108",
+      "transform": { "x": 56, "y": 228, "width": 132, "height": 40 },
+      "fontData": "开始创作",
+      "bg": "rgba(255,255,255,1)",
+      "font": { "size": 14, "color": "rgba(0,105,95,1)" },
+      "fontStyle": ["bold"],
+      "align": { "x": "center", "y": "center" },
+      "corner": { "topLeft": 6, "topRight": 6, "bottomLeft": 6, "bottomRight": 6 }
+    },
+    {
+      "type": "button",
+      "alias": "在线体验",
+      "id": "sb_109",
+      "transform": { "x": 202, "y": 228, "width": 132, "height": 40 },
+      "fontData": "在线体验",
+      "bg": "rgba(255,255,255,0)",
+      "border": { "width": 1, "color": "rgba(255,255,255,0.85)", "style": "solid" },
+      "font": { "size": 14, "color": "rgba(255,255,255,1)" },
+      "align": { "x": "center", "y": "center" },
+      "corner": { "topLeft": 6, "topRight": 6, "bottomLeft": 6, "bottomRight": 6 }
+    },
+    {
+      "type": "chart",
+      "alias": "Hero 饼图",
+      "id": "sb_110",
+      "chartType": "pie",
+      "transform": { "x": 470, "y": 66, "width": 280, "height": 198 },
+      "bg": "rgba(255,255,255,0)",
+      "font": { "size": 12, "color": "rgba(255,255,255,1)" },
+      "chartData": {
+        "categories": ["设计", "开发", "运营", "测试", "产品"],
+        "series": [{ "name": "占比", "data": [35, 25, 20, 12, 8] }]
+      },
+      "chartColors": [
+        "rgba(0,220,190,1)",
+        "rgba(255,196,105,1)",
+        "rgba(130,180,255,1)",
+        "rgba(255,140,160,1)",
+        "rgba(190,160,255,1)"
+      ]
+    },
+    {
+      "type": "text",
+      "alias": "特性标题",
+      "id": "sb_111",
+      "transform": { "x": 56, "y": 372, "width": 200, "height": 32 },
+      "fontData": "核心能力",
+      "font": { "size": 24, "color": "rgba(34,34,34,1)" },
+      "fontStyle": ["bold"],
+      "align": { "x": "flex-start", "y": "center" }
+    },
+    {
+      "type": "text",
+      "alias": "特性副文案",
+      "id": "sb_112",
+      "transform": { "x": 56, "y": 408, "width": 440, "height": 20 },
+      "fontData": "所见即所得 · 页面即数据 · 一切皆可拖拽",
+      "font": { "size": 12, "color": "rgba(140,140,140,1)" },
+      "align": { "x": "flex-start", "y": "center" }
+    },
+    {
+      "type": "rect",
+      "alias": "卡片1 底",
+      "id": "sb_113",
+      "transform": { "x": 56, "y": 446, "width": 332, "height": 130 },
+      "bg": "rgba(255,255,255,1)",
+      "border": { "width": 1, "color": "rgba(228,232,238,1)", "style": "solid" },
+      "corner": { "topLeft": 8, "topRight": 8, "bottomLeft": 8, "bottomRight": 8 }
+    },
+    {
+      "type": "icon",
+      "alias": "拖拽图标",
+      "id": "sb_114",
+      "transform": { "x": 80, "y": 470, "width": 26, "height": 26 },
+      "icon": { "data": "tongyong_edit-line", "content": "e658" },
+      "bg": "rgba(0,150,136,1)"
+    },
+    {
+      "type": "text",
+      "alias": "卡片1 标题",
+      "id": "sb_115",
+      "transform": { "x": 118, "y": 470, "width": 200, "height": 24 },
+      "fontData": "拖拽编排",
+      "font": { "size": 15, "color": "rgba(34,34,34,1)" },
+      "fontStyle": ["bold"],
+      "align": { "x": "flex-start", "y": "center" }
+    },
+    {
+      "type": "text",
+      "alias": "卡片1 描述1",
+      "id": "sb_116",
+      "transform": { "x": 80, "y": 506, "width": 288, "height": 18 },
+      "fontData": "组件自由拖拽、缩放、旋转",
+      "font": { "size": 12, "color": "rgba(120,120,120,1)" },
+      "align": { "x": "flex-start", "y": "center" }
+    },
+    {
+      "type": "text",
+      "alias": "卡片1 描述2",
+      "id": "sb_117",
+      "transform": { "x": 80, "y": 528, "width": 288, "height": 18 },
+      "fontData": "辅助线吸附对齐，排版一步到位",
+      "font": { "size": 12, "color": "rgba(120,120,120,1)" },
+      "align": { "x": "flex-start", "y": "center" }
+    },
+    {
+      "type": "rect",
+      "alias": "卡片2 底",
+      "id": "sb_118",
+      "transform": { "x": 412, "y": 446, "width": 332, "height": 130 },
+      "bg": "rgba(255,255,255,1)",
+      "border": { "width": 1, "color": "rgba(228,232,238,1)", "style": "solid" },
+      "corner": { "topLeft": 8, "topRight": 8, "bottomLeft": 8, "bottomRight": 8 }
+    },
+    {
+      "type": "icon",
+      "alias": "组件图标",
+      "id": "sb_119",
+      "transform": { "x": 436, "y": 470, "width": 26, "height": 26 },
+      "icon": { "data": "tongyong_list", "content": "e681" },
+      "bg": "rgba(84,160,255,1)"
+    },
+    {
+      "type": "text",
+      "alias": "卡片2 标题",
+      "id": "sb_120",
+      "transform": { "x": 474, "y": 470, "width": 200, "height": 24 },
+      "fontData": "组件丰富",
+      "font": { "size": 15, "color": "rgba(34,34,34,1)" },
+      "fontStyle": ["bold"],
+      "align": { "x": "flex-start", "y": "center" }
+    },
+    {
+      "type": "text",
+      "alias": "卡片2 描述1",
+      "id": "sb_121",
+      "transform": { "x": 436, "y": 506, "width": 288, "height": 18 },
+      "fontData": "文本、表单、表格、形状、图表",
+      "font": { "size": 12, "color": "rgba(120,120,120,1)" },
+      "align": { "x": "flex-start", "y": "center" }
+    },
+    {
+      "type": "text",
+      "alias": "卡片2 描述2",
+      "id": "sb_122",
+      "transform": { "x": 436, "y": 528, "width": 288, "height": 18 },
+      "fontData": "覆盖常见页面元素，即拖即用",
+      "font": { "size": 12, "color": "rgba(120,120,120,1)" },
+      "align": { "x": "flex-start", "y": "center" }
+    },
+    {
+      "type": "rect",
+      "alias": "卡片3 底",
+      "id": "sb_123",
+      "transform": { "x": 56, "y": 596, "width": 332, "height": 130 },
+      "bg": "rgba(255,255,255,1)",
+      "border": { "width": 1, "color": "rgba(228,232,238,1)", "style": "solid" },
+      "corner": { "topLeft": 8, "topRight": 8, "bottomLeft": 8, "bottomRight": 8 }
+    },
+    {
+      "type": "icon",
+      "alias": "图表图标",
+      "id": "sb_124",
+      "transform": { "x": 80, "y": 620, "width": 26, "height": 26 },
+      "icon": { "data": "xiaochengxu_bingzhuangtu", "content": "e6c4" },
+      "bg": "rgba(124,93,250,1)"
+    },
+    {
+      "type": "text",
+      "alias": "卡片3 标题",
+      "id": "sb_125",
+      "transform": { "x": 118, "y": 620, "width": 200, "height": 24 },
+      "fontData": "数据可视化",
+      "font": { "size": 15, "color": "rgba(34,34,34,1)" },
+      "fontStyle": ["bold"],
+      "align": { "x": "flex-start", "y": "center" }
+    },
+    {
+      "type": "text",
+      "alias": "卡片3 描述1",
+      "id": "sb_126",
+      "transform": { "x": 80, "y": 656, "width": 288, "height": 18 },
+      "fontData": "柱状、折线、面积、饼图、雷达",
+      "font": { "size": 12, "color": "rgba(120,120,120,1)" },
+      "align": { "x": "flex-start", "y": "center" }
+    },
+    {
+      "type": "text",
+      "alias": "卡片3 描述2",
+      "id": "sb_127",
+      "transform": { "x": 80, "y": 678, "width": 288, "height": 18 },
+      "fontData": "双击图表，表格文本直接编辑数据",
+      "font": { "size": 12, "color": "rgba(120,120,120,1)" },
+      "align": { "x": "flex-start", "y": "center" }
+    },
+    {
+      "type": "rect",
+      "alias": "卡片4 底",
+      "id": "sb_128",
+      "transform": { "x": 412, "y": 596, "width": 332, "height": 130 },
+      "bg": "rgba(255,255,255,1)",
+      "border": { "width": 1, "color": "rgba(228,232,238,1)", "style": "solid" },
+      "corner": { "topLeft": 8, "topRight": 8, "bottomLeft": 8, "bottomRight": 8 }
+    },
+    {
+      "type": "icon",
+      "alias": "导出图标",
+      "id": "sb_129",
+      "transform": { "x": 436, "y": 620, "width": 26, "height": 26 },
+      "icon": { "data": "tongyong_download", "content": "e693" },
+      "bg": "rgba(255,159,67,1)"
+    },
+    {
+      "type": "text",
+      "alias": "卡片4 标题",
+      "id": "sb_130",
+      "transform": { "x": 474, "y": 620, "width": 200, "height": 24 },
+      "fontData": "图片导出",
+      "font": { "size": 15, "color": "rgba(34,34,34,1)" },
+      "fontStyle": ["bold"],
+      "align": { "x": "flex-start", "y": "center" }
+    },
+    {
+      "type": "text",
+      "alias": "卡片4 描述1",
+      "id": "sb_131",
+      "transform": { "x": 436, "y": 656, "width": 288, "height": 18 },
+      "fontData": "所见即所得，一键导出图片",
+      "font": { "size": 12, "color": "rgba(120,120,120,1)" },
+      "align": { "x": "flex-start", "y": "center" }
+    },
+    {
+      "type": "text",
+      "alias": "卡片4 描述2",
+      "id": "sb_132",
+      "transform": { "x": 436, "y": 678, "width": 288, "height": 18 },
+      "fontData": "随时交付，无需前端联调",
+      "font": { "size": 12, "color": "rgba(120,120,120,1)" },
+      "align": { "x": "flex-start", "y": "center" }
+    },
+    {
+      "type": "text",
+      "alias": "示例区标题",
+      "id": "sb_133",
+      "transform": { "x": 56, "y": 774, "width": 300, "height": 28 },
+      "fontData": "由设计器生成的示例",
+      "font": { "size": 20, "color": "rgba(34,34,34,1)" },
+      "fontStyle": ["bold"],
+      "align": { "x": "flex-start", "y": "center" }
+    },
+    {
+      "type": "text",
+      "alias": "示例区副文案",
+      "id": "sb_134",
+      "transform": { "x": 56, "y": 808, "width": 400, "height": 18 },
+      "fontData": "以下模块全部由组件拖拽搭建",
+      "font": { "size": 12, "color": "rgba(140,140,140,1)" },
+      "align": { "x": "flex-start", "y": "center" }
+    },
+    {
+      "type": "text",
+      "alias": "图表示例标题",
+      "id": "sb_135",
+      "transform": { "x": 56, "y": 838, "width": 200, "height": 20 },
+      "fontData": "多系列混合图表",
+      "font": { "size": 15, "color": "rgba(34,34,34,1)" },
+      "fontStyle": ["bold"],
+      "align": { "x": "flex-start", "y": "center" }
+    },
+    {
+      "type": "chart",
+      "alias": "图表示例",
+      "id": "sb_136",
+      "chartType": "bar",
+      "transform": { "x": 56, "y": 866, "width": 420, "height": 200 },
+      "bg": "rgba(247,248,250,1)",
+      "font": { "size": 12, "color": "rgba(80,80,80,1)" },
+      "chartData": {
+        "categories": ["1月", "2月", "3月", "4月"],
+        "series": [
+          { "name": "销量", "data": [120, 200, 150, 80] },
+          { "name": "利润率", "data": [40, 80, 60, 30] }
+        ]
+      },
+      "chartSeries": [
+        { "type": "bar", "color": "rgba(0,150,136,1)" },
+        { "type": "line", "color": "rgba(255,159,67,1)" }
+      ],
+      "chartAxis": { "xLabel": true, "yLabel": true }
+    },
+    {
+      "type": "text",
+      "alias": "表单示例标题",
+      "id": "sb_137",
+      "transform": { "x": 500, "y": 838, "width": 200, "height": 20 },
+      "fontData": "表单交互组件",
+      "font": { "size": 15, "color": "rgba(34,34,34,1)" },
+      "fontStyle": ["bold"],
+      "align": { "x": "flex-start", "y": "center" }
+    },
+    {
+      "type": "input",
+      "alias": "手机号输入",
+      "id": "sb_138",
+      "transform": { "x": 500, "y": 866, "width": 244, "height": 32 },
+      "fontData": "请输入手机号",
+      "font": { "size": 12, "color": "rgba(160,160,160,1)" },
+      "border": { "width": 1, "color": "rgba(200,204,210,1)", "style": "solid" },
+      "corner": { "topLeft": 4, "topRight": 4, "bottomLeft": 4, "bottomRight": 4 }
+    },
+    {
+      "type": "select",
+      "alias": "城市选择",
+      "id": "sb_139",
+      "transform": { "x": 500, "y": 910, "width": 244, "height": 32 },
+      "selectOptions": "北京\n上海\n广州\n深圳",
+      "font": { "size": 12, "color": "rgba(80,80,80,1)" },
+      "bg": "rgba(255,255,255,1)",
+      "border": { "width": 1, "color": "rgba(200,204,210,1)", "style": "solid" },
+      "corner": { "topLeft": 4, "topRight": 4, "bottomLeft": 4, "bottomRight": 4 }
+    },
+    {
+      "type": "radio",
+      "alias": "方向选择",
+      "id": "sb_140",
+      "transform": { "x": 500, "y": 954, "width": 244, "height": 64 },
+      "radioOptions": "> 产品设计\n前端开发\n数据分析",
+      "direction": "vertical",
+      "font": { "size": 12, "color": "rgba(80,80,80,1)" }
+    },
+    {
+      "type": "button",
+      "alias": "预约按钮",
+      "id": "sb_141",
+      "transform": { "x": 500, "y": 1030, "width": 244, "height": 36 },
+      "fontData": "立即预约体验",
+      "bg": "rgba(0,150,136,1)",
+      "font": { "size": 14, "color": "rgba(255,255,255,1)" },
+      "align": { "x": "center", "y": "center" },
+      "corner": { "topLeft": 4, "topRight": 4, "bottomLeft": 4, "bottomRight": 4 }
+    },
+    {
+      "type": "line",
+      "alias": "页脚分隔线",
+      "id": "sb_142",
+      "transform": { "x": 56, "y": 1084, "width": 688, "height": 1 },
+      "border": { "width": 1, "color": "rgba(228,232,238,1)", "style": "solid" }
+    },
+    {
+      "type": "text",
+      "alias": "页脚文案",
+      "id": "sb_143",
+      "transform": { "x": 56, "y": 1096, "width": 688, "height": 18 },
+      "fontData": "YOYOO DESIGN · 在线可视化页面设计器",
+      "font": { "size": 12, "color": "rgba(140,140,140,1)" },
+      "align": { "x": "center", "y": "center" }
+    }
+  ]
+}

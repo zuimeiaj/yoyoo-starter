@@ -1,0 +1,3065 @@
+{
+  "bg": "rgba(245,247,250,1)",
+  "width": 800,
+  "height": 1020,
+  "rotation": 0,
+  "id": 1785894910159,
+  "alias": "用户画像",
+  "parentid": null,
+  "projectid": "testid",
+  "type": "PAGE",
+  "guides": {
+    "x": [],
+    "y": []
+  },
+  "nodes": [
+    {
+      "type": "text",
+      "alias": "标题",
+      "zIndex": 1002,
+      "id": "sub_c1",
+      "selected": false,
+      "transform": {
+        "x": 20,
+        "y": 24,
+        "width": 220,
+        "height": 32,
+        "rotation": 0
+      },
+      "interactions": [],
+      "animations": {},
+      "settings": {
+        "fixation": false,
+        "hover": true,
+        "resize": null,
+        "ratio": false,
+        "isHide": false,
+        "overflow": ""
+      },
+      "border": {
+        "width": 0,
+        "color": "rgba(224,224,224,1)",
+        "style": "solid"
+      },
+      "corner": {
+        "topLeft": 0,
+        "topRight": 0,
+        "bottomLeft": 0,
+        "bottomRight": 0
+      },
+      "shadow": {
+        "blur": 0,
+        "spread": 0,
+        "offsetX": 0,
+        "offsetY": 0,
+        "color": "rgba(255,255,255,1)",
+        "type": "outset"
+      },
+      "bg": "rgba(255,255,255,0)",
+      "font": {
+        "size": 24,
+        "color": "rgba(34,34,34,1)"
+      },
+      "align": {
+        "x": "flex-start",
+        "y": "flex-start"
+      },
+      "fontStyle": [
+        "bold"
+      ],
+      "decorator": "none",
+      "fontData": "用户画像",
+      "spacing": {
+        "height": 1,
+        "width": 0
+      }
+    },
+    {
+      "type": "text",
+      "alias": "副标题",
+      "zIndex": 1003,
+      "id": "sub_c2",
+      "selected": false,
+      "transform": {
+        "x": 20,
+        "y": 60,
+        "width": 400,
+        "height": 18,
+        "rotation": 0
+      },
+      "interactions": [],
+      "animations": {},
+      "settings": {
+        "fixation": false,
+        "hover": true,
+        "resize": null,
+        "ratio": false,
+        "isHide": false,
+        "overflow": ""
+      },
+      "border": {
+        "width": 0,
+        "color": "rgba(224,224,224,1)",
+        "style": "solid"
+      },
+      "corner": {
+        "topLeft": 0,
+        "topRight": 0,
+        "bottomLeft": 0,
+        "bottomRight": 0
+      },
+      "shadow": {
+        "blur": 0,
+        "spread": 0,
+        "offsetX": 0,
+        "offsetY": 0,
+        "color": "rgba(255,255,255,1)",
+        "type": "outset"
+      },
+      "bg": "rgba(255,255,255,0)",
+      "font": {
+        "size": 12,
+        "color": "rgba(150,150,150,1)"
+      },
+      "align": {
+        "x": "flex-start",
+        "y": "flex-start"
+      },
+      "fontStyle": [],
+      "decorator": "none",
+      "fontData": "数据看板 · 实时更新 · 2026-08-04",
+      "spacing": {
+        "height": 1,
+        "width": 0
+      }
+    },
+    {
+      "type": "rect",
+      "alias": "年龄分布竖条",
+      "zIndex": 1004,
+      "id": "sub_c23",
+      "selected": false,
+      "transform": {
+        "x": 20,
+        "y": 210,
+        "width": 3,
+        "height": 16,
+        "rotation": 0
+      },
+      "interactions": [],
+      "animations": {},
+      "settings": {
+        "fixation": false,
+        "hover": true,
+        "resize": null,
+        "ratio": false,
+        "isHide": false,
+        "overflow": ""
+      },
+      "border": {
+        "width": 1,
+        "color": "rgba(221,221,221,1)",
+        "style": "solid"
+      },
+      "corner": {
+        "topLeft": 2,
+        "topRight": 2,
+        "bottomLeft": 2,
+        "bottomRight": 2
+      },
+      "shadow": {
+        "blur": 0,
+        "spread": 0,
+        "offsetX": 0,
+        "offsetY": 0,
+        "color": "rgba(255,255,255,1)",
+        "type": "outset"
+      },
+      "bg": "rgba(0,150,136,1)"
+    },
+    {
+      "type": "text",
+      "alias": "年龄分布标题",
+      "zIndex": 1005,
+      "id": "sub_c24",
+      "selected": false,
+      "transform": {
+        "x": 30,
+        "y": 206,
+        "width": 200,
+        "height": 24,
+        "rotation": 0
+      },
+      "interactions": [],
+      "animations": {},
+      "settings": {
+        "fixation": false,
+        "hover": true,
+        "resize": null,
+        "ratio": false,
+        "isHide": false,
+        "overflow": ""
+      },
+      "border": {
+        "width": 0,
+        "color": "rgba(224,224,224,1)",
+        "style": "solid"
+      },
+      "corner": {
+        "topLeft": 0,
+        "topRight": 0,
+        "bottomLeft": 0,
+        "bottomRight": 0
+      },
+      "shadow": {
+        "blur": 0,
+        "spread": 0,
+        "offsetX": 0,
+        "offsetY": 0,
+        "color": "rgba(255,255,255,1)",
+        "type": "outset"
+      },
+      "bg": "rgba(255,255,255,0)",
+      "font": {
+        "size": 15,
+        "color": "rgba(34,34,34,1)"
+      },
+      "align": {
+        "x": "flex-start",
+        "y": "flex-start"
+      },
+      "fontStyle": [
+        "bold"
+      ],
+      "decorator": "none",
+      "fontData": "年龄分布",
+      "spacing": {
+        "height": 1,
+        "width": 0
+      }
+    },
+    {
+      "type": "chart",
+      "alias": "年龄分布",
+      "zIndex": 1006,
+      "id": "sub_c25",
+      "selected": false,
+      "transform": {
+        "x": 20,
+        "y": 235,
+        "width": 460,
+        "height": 230,
+        "rotation": 0
+      },
+      "interactions": [],
+      "animations": {},
+      "settings": {
+        "fixation": false,
+        "hover": true,
+        "resize": null,
+        "ratio": false,
+        "isHide": false,
+        "overflow": ""
+      },
+      "border": {
+        "width": 0,
+        "color": "rgba(224,224,224,1)",
+        "style": "solid"
+      },
+      "bg": "rgba(255,255,255,1)",
+      "chartType": "bar",
+      "chartData": {
+        "categories": [
+          "18岁以下",
+          "18-24",
+          "25-30",
+          "31-35",
+          "36-40",
+          "40以上"
+        ],
+        "series": [
+          {
+            "name": "人数",
+            "data": [
+              4200,
+              15800,
+              21600,
+              12900,
+              6800,
+              3400
+            ]
+          }
+        ]
+      },
+      "chartSeries": [
+        {
+          "color": "rgba(0,150,136,0.85)"
+        }
+      ],
+      "chartAxis": {
+        "xLabel": true,
+        "yLabel": true
+      }
+    },
+    {
+      "type": "rect",
+      "alias": "性别比例竖条",
+      "zIndex": 1007,
+      "id": "sub_c26",
+      "selected": false,
+      "transform": {
+        "x": 500,
+        "y": 210,
+        "width": 3,
+        "height": 16,
+        "rotation": 0
+      },
+      "interactions": [],
+      "animations": {},
+      "settings": {
+        "fixation": false,
+        "hover": true,
+        "resize": null,
+        "ratio": false,
+        "isHide": false,
+        "overflow": ""
+      },
+      "border": {
+        "width": 1,
+        "color": "rgba(221,221,221,1)",
+        "style": "solid"
+      },
+      "corner": {
+        "topLeft": 2,
+        "topRight": 2,
+        "bottomLeft": 2,
+        "bottomRight": 2
+      },
+      "shadow": {
+        "blur": 0,
+        "spread": 0,
+        "offsetX": 0,
+        "offsetY": 0,
+        "color": "rgba(255,255,255,1)",
+        "type": "outset"
+      },
+      "bg": "rgba(84,160,255,1)"
+    },
+    {
+      "type": "text",
+      "alias": "性别比例标题",
+      "zIndex": 1008,
+      "id": "sub_c27",
+      "selected": false,
+      "transform": {
+        "x": 510,
+        "y": 206,
+        "width": 200,
+        "height": 24,
+        "rotation": 0
+      },
+      "interactions": [],
+      "animations": {},
+      "settings": {
+        "fixation": false,
+        "hover": true,
+        "resize": null,
+        "ratio": false,
+        "isHide": false,
+        "overflow": ""
+      },
+      "border": {
+        "width": 0,
+        "color": "rgba(224,224,224,1)",
+        "style": "solid"
+      },
+      "corner": {
+        "topLeft": 0,
+        "topRight": 0,
+        "bottomLeft": 0,
+        "bottomRight": 0
+      },
+      "shadow": {
+        "blur": 0,
+        "spread": 0,
+        "offsetX": 0,
+        "offsetY": 0,
+        "color": "rgba(255,255,255,1)",
+        "type": "outset"
+      },
+      "bg": "rgba(255,255,255,0)",
+      "font": {
+        "size": 15,
+        "color": "rgba(34,34,34,1)"
+      },
+      "align": {
+        "x": "flex-start",
+        "y": "flex-start"
+      },
+      "fontStyle": [
+        "bold"
+      ],
+      "decorator": "none",
+      "fontData": "性别比例",
+      "spacing": {
+        "height": 1,
+        "width": 0
+      }
+    },
+    {
+      "type": "chart",
+      "alias": "性别比例",
+      "zIndex": 1009,
+      "id": "sub_c28",
+      "selected": false,
+      "transform": {
+        "x": 500,
+        "y": 235,
+        "width": 280,
+        "height": 230,
+        "rotation": 0
+      },
+      "interactions": [],
+      "animations": {},
+      "settings": {
+        "fixation": false,
+        "hover": true,
+        "resize": null,
+        "ratio": false,
+        "isHide": false,
+        "overflow": ""
+      },
+      "border": {
+        "width": 0,
+        "color": "rgba(224,224,224,1)",
+        "style": "solid"
+      },
+      "bg": "rgba(255,255,255,1)",
+      "chartType": "pie",
+      "chartData": {
+        "categories": [
+          "男",
+          "女",
+          "未知"
+        ],
+        "series": [
+          {
+            "name": "性别",
+            "data": [
+              52,
+              45,
+              3
+            ]
+          }
+        ]
+      },
+      "chartSeries": [
+        {
+          "color": "rgba(84,160,255,1)"
+        },
+        {
+          "color": "rgba(255,99,132,1)"
+        },
+        {
+          "color": "rgba(200,200,200,1)"
+        }
+      ],
+      "chartAxis": {
+        "xLabel": true,
+        "yLabel": true
+      }
+    },
+    {
+      "type": "rect",
+      "alias": "活跃趋势竖条",
+      "zIndex": 1010,
+      "id": "sub_c29",
+      "selected": false,
+      "transform": {
+        "x": 20,
+        "y": 480,
+        "width": 3,
+        "height": 16,
+        "rotation": 0
+      },
+      "interactions": [],
+      "animations": {},
+      "settings": {
+        "fixation": false,
+        "hover": true,
+        "resize": null,
+        "ratio": false,
+        "isHide": false,
+        "overflow": ""
+      },
+      "border": {
+        "width": 1,
+        "color": "rgba(221,221,221,1)",
+        "style": "solid"
+      },
+      "corner": {
+        "topLeft": 2,
+        "topRight": 2,
+        "bottomLeft": 2,
+        "bottomRight": 2
+      },
+      "shadow": {
+        "blur": 0,
+        "spread": 0,
+        "offsetX": 0,
+        "offsetY": 0,
+        "color": "rgba(255,255,255,1)",
+        "type": "outset"
+      },
+      "bg": "rgba(0,150,136,1)"
+    },
+    {
+      "type": "text",
+      "alias": "活跃趋势标题",
+      "zIndex": 1011,
+      "id": "sub_c30",
+      "selected": false,
+      "transform": {
+        "x": 30,
+        "y": 476,
+        "width": 200,
+        "height": 24,
+        "rotation": 0
+      },
+      "interactions": [],
+      "animations": {},
+      "settings": {
+        "fixation": false,
+        "hover": true,
+        "resize": null,
+        "ratio": false,
+        "isHide": false,
+        "overflow": ""
+      },
+      "border": {
+        "width": 0,
+        "color": "rgba(224,224,224,1)",
+        "style": "solid"
+      },
+      "corner": {
+        "topLeft": 0,
+        "topRight": 0,
+        "bottomLeft": 0,
+        "bottomRight": 0
+      },
+      "shadow": {
+        "blur": 0,
+        "spread": 0,
+        "offsetX": 0,
+        "offsetY": 0,
+        "color": "rgba(255,255,255,1)",
+        "type": "outset"
+      },
+      "bg": "rgba(255,255,255,0)",
+      "font": {
+        "size": 15,
+        "color": "rgba(34,34,34,1)"
+      },
+      "align": {
+        "x": "flex-start",
+        "y": "flex-start"
+      },
+      "fontStyle": [
+        "bold"
+      ],
+      "decorator": "none",
+      "fontData": "活跃趋势",
+      "spacing": {
+        "height": 1,
+        "width": 0
+      }
+    },
+    {
+      "type": "chart",
+      "alias": "活跃趋势",
+      "zIndex": 1012,
+      "id": "sub_c31",
+      "selected": false,
+      "transform": {
+        "x": 20,
+        "y": 505,
+        "width": 460,
+        "height": 230,
+        "rotation": 0
+      },
+      "interactions": [],
+      "animations": {},
+      "settings": {
+        "fixation": false,
+        "hover": true,
+        "resize": null,
+        "ratio": false,
+        "isHide": false,
+        "overflow": ""
+      },
+      "border": {
+        "width": 0,
+        "color": "rgba(224,224,224,1)",
+        "style": "solid"
+      },
+      "bg": "rgba(255,255,255,1)",
+      "chartType": "line",
+      "chartData": {
+        "categories": [
+          "周一",
+          "周二",
+          "周三",
+          "周四",
+          "周五",
+          "周六",
+          "周日"
+        ],
+        "series": [
+          {
+            "name": "日活",
+            "data": [
+              21000,
+              23800,
+              19600,
+              25400,
+              28900,
+              32100,
+              30500
+            ]
+          },
+          {
+            "name": "周活",
+            "data": [
+              88000,
+              92000,
+              86500,
+              94000,
+              102000,
+              118000,
+              121000
+            ]
+          }
+        ]
+      },
+      "chartSeries": [
+        {
+          "type": "line",
+          "color": "rgba(84,160,255,1)"
+        },
+        {
+          "type": "area",
+          "color": "rgba(0,150,136,0.35)"
+        }
+      ],
+      "chartAxis": {
+        "xLabel": true,
+        "yLabel": true
+      }
+    },
+    {
+      "type": "rect",
+      "alias": "兴趣偏好竖条",
+      "zIndex": 1013,
+      "id": "sub_c32",
+      "selected": false,
+      "transform": {
+        "x": 500,
+        "y": 480,
+        "width": 3,
+        "height": 16,
+        "rotation": 0
+      },
+      "interactions": [],
+      "animations": {},
+      "settings": {
+        "fixation": false,
+        "hover": true,
+        "resize": null,
+        "ratio": false,
+        "isHide": false,
+        "overflow": ""
+      },
+      "border": {
+        "width": 1,
+        "color": "rgba(221,221,221,1)",
+        "style": "solid"
+      },
+      "corner": {
+        "topLeft": 2,
+        "topRight": 2,
+        "bottomLeft": 2,
+        "bottomRight": 2
+      },
+      "shadow": {
+        "blur": 0,
+        "spread": 0,
+        "offsetX": 0,
+        "offsetY": 0,
+        "color": "rgba(255,255,255,1)",
+        "type": "outset"
+      },
+      "bg": "rgba(155,89,182,1)"
+    },
+    {
+      "type": "text",
+      "alias": "兴趣偏好标题",
+      "zIndex": 1014,
+      "id": "sub_c33",
+      "selected": false,
+      "transform": {
+        "x": 510,
+        "y": 476,
+        "width": 200,
+        "height": 24,
+        "rotation": 0
+      },
+      "interactions": [],
+      "animations": {},
+      "settings": {
+        "fixation": false,
+        "hover": true,
+        "resize": null,
+        "ratio": false,
+        "isHide": false,
+        "overflow": ""
+      },
+      "border": {
+        "width": 0,
+        "color": "rgba(224,224,224,1)",
+        "style": "solid"
+      },
+      "corner": {
+        "topLeft": 0,
+        "topRight": 0,
+        "bottomLeft": 0,
+        "bottomRight": 0
+      },
+      "shadow": {
+        "blur": 0,
+        "spread": 0,
+        "offsetX": 0,
+        "offsetY": 0,
+        "color": "rgba(255,255,255,1)",
+        "type": "outset"
+      },
+      "bg": "rgba(255,255,255,0)",
+      "font": {
+        "size": 15,
+        "color": "rgba(34,34,34,1)"
+      },
+      "align": {
+        "x": "flex-start",
+        "y": "flex-start"
+      },
+      "fontStyle": [
+        "bold"
+      ],
+      "decorator": "none",
+      "fontData": "兴趣偏好",
+      "spacing": {
+        "height": 1,
+        "width": 0
+      }
+    },
+    {
+      "type": "chart",
+      "alias": "兴趣偏好",
+      "zIndex": 1015,
+      "id": "sub_c34",
+      "selected": false,
+      "transform": {
+        "x": 500,
+        "y": 505,
+        "width": 280,
+        "height": 230,
+        "rotation": 0
+      },
+      "interactions": [],
+      "animations": {},
+      "settings": {
+        "fixation": false,
+        "hover": true,
+        "resize": null,
+        "ratio": false,
+        "isHide": false,
+        "overflow": ""
+      },
+      "border": {
+        "width": 0,
+        "color": "rgba(224,224,224,1)",
+        "style": "solid"
+      },
+      "bg": "rgba(255,255,255,1)",
+      "chartType": "radar",
+      "chartData": {
+        "categories": [
+          "购物",
+          "社交",
+          "游戏",
+          "学习",
+          "影音"
+        ],
+        "series": [
+          {
+            "name": "兴趣指数",
+            "data": [
+              82,
+              95,
+              70,
+              60,
+              88
+            ]
+          }
+        ]
+      },
+      "chartSeries": [
+        {
+          "color": "rgba(155,89,182,1)"
+        }
+      ],
+      "chartAxis": {
+        "xLabel": true,
+        "yLabel": true
+      }
+    },
+    {
+      "type": "rect",
+      "alias": "最近用户竖条",
+      "zIndex": 1016,
+      "id": "sub_c35",
+      "selected": false,
+      "transform": {
+        "x": 20,
+        "y": 750,
+        "width": 3,
+        "height": 16,
+        "rotation": 0
+      },
+      "interactions": [],
+      "animations": {},
+      "settings": {
+        "fixation": false,
+        "hover": true,
+        "resize": null,
+        "ratio": false,
+        "isHide": false,
+        "overflow": ""
+      },
+      "border": {
+        "width": 1,
+        "color": "rgba(221,221,221,1)",
+        "style": "solid"
+      },
+      "corner": {
+        "topLeft": 2,
+        "topRight": 2,
+        "bottomLeft": 2,
+        "bottomRight": 2
+      },
+      "shadow": {
+        "blur": 0,
+        "spread": 0,
+        "offsetX": 0,
+        "offsetY": 0,
+        "color": "rgba(255,255,255,1)",
+        "type": "outset"
+      },
+      "bg": "rgba(0,150,136,1)"
+    },
+    {
+      "type": "text",
+      "alias": "最近用户标题",
+      "zIndex": 1017,
+      "id": "sub_c36",
+      "selected": false,
+      "transform": {
+        "x": 30,
+        "y": 746,
+        "width": 200,
+        "height": 24,
+        "rotation": 0
+      },
+      "interactions": [],
+      "animations": {},
+      "settings": {
+        "fixation": false,
+        "hover": true,
+        "resize": null,
+        "ratio": false,
+        "isHide": false,
+        "overflow": ""
+      },
+      "border": {
+        "width": 0,
+        "color": "rgba(224,224,224,1)",
+        "style": "solid"
+      },
+      "corner": {
+        "topLeft": 0,
+        "topRight": 0,
+        "bottomLeft": 0,
+        "bottomRight": 0
+      },
+      "shadow": {
+        "blur": 0,
+        "spread": 0,
+        "offsetX": 0,
+        "offsetY": 0,
+        "color": "rgba(255,255,255,1)",
+        "type": "outset"
+      },
+      "bg": "rgba(255,255,255,0)",
+      "font": {
+        "size": 15,
+        "color": "rgba(34,34,34,1)"
+      },
+      "align": {
+        "x": "flex-start",
+        "y": "flex-start"
+      },
+      "fontStyle": [
+        "bold"
+      ],
+      "decorator": "none",
+      "fontData": "最近活跃用户",
+      "spacing": {
+        "height": 1,
+        "width": 0
+      }
+    },
+    {
+      "type": "table",
+      "alias": "最近活跃用户",
+      "zIndex": 1018,
+      "id": "sub_c37",
+      "selected": false,
+      "transform": {
+        "x": 20,
+        "y": 775,
+        "width": 460,
+        "height": 230,
+        "rotation": 0
+      },
+      "interactions": [],
+      "animations": {},
+      "settings": {
+        "fixation": false,
+        "hover": true,
+        "resize": null,
+        "ratio": false,
+        "isHide": false,
+        "overflow": ""
+      },
+      "border": {
+        "width": 1,
+        "color": "rgba(217,217,217,1)",
+        "style": "solid"
+      },
+      "bg": "rgba(255,255,255,0)",
+      "tableData": [
+        [
+          "用户名",
+          "性别",
+          "城市",
+          "最近活跃"
+        ],
+        [
+          "Lemon_9527",
+          "男",
+          "北京",
+          "3 分钟前"
+        ],
+        [
+          "Cindy_W",
+          "女",
+          "上海",
+          "12 分钟前"
+        ],
+        [
+          "FlyingFish",
+          "男",
+          "广州",
+          "1 小时前"
+        ],
+        [
+          "Momo",
+          "女",
+          "深圳",
+          "2 小时前"
+        ],
+        [
+          "夜航星",
+          "男",
+          "杭州",
+          "5 小时前"
+        ]
+      ],
+      "rowRatios": null,
+      "colRatios": null,
+      "mergedCells": [],
+      "cellStyles": [
+        [
+          {
+            "bg": "rgba(0,150,136,0.08)",
+            "bold": true,
+            "size": 12,
+            "color": "rgba(0,150,136,1)"
+          }
+        ]
+      ]
+    },
+    {
+      "type": "rect",
+      "alias": "城市分布竖条",
+      "zIndex": 1019,
+      "id": "sub_c38",
+      "selected": false,
+      "transform": {
+        "x": 500,
+        "y": 750,
+        "width": 3,
+        "height": 16,
+        "rotation": 0
+      },
+      "interactions": [],
+      "animations": {},
+      "settings": {
+        "fixation": false,
+        "hover": true,
+        "resize": null,
+        "ratio": false,
+        "isHide": false,
+        "overflow": ""
+      },
+      "border": {
+        "width": 1,
+        "color": "rgba(221,221,221,1)",
+        "style": "solid"
+      },
+      "corner": {
+        "topLeft": 2,
+        "topRight": 2,
+        "bottomLeft": 2,
+        "bottomRight": 2
+      },
+      "shadow": {
+        "blur": 0,
+        "spread": 0,
+        "offsetX": 0,
+        "offsetY": 0,
+        "color": "rgba(255,255,255,1)",
+        "type": "outset"
+      },
+      "bg": "rgba(255,159,67,1)"
+    },
+    {
+      "type": "text",
+      "alias": "城市分布标题",
+      "zIndex": 1020,
+      "id": "sub_c39",
+      "selected": false,
+      "transform": {
+        "x": 510,
+        "y": 746,
+        "width": 200,
+        "height": 24,
+        "rotation": 0
+      },
+      "interactions": [],
+      "animations": {},
+      "settings": {
+        "fixation": false,
+        "hover": true,
+        "resize": null,
+        "ratio": false,
+        "isHide": false,
+        "overflow": ""
+      },
+      "border": {
+        "width": 0,
+        "color": "rgba(224,224,224,1)",
+        "style": "solid"
+      },
+      "corner": {
+        "topLeft": 0,
+        "topRight": 0,
+        "bottomLeft": 0,
+        "bottomRight": 0
+      },
+      "shadow": {
+        "blur": 0,
+        "spread": 0,
+        "offsetX": 0,
+        "offsetY": 0,
+        "color": "rgba(255,255,255,1)",
+        "type": "outset"
+      },
+      "bg": "rgba(255,255,255,0)",
+      "font": {
+        "size": 15,
+        "color": "rgba(34,34,34,1)"
+      },
+      "align": {
+        "x": "flex-start",
+        "y": "flex-start"
+      },
+      "fontStyle": [
+        "bold"
+      ],
+      "decorator": "none",
+      "fontData": "城市分布 TOP4",
+      "spacing": {
+        "height": 1,
+        "width": 0
+      }
+    },
+    {
+      "type": "block",
+      "alias": "Block",
+      "zIndex": -1,
+      "id": "sb_9464147379999",
+      "selected": false,
+      "transform": {
+        "x": 500,
+        "y": 775,
+        "width": 280,
+        "height": 230,
+        "rotation": 0
+      },
+      "interactions": [],
+      "animations": {},
+      "settings": {
+        "fixation": false,
+        "hover": true,
+        "resize": null,
+        "ratio": false,
+        "isHide": false,
+        "overflow": ""
+      },
+      "border": {
+        "width": 0,
+        "color": "rgba(224,224,224,1)",
+        "style": "solid"
+      },
+      "corner": {
+        "topLeft": 0,
+        "topRight": 0,
+        "bottomLeft": 0,
+        "bottomRight": 0
+      },
+      "shadow": {
+        "blur": 0,
+        "spread": 0,
+        "offsetX": 0,
+        "offsetY": 0,
+        "color": "rgba(255,255,255,1)",
+        "type": "outset"
+      },
+      "bg": "rgba(255,255,255,0)",
+      "items": [
+        {
+          "type": "rect",
+          "alias": "矩形",
+          "zIndex": 1037,
+          "id": "sub_c41",
+          "selected": false,
+          "transform": {
+            "x": 500,
+            "y": 775,
+            "width": 280,
+            "height": 230,
+            "rotation": 0
+          },
+          "interactions": [],
+          "animations": {},
+          "settings": {
+            "fixation": false,
+            "hover": true,
+            "resize": null,
+            "ratio": false,
+            "isHide": false,
+            "overflow": "",
+            "isLock": true
+          },
+          "border": {
+            "width": 1,
+            "color": "rgba(238,240,244,1)",
+            "style": "solid"
+          },
+          "corner": {
+            "topLeft": 10,
+            "topRight": 10,
+            "bottomLeft": 10,
+            "bottomRight": 10
+          },
+          "shadow": {
+            "blur": 12,
+            "spread": 0,
+            "offsetX": 0,
+            "offsetY": 2,
+            "color": "rgba(0,0,0,0.06)",
+            "type": "outset"
+          },
+          "bg": "rgba(255,255,255,1)"
+        },
+        {
+          "type": "text",
+          "alias": "文本",
+          "zIndex": 1038,
+          "id": "sub_c42",
+          "selected": false,
+          "transform": {
+            "x": 520,
+            "y": 799,
+            "width": 60,
+            "height": 18,
+            "rotation": 0
+          },
+          "interactions": [],
+          "animations": {},
+          "settings": {
+            "fixation": false,
+            "hover": true,
+            "resize": null,
+            "ratio": false,
+            "isHide": false,
+            "overflow": "",
+            "isLock": true
+          },
+          "border": {
+            "width": 0,
+            "color": "rgba(224,224,224,1)",
+            "style": "solid"
+          },
+          "corner": {
+            "topLeft": 0,
+            "topRight": 0,
+            "bottomLeft": 0,
+            "bottomRight": 0
+          },
+          "shadow": {
+            "blur": 0,
+            "spread": 0,
+            "offsetX": 0,
+            "offsetY": 0,
+            "color": "rgba(255,255,255,1)",
+            "type": "outset"
+          },
+          "bg": "rgba(255,255,255,0)",
+          "font": {
+            "size": 13,
+            "color": "rgba(80,80,80,1)"
+          },
+          "align": {
+            "x": "flex-start",
+            "y": "flex-start"
+          },
+          "fontStyle": [],
+          "decorator": "none",
+          "fontData": "北京",
+          "spacing": {
+            "height": 1,
+            "width": 0
+          }
+        },
+        {
+          "type": "rect",
+          "alias": "矩形",
+          "zIndex": 1039,
+          "id": "sub_c43",
+          "selected": false,
+          "transform": {
+            "x": 592,
+            "y": 804,
+            "width": 128,
+            "height": 8,
+            "rotation": 0
+          },
+          "interactions": [],
+          "animations": {},
+          "settings": {
+            "fixation": false,
+            "hover": true,
+            "resize": null,
+            "ratio": false,
+            "isHide": false,
+            "overflow": "",
+            "isLock": true
+          },
+          "border": {
+            "width": 1,
+            "color": "rgba(221,221,221,1)",
+            "style": "solid"
+          },
+          "corner": {
+            "topLeft": 4,
+            "topRight": 4,
+            "bottomLeft": 4,
+            "bottomRight": 4
+          },
+          "shadow": {
+            "blur": 0,
+            "spread": 0,
+            "offsetX": 0,
+            "offsetY": 0,
+            "color": "rgba(255,255,255,1)",
+            "type": "outset"
+          },
+          "bg": "rgba(0,150,136,0.8)"
+        },
+        {
+          "type": "text",
+          "alias": "文本",
+          "zIndex": 1040,
+          "id": "sub_c44",
+          "selected": false,
+          "transform": {
+            "x": 730,
+            "y": 799,
+            "width": 36,
+            "height": 18,
+            "rotation": 0
+          },
+          "interactions": [],
+          "animations": {},
+          "settings": {
+            "fixation": false,
+            "hover": true,
+            "resize": null,
+            "ratio": false,
+            "isHide": false,
+            "overflow": "",
+            "isLock": true
+          },
+          "border": {
+            "width": 0,
+            "color": "rgba(224,224,224,1)",
+            "style": "solid"
+          },
+          "corner": {
+            "topLeft": 0,
+            "topRight": 0,
+            "bottomLeft": 0,
+            "bottomRight": 0
+          },
+          "shadow": {
+            "blur": 0,
+            "spread": 0,
+            "offsetX": 0,
+            "offsetY": 0,
+            "color": "rgba(255,255,255,1)",
+            "type": "outset"
+          },
+          "bg": "rgba(255,255,255,0)",
+          "font": {
+            "size": 13,
+            "color": "rgba(34,34,34,1)"
+          },
+          "align": {
+            "x": "flex-end",
+            "y": "flex-start"
+          },
+          "fontStyle": [],
+          "decorator": "none",
+          "fontData": "32%",
+          "spacing": {
+            "height": 1,
+            "width": 0
+          }
+        },
+        {
+          "type": "text",
+          "alias": "文本",
+          "zIndex": 1041,
+          "id": "sub_c45",
+          "selected": false,
+          "transform": {
+            "x": 520,
+            "y": 841,
+            "width": 60,
+            "height": 18,
+            "rotation": 0
+          },
+          "interactions": [],
+          "animations": {},
+          "settings": {
+            "fixation": false,
+            "hover": true,
+            "resize": null,
+            "ratio": false,
+            "isHide": false,
+            "overflow": "",
+            "isLock": true
+          },
+          "border": {
+            "width": 0,
+            "color": "rgba(224,224,224,1)",
+            "style": "solid"
+          },
+          "corner": {
+            "topLeft": 0,
+            "topRight": 0,
+            "bottomLeft": 0,
+            "bottomRight": 0
+          },
+          "shadow": {
+            "blur": 0,
+            "spread": 0,
+            "offsetX": 0,
+            "offsetY": 0,
+            "color": "rgba(255,255,255,1)",
+            "type": "outset"
+          },
+          "bg": "rgba(255,255,255,0)",
+          "font": {
+            "size": 13,
+            "color": "rgba(80,80,80,1)"
+          },
+          "align": {
+            "x": "flex-start",
+            "y": "flex-start"
+          },
+          "fontStyle": [],
+          "decorator": "none",
+          "fontData": "上海",
+          "spacing": {
+            "height": 1,
+            "width": 0
+          }
+        },
+        {
+          "type": "rect",
+          "alias": "矩形",
+          "zIndex": 1042,
+          "id": "sub_c46",
+          "selected": false,
+          "transform": {
+            "x": 592,
+            "y": 846,
+            "width": 100,
+            "height": 8,
+            "rotation": 0
+          },
+          "interactions": [],
+          "animations": {},
+          "settings": {
+            "fixation": false,
+            "hover": true,
+            "resize": null,
+            "ratio": false,
+            "isHide": false,
+            "overflow": "",
+            "isLock": true
+          },
+          "border": {
+            "width": 1,
+            "color": "rgba(221,221,221,1)",
+            "style": "solid"
+          },
+          "corner": {
+            "topLeft": 4,
+            "topRight": 4,
+            "bottomLeft": 4,
+            "bottomRight": 4
+          },
+          "shadow": {
+            "blur": 0,
+            "spread": 0,
+            "offsetX": 0,
+            "offsetY": 0,
+            "color": "rgba(255,255,255,1)",
+            "type": "outset"
+          },
+          "bg": "rgba(0,150,136,0.65)"
+        },
+        {
+          "type": "text",
+          "alias": "文本",
+          "zIndex": 1043,
+          "id": "sub_c47",
+          "selected": false,
+          "transform": {
+            "x": 730,
+            "y": 841,
+            "width": 36,
+            "height": 18,
+            "rotation": 0
+          },
+          "interactions": [],
+          "animations": {},
+          "settings": {
+            "fixation": false,
+            "hover": true,
+            "resize": null,
+            "ratio": false,
+            "isHide": false,
+            "overflow": "",
+            "isLock": true
+          },
+          "border": {
+            "width": 0,
+            "color": "rgba(224,224,224,1)",
+            "style": "solid"
+          },
+          "corner": {
+            "topLeft": 0,
+            "topRight": 0,
+            "bottomLeft": 0,
+            "bottomRight": 0
+          },
+          "shadow": {
+            "blur": 0,
+            "spread": 0,
+            "offsetX": 0,
+            "offsetY": 0,
+            "color": "rgba(255,255,255,1)",
+            "type": "outset"
+          },
+          "bg": "rgba(255,255,255,0)",
+          "font": {
+            "size": 13,
+            "color": "rgba(34,34,34,1)"
+          },
+          "align": {
+            "x": "flex-end",
+            "y": "flex-start"
+          },
+          "fontStyle": [],
+          "decorator": "none",
+          "fontData": "25%",
+          "spacing": {
+            "height": 1,
+            "width": 0
+          }
+        },
+        {
+          "type": "text",
+          "alias": "文本",
+          "zIndex": 1044,
+          "id": "sub_c48",
+          "selected": false,
+          "transform": {
+            "x": 520,
+            "y": 883,
+            "width": 60,
+            "height": 18,
+            "rotation": 0
+          },
+          "interactions": [],
+          "animations": {},
+          "settings": {
+            "fixation": false,
+            "hover": true,
+            "resize": null,
+            "ratio": false,
+            "isHide": false,
+            "overflow": "",
+            "isLock": true
+          },
+          "border": {
+            "width": 0,
+            "color": "rgba(224,224,224,1)",
+            "style": "solid"
+          },
+          "corner": {
+            "topLeft": 0,
+            "topRight": 0,
+            "bottomLeft": 0,
+            "bottomRight": 0
+          },
+          "shadow": {
+            "blur": 0,
+            "spread": 0,
+            "offsetX": 0,
+            "offsetY": 0,
+            "color": "rgba(255,255,255,1)",
+            "type": "outset"
+          },
+          "bg": "rgba(255,255,255,0)",
+          "font": {
+            "size": 13,
+            "color": "rgba(80,80,80,1)"
+          },
+          "align": {
+            "x": "flex-start",
+            "y": "flex-start"
+          },
+          "fontStyle": [],
+          "decorator": "none",
+          "fontData": "广州",
+          "spacing": {
+            "height": 1,
+            "width": 0
+          }
+        },
+        {
+          "type": "rect",
+          "alias": "矩形",
+          "zIndex": 1045,
+          "id": "sub_c49",
+          "selected": false,
+          "transform": {
+            "x": 592,
+            "y": 888,
+            "width": 72,
+            "height": 8,
+            "rotation": 0
+          },
+          "interactions": [],
+          "animations": {},
+          "settings": {
+            "fixation": false,
+            "hover": true,
+            "resize": null,
+            "ratio": false,
+            "isHide": false,
+            "overflow": "",
+            "isLock": true
+          },
+          "border": {
+            "width": 1,
+            "color": "rgba(221,221,221,1)",
+            "style": "solid"
+          },
+          "corner": {
+            "topLeft": 4,
+            "topRight": 4,
+            "bottomLeft": 4,
+            "bottomRight": 4
+          },
+          "shadow": {
+            "blur": 0,
+            "spread": 0,
+            "offsetX": 0,
+            "offsetY": 0,
+            "color": "rgba(255,255,255,1)",
+            "type": "outset"
+          },
+          "bg": "rgba(0,150,136,0.5)"
+        },
+        {
+          "type": "text",
+          "alias": "文本",
+          "zIndex": 1046,
+          "id": "sub_c50",
+          "selected": false,
+          "transform": {
+            "x": 730,
+            "y": 883,
+            "width": 36,
+            "height": 18,
+            "rotation": 0
+          },
+          "interactions": [],
+          "animations": {},
+          "settings": {
+            "fixation": false,
+            "hover": true,
+            "resize": null,
+            "ratio": false,
+            "isHide": false,
+            "overflow": "",
+            "isLock": true
+          },
+          "border": {
+            "width": 0,
+            "color": "rgba(224,224,224,1)",
+            "style": "solid"
+          },
+          "corner": {
+            "topLeft": 0,
+            "topRight": 0,
+            "bottomLeft": 0,
+            "bottomRight": 0
+          },
+          "shadow": {
+            "blur": 0,
+            "spread": 0,
+            "offsetX": 0,
+            "offsetY": 0,
+            "color": "rgba(255,255,255,1)",
+            "type": "outset"
+          },
+          "bg": "rgba(255,255,255,0)",
+          "font": {
+            "size": 13,
+            "color": "rgba(34,34,34,1)"
+          },
+          "align": {
+            "x": "flex-end",
+            "y": "flex-start"
+          },
+          "fontStyle": [],
+          "decorator": "none",
+          "fontData": "18%",
+          "spacing": {
+            "height": 1,
+            "width": 0
+          }
+        },
+        {
+          "type": "text",
+          "alias": "文本",
+          "zIndex": 1047,
+          "id": "sub_c51",
+          "selected": false,
+          "transform": {
+            "x": 520,
+            "y": 925,
+            "width": 60,
+            "height": 18,
+            "rotation": 0
+          },
+          "interactions": [],
+          "animations": {},
+          "settings": {
+            "fixation": false,
+            "hover": true,
+            "resize": null,
+            "ratio": false,
+            "isHide": false,
+            "overflow": "",
+            "isLock": true
+          },
+          "border": {
+            "width": 0,
+            "color": "rgba(224,224,224,1)",
+            "style": "solid"
+          },
+          "corner": {
+            "topLeft": 0,
+            "topRight": 0,
+            "bottomLeft": 0,
+            "bottomRight": 0
+          },
+          "shadow": {
+            "blur": 0,
+            "spread": 0,
+            "offsetX": 0,
+            "offsetY": 0,
+            "color": "rgba(255,255,255,1)",
+            "type": "outset"
+          },
+          "bg": "rgba(255,255,255,0)",
+          "font": {
+            "size": 13,
+            "color": "rgba(80,80,80,1)"
+          },
+          "align": {
+            "x": "flex-start",
+            "y": "flex-start"
+          },
+          "fontStyle": [],
+          "decorator": "none",
+          "fontData": "深圳",
+          "spacing": {
+            "height": 1,
+            "width": 0
+          }
+        },
+        {
+          "type": "rect",
+          "alias": "矩形",
+          "zIndex": 1048,
+          "id": "sub_c52",
+          "selected": false,
+          "transform": {
+            "x": 592,
+            "y": 930,
+            "width": 60,
+            "height": 8,
+            "rotation": 0
+          },
+          "interactions": [],
+          "animations": {},
+          "settings": {
+            "fixation": false,
+            "hover": true,
+            "resize": null,
+            "ratio": false,
+            "isHide": false,
+            "overflow": "",
+            "isLock": true
+          },
+          "border": {
+            "width": 1,
+            "color": "rgba(221,221,221,1)",
+            "style": "solid"
+          },
+          "corner": {
+            "topLeft": 4,
+            "topRight": 4,
+            "bottomLeft": 4,
+            "bottomRight": 4
+          },
+          "shadow": {
+            "blur": 0,
+            "spread": 0,
+            "offsetX": 0,
+            "offsetY": 0,
+            "color": "rgba(255,255,255,1)",
+            "type": "outset"
+          },
+          "bg": "rgba(0,150,136,0.4)"
+        },
+        {
+          "type": "text",
+          "alias": "文本",
+          "zIndex": 1049,
+          "id": "sub_c53",
+          "selected": false,
+          "transform": {
+            "x": 730,
+            "y": 925,
+            "width": 36,
+            "height": 18,
+            "rotation": 0
+          },
+          "interactions": [],
+          "animations": {},
+          "settings": {
+            "fixation": false,
+            "hover": true,
+            "resize": null,
+            "ratio": false,
+            "isHide": false,
+            "overflow": "",
+            "isLock": true
+          },
+          "border": {
+            "width": 0,
+            "color": "rgba(224,224,224,1)",
+            "style": "solid"
+          },
+          "corner": {
+            "topLeft": 0,
+            "topRight": 0,
+            "bottomLeft": 0,
+            "bottomRight": 0
+          },
+          "shadow": {
+            "blur": 0,
+            "spread": 0,
+            "offsetX": 0,
+            "offsetY": 0,
+            "color": "rgba(255,255,255,1)",
+            "type": "outset"
+          },
+          "bg": "rgba(255,255,255,0)",
+          "font": {
+            "size": 13,
+            "color": "rgba(34,34,34,1)"
+          },
+          "align": {
+            "x": "flex-end",
+            "y": "flex-start"
+          },
+          "fontStyle": [],
+          "decorator": "none",
+          "fontData": "15%",
+          "spacing": {
+            "height": 1,
+            "width": 0
+          }
+        },
+        {
+          "type": "text",
+          "alias": "文本",
+          "zIndex": 1050,
+          "id": "sub_c54",
+          "selected": false,
+          "transform": {
+            "x": 520,
+            "y": 967,
+            "width": 60,
+            "height": 18,
+            "rotation": 0
+          },
+          "interactions": [],
+          "animations": {},
+          "settings": {
+            "fixation": false,
+            "hover": true,
+            "resize": null,
+            "ratio": false,
+            "isHide": false,
+            "overflow": "",
+            "isLock": true
+          },
+          "border": {
+            "width": 0,
+            "color": "rgba(224,224,224,1)",
+            "style": "solid"
+          },
+          "corner": {
+            "topLeft": 0,
+            "topRight": 0,
+            "bottomLeft": 0,
+            "bottomRight": 0
+          },
+          "shadow": {
+            "blur": 0,
+            "spread": 0,
+            "offsetX": 0,
+            "offsetY": 0,
+            "color": "rgba(255,255,255,1)",
+            "type": "outset"
+          },
+          "bg": "rgba(255,255,255,0)",
+          "font": {
+            "size": 13,
+            "color": "rgba(80,80,80,1)"
+          },
+          "align": {
+            "x": "flex-start",
+            "y": "flex-start"
+          },
+          "fontStyle": [],
+          "decorator": "none",
+          "fontData": "杭州",
+          "spacing": {
+            "height": 1,
+            "width": 0
+          }
+        },
+        {
+          "type": "rect",
+          "alias": "矩形",
+          "zIndex": 1051,
+          "id": "sub_c55",
+          "selected": false,
+          "transform": {
+            "x": 592,
+            "y": 972,
+            "width": 40,
+            "height": 8,
+            "rotation": 0
+          },
+          "interactions": [],
+          "animations": {},
+          "settings": {
+            "fixation": false,
+            "hover": true,
+            "resize": null,
+            "ratio": false,
+            "isHide": false,
+            "overflow": "",
+            "isLock": true
+          },
+          "border": {
+            "width": 1,
+            "color": "rgba(221,221,221,1)",
+            "style": "solid"
+          },
+          "corner": {
+            "topLeft": 4,
+            "topRight": 4,
+            "bottomLeft": 4,
+            "bottomRight": 4
+          },
+          "shadow": {
+            "blur": 0,
+            "spread": 0,
+            "offsetX": 0,
+            "offsetY": 0,
+            "color": "rgba(255,255,255,1)",
+            "type": "outset"
+          },
+          "bg": "rgba(0,150,136,0.3)"
+        },
+        {
+          "type": "text",
+          "alias": "文本",
+          "zIndex": 1052,
+          "id": "sub_c56",
+          "selected": false,
+          "transform": {
+            "x": 730,
+            "y": 967,
+            "width": 36,
+            "height": 18,
+            "rotation": 0
+          },
+          "interactions": [],
+          "animations": {},
+          "settings": {
+            "fixation": false,
+            "hover": true,
+            "resize": null,
+            "ratio": false,
+            "isHide": false,
+            "overflow": "",
+            "isLock": true
+          },
+          "border": {
+            "width": 0,
+            "color": "rgba(224,224,224,1)",
+            "style": "solid"
+          },
+          "corner": {
+            "topLeft": 0,
+            "topRight": 0,
+            "bottomLeft": 0,
+            "bottomRight": 0
+          },
+          "shadow": {
+            "blur": 0,
+            "spread": 0,
+            "offsetX": 0,
+            "offsetY": 0,
+            "color": "rgba(255,255,255,1)",
+            "type": "outset"
+          },
+          "bg": "rgba(255,255,255,0)",
+          "font": {
+            "size": 13,
+            "color": "rgba(34,34,34,1)"
+          },
+          "align": {
+            "x": "flex-end",
+            "y": "flex-start"
+          },
+          "fontStyle": [],
+          "decorator": "none",
+          "fontData": "10%",
+          "spacing": {
+            "height": 1,
+            "width": 0
+          }
+        }
+      ]
+    },
+    {
+      "type": "block",
+      "alias": "Block",
+      "zIndex": -1,
+      "id": "sb_3731399420533",
+      "selected": false,
+      "transform": {
+        "x": 20,
+        "y": 95,
+        "width": 180,
+        "height": 90,
+        "rotation": 0
+      },
+      "interactions": [],
+      "animations": {},
+      "settings": {
+        "fixation": false,
+        "hover": true,
+        "resize": null,
+        "ratio": false,
+        "isHide": false,
+        "overflow": ""
+      },
+      "border": {
+        "width": 0,
+        "color": "rgba(224,224,224,1)",
+        "style": "solid"
+      },
+      "corner": {
+        "topLeft": 0,
+        "topRight": 0,
+        "bottomLeft": 0,
+        "bottomRight": 0
+      },
+      "shadow": {
+        "blur": 0,
+        "spread": 0,
+        "offsetX": 0,
+        "offsetY": 0,
+        "color": "rgba(255,255,255,1)",
+        "type": "outset"
+      },
+      "bg": "rgba(255,255,255,0)",
+      "items": [
+        {
+          "type": "rect",
+          "alias": "矩形",
+          "zIndex": 1021,
+          "id": "sub_c4",
+          "selected": false,
+          "transform": {
+            "x": 20,
+            "y": 95,
+            "width": 180,
+            "height": 90,
+            "rotation": 0
+          },
+          "interactions": [],
+          "animations": {},
+          "settings": {
+            "fixation": false,
+            "hover": true,
+            "resize": null,
+            "ratio": false,
+            "isHide": false,
+            "overflow": "",
+            "isLock": true
+          },
+          "border": {
+            "width": 1,
+            "color": "rgba(238,240,244,1)",
+            "style": "solid"
+          },
+          "corner": {
+            "topLeft": 10,
+            "topRight": 10,
+            "bottomLeft": 10,
+            "bottomRight": 10
+          },
+          "shadow": {
+            "blur": 12,
+            "spread": 0,
+            "offsetX": 0,
+            "offsetY": 2,
+            "color": "rgba(0,0,0,0.06)",
+            "type": "outset"
+          },
+          "bg": "rgba(255,255,255,1)"
+        },
+        {
+          "type": "rect",
+          "alias": "矩形",
+          "zIndex": 1022,
+          "id": "sub_c5",
+          "selected": false,
+          "transform": {
+            "x": 20,
+            "y": 95,
+            "width": 4,
+            "height": 90,
+            "rotation": 0
+          },
+          "interactions": [],
+          "animations": {},
+          "settings": {
+            "fixation": false,
+            "hover": true,
+            "resize": null,
+            "ratio": false,
+            "isHide": false,
+            "overflow": "",
+            "isLock": true
+          },
+          "border": {
+            "width": 1,
+            "color": "rgba(221,221,221,1)",
+            "style": "solid"
+          },
+          "corner": {
+            "topLeft": 10,
+            "topRight": 0,
+            "bottomLeft": 10,
+            "bottomRight": 0
+          },
+          "shadow": {
+            "blur": 0,
+            "spread": 0,
+            "offsetX": 0,
+            "offsetY": 0,
+            "color": "rgba(255,255,255,1)",
+            "type": "outset"
+          },
+          "bg": "rgba(0,150,136,1)"
+        },
+        {
+          "type": "text",
+          "alias": "文本",
+          "zIndex": 1023,
+          "id": "sub_c6",
+          "selected": false,
+          "transform": {
+            "x": 40,
+            "y": 111,
+            "width": 150,
+            "height": 30,
+            "rotation": 0
+          },
+          "interactions": [],
+          "animations": {},
+          "settings": {
+            "fixation": false,
+            "hover": true,
+            "resize": null,
+            "ratio": false,
+            "isHide": false,
+            "overflow": "",
+            "isLock": true
+          },
+          "border": {
+            "width": 0,
+            "color": "rgba(224,224,224,1)",
+            "style": "solid"
+          },
+          "corner": {
+            "topLeft": 0,
+            "topRight": 0,
+            "bottomLeft": 0,
+            "bottomRight": 0
+          },
+          "shadow": {
+            "blur": 0,
+            "spread": 0,
+            "offsetX": 0,
+            "offsetY": 0,
+            "color": "rgba(255,255,255,1)",
+            "type": "outset"
+          },
+          "bg": "rgba(255,255,255,0)",
+          "font": {
+            "size": 24,
+            "color": "rgba(0,150,136,1)"
+          },
+          "align": {
+            "x": "flex-start",
+            "y": "flex-start"
+          },
+          "fontStyle": [
+            "bold"
+          ],
+          "decorator": "none",
+          "fontData": "128,450",
+          "spacing": {
+            "height": 1,
+            "width": 0
+          }
+        },
+        {
+          "type": "text",
+          "alias": "文本",
+          "zIndex": 1024,
+          "id": "sub_c7",
+          "selected": false,
+          "transform": {
+            "x": 40,
+            "y": 149,
+            "width": 150,
+            "height": 18,
+            "rotation": 0
+          },
+          "interactions": [],
+          "animations": {},
+          "settings": {
+            "fixation": false,
+            "hover": true,
+            "resize": null,
+            "ratio": false,
+            "isHide": false,
+            "overflow": "",
+            "isLock": true
+          },
+          "border": {
+            "width": 0,
+            "color": "rgba(224,224,224,1)",
+            "style": "solid"
+          },
+          "corner": {
+            "topLeft": 0,
+            "topRight": 0,
+            "bottomLeft": 0,
+            "bottomRight": 0
+          },
+          "shadow": {
+            "blur": 0,
+            "spread": 0,
+            "offsetX": 0,
+            "offsetY": 0,
+            "color": "rgba(255,255,255,1)",
+            "type": "outset"
+          },
+          "bg": "rgba(255,255,255,0)",
+          "font": {
+            "size": 12,
+            "color": "rgba(140,140,140,1)"
+          },
+          "align": {
+            "x": "flex-start",
+            "y": "flex-start"
+          },
+          "fontStyle": [],
+          "decorator": "none",
+          "fontData": "总用户数",
+          "spacing": {
+            "height": 1,
+            "width": 0
+          }
+        }
+      ]
+    },
+    {
+      "type": "block",
+      "alias": "Block",
+      "zIndex": -1,
+      "id": "sb_2552752394041",
+      "selected": false,
+      "transform": {
+        "x": 213,
+        "y": 95,
+        "width": 180,
+        "height": 90,
+        "rotation": 0
+      },
+      "interactions": [],
+      "animations": {},
+      "settings": {
+        "fixation": false,
+        "hover": true,
+        "resize": null,
+        "ratio": false,
+        "isHide": false,
+        "overflow": ""
+      },
+      "border": {
+        "width": 0,
+        "color": "rgba(224,224,224,1)",
+        "style": "solid"
+      },
+      "corner": {
+        "topLeft": 0,
+        "topRight": 0,
+        "bottomLeft": 0,
+        "bottomRight": 0
+      },
+      "shadow": {
+        "blur": 0,
+        "spread": 0,
+        "offsetX": 0,
+        "offsetY": 0,
+        "color": "rgba(255,255,255,1)",
+        "type": "outset"
+      },
+      "bg": "rgba(255,255,255,0)",
+      "items": [
+        {
+          "type": "rect",
+          "alias": "矩形",
+          "zIndex": 1025,
+          "id": "sub_c9",
+          "selected": false,
+          "transform": {
+            "x": 213,
+            "y": 95,
+            "width": 180,
+            "height": 90,
+            "rotation": 0
+          },
+          "interactions": [],
+          "animations": {},
+          "settings": {
+            "fixation": false,
+            "hover": true,
+            "resize": null,
+            "ratio": false,
+            "isHide": false,
+            "overflow": "",
+            "isLock": true
+          },
+          "border": {
+            "width": 1,
+            "color": "rgba(238,240,244,1)",
+            "style": "solid"
+          },
+          "corner": {
+            "topLeft": 10,
+            "topRight": 10,
+            "bottomLeft": 10,
+            "bottomRight": 10
+          },
+          "shadow": {
+            "blur": 12,
+            "spread": 0,
+            "offsetX": 0,
+            "offsetY": 2,
+            "color": "rgba(0,0,0,0.06)",
+            "type": "outset"
+          },
+          "bg": "rgba(255,255,255,1)"
+        },
+        {
+          "type": "rect",
+          "alias": "矩形",
+          "zIndex": 1026,
+          "id": "sub_c10",
+          "selected": false,
+          "transform": {
+            "x": 213,
+            "y": 95,
+            "width": 4,
+            "height": 90,
+            "rotation": 0
+          },
+          "interactions": [],
+          "animations": {},
+          "settings": {
+            "fixation": false,
+            "hover": true,
+            "resize": null,
+            "ratio": false,
+            "isHide": false,
+            "overflow": "",
+            "isLock": true
+          },
+          "border": {
+            "width": 1,
+            "color": "rgba(221,221,221,1)",
+            "style": "solid"
+          },
+          "corner": {
+            "topLeft": 10,
+            "topRight": 0,
+            "bottomLeft": 10,
+            "bottomRight": 0
+          },
+          "shadow": {
+            "blur": 0,
+            "spread": 0,
+            "offsetX": 0,
+            "offsetY": 0,
+            "color": "rgba(255,255,255,1)",
+            "type": "outset"
+          },
+          "bg": "rgba(84,160,255,1)"
+        },
+        {
+          "type": "text",
+          "alias": "文本",
+          "zIndex": 1027,
+          "id": "sub_c11",
+          "selected": false,
+          "transform": {
+            "x": 233,
+            "y": 111,
+            "width": 150,
+            "height": 30,
+            "rotation": 0
+          },
+          "interactions": [],
+          "animations": {},
+          "settings": {
+            "fixation": false,
+            "hover": true,
+            "resize": null,
+            "ratio": false,
+            "isHide": false,
+            "overflow": "",
+            "isLock": true
+          },
+          "border": {
+            "width": 0,
+            "color": "rgba(224,224,224,1)",
+            "style": "solid"
+          },
+          "corner": {
+            "topLeft": 0,
+            "topRight": 0,
+            "bottomLeft": 0,
+            "bottomRight": 0
+          },
+          "shadow": {
+            "blur": 0,
+            "spread": 0,
+            "offsetX": 0,
+            "offsetY": 0,
+            "color": "rgba(255,255,255,1)",
+            "type": "outset"
+          },
+          "bg": "rgba(255,255,255,0)",
+          "font": {
+            "size": 24,
+            "color": "rgba(84,160,255,1)"
+          },
+          "align": {
+            "x": "flex-start",
+            "y": "flex-start"
+          },
+          "fontStyle": [
+            "bold"
+          ],
+          "decorator": "none",
+          "fontData": "32,180",
+          "spacing": {
+            "height": 1,
+            "width": 0
+          }
+        },
+        {
+          "type": "text",
+          "alias": "文本",
+          "zIndex": 1028,
+          "id": "sub_c12",
+          "selected": false,
+          "transform": {
+            "x": 233,
+            "y": 149,
+            "width": 150,
+            "height": 18,
+            "rotation": 0
+          },
+          "interactions": [],
+          "animations": {},
+          "settings": {
+            "fixation": false,
+            "hover": true,
+            "resize": null,
+            "ratio": false,
+            "isHide": false,
+            "overflow": "",
+            "isLock": true
+          },
+          "border": {
+            "width": 0,
+            "color": "rgba(224,224,224,1)",
+            "style": "solid"
+          },
+          "corner": {
+            "topLeft": 0,
+            "topRight": 0,
+            "bottomLeft": 0,
+            "bottomRight": 0
+          },
+          "shadow": {
+            "blur": 0,
+            "spread": 0,
+            "offsetX": 0,
+            "offsetY": 0,
+            "color": "rgba(255,255,255,1)",
+            "type": "outset"
+          },
+          "bg": "rgba(255,255,255,0)",
+          "font": {
+            "size": 12,
+            "color": "rgba(140,140,140,1)"
+          },
+          "align": {
+            "x": "flex-start",
+            "y": "flex-start"
+          },
+          "fontStyle": [],
+          "decorator": "none",
+          "fontData": "活跃用户",
+          "spacing": {
+            "height": 1,
+            "width": 0
+          }
+        }
+      ]
+    },
+    {
+      "type": "block",
+      "alias": "Block",
+      "zIndex": -1,
+      "id": "sb_7352640430832",
+      "selected": false,
+      "transform": {
+        "x": 406,
+        "y": 95,
+        "width": 180,
+        "height": 90,
+        "rotation": 0
+      },
+      "interactions": [],
+      "animations": {},
+      "settings": {
+        "fixation": false,
+        "hover": true,
+        "resize": null,
+        "ratio": false,
+        "isHide": false,
+        "overflow": ""
+      },
+      "border": {
+        "width": 0,
+        "color": "rgba(224,224,224,1)",
+        "style": "solid"
+      },
+      "corner": {
+        "topLeft": 0,
+        "topRight": 0,
+        "bottomLeft": 0,
+        "bottomRight": 0
+      },
+      "shadow": {
+        "blur": 0,
+        "spread": 0,
+        "offsetX": 0,
+        "offsetY": 0,
+        "color": "rgba(255,255,255,1)",
+        "type": "outset"
+      },
+      "bg": "rgba(255,255,255,0)",
+      "items": [
+        {
+          "type": "rect",
+          "alias": "矩形",
+          "zIndex": 1029,
+          "id": "sub_c14",
+          "selected": false,
+          "transform": {
+            "x": 406,
+            "y": 95,
+            "width": 180,
+            "height": 90,
+            "rotation": 0
+          },
+          "interactions": [],
+          "animations": {},
+          "settings": {
+            "fixation": false,
+            "hover": true,
+            "resize": null,
+            "ratio": false,
+            "isHide": false,
+            "overflow": "",
+            "isLock": true
+          },
+          "border": {
+            "width": 1,
+            "color": "rgba(238,240,244,1)",
+            "style": "solid"
+          },
+          "corner": {
+            "topLeft": 10,
+            "topRight": 10,
+            "bottomLeft": 10,
+            "bottomRight": 10
+          },
+          "shadow": {
+            "blur": 12,
+            "spread": 0,
+            "offsetX": 0,
+            "offsetY": 2,
+            "color": "rgba(0,0,0,0.06)",
+            "type": "outset"
+          },
+          "bg": "rgba(255,255,255,1)"
+        },
+        {
+          "type": "rect",
+          "alias": "矩形",
+          "zIndex": 1030,
+          "id": "sub_c15",
+          "selected": false,
+          "transform": {
+            "x": 406,
+            "y": 95,
+            "width": 4,
+            "height": 90,
+            "rotation": 0
+          },
+          "interactions": [],
+          "animations": {},
+          "settings": {
+            "fixation": false,
+            "hover": true,
+            "resize": null,
+            "ratio": false,
+            "isHide": false,
+            "overflow": "",
+            "isLock": true
+          },
+          "border": {
+            "width": 1,
+            "color": "rgba(221,221,221,1)",
+            "style": "solid"
+          },
+          "corner": {
+            "topLeft": 10,
+            "topRight": 0,
+            "bottomLeft": 10,
+            "bottomRight": 0
+          },
+          "shadow": {
+            "blur": 0,
+            "spread": 0,
+            "offsetX": 0,
+            "offsetY": 0,
+            "color": "rgba(255,255,255,1)",
+            "type": "outset"
+          },
+          "bg": "rgba(255,159,67,1)"
+        },
+        {
+          "type": "text",
+          "alias": "文本",
+          "zIndex": 1031,
+          "id": "sub_c16",
+          "selected": false,
+          "transform": {
+            "x": 426,
+            "y": 111,
+            "width": 150,
+            "height": 30,
+            "rotation": 0
+          },
+          "interactions": [],
+          "animations": {},
+          "settings": {
+            "fixation": false,
+            "hover": true,
+            "resize": null,
+            "ratio": false,
+            "isHide": false,
+            "overflow": "",
+            "isLock": true
+          },
+          "border": {
+            "width": 0,
+            "color": "rgba(224,224,224,1)",
+            "style": "solid"
+          },
+          "corner": {
+            "topLeft": 0,
+            "topRight": 0,
+            "bottomLeft": 0,
+            "bottomRight": 0
+          },
+          "shadow": {
+            "blur": 0,
+            "spread": 0,
+            "offsetX": 0,
+            "offsetY": 0,
+            "color": "rgba(255,255,255,1)",
+            "type": "outset"
+          },
+          "bg": "rgba(255,255,255,0)",
+          "font": {
+            "size": 24,
+            "color": "rgba(255,159,67,1)"
+          },
+          "align": {
+            "x": "flex-start",
+            "y": "flex-start"
+          },
+          "fontStyle": [
+            "bold"
+          ],
+          "decorator": "none",
+          "fontData": "1,024",
+          "spacing": {
+            "height": 1,
+            "width": 0
+          }
+        },
+        {
+          "type": "text",
+          "alias": "文本",
+          "zIndex": 1032,
+          "id": "sub_c17",
+          "selected": false,
+          "transform": {
+            "x": 426,
+            "y": 149,
+            "width": 150,
+            "height": 18,
+            "rotation": 0
+          },
+          "interactions": [],
+          "animations": {},
+          "settings": {
+            "fixation": false,
+            "hover": true,
+            "resize": null,
+            "ratio": false,
+            "isHide": false,
+            "overflow": "",
+            "isLock": true
+          },
+          "border": {
+            "width": 0,
+            "color": "rgba(224,224,224,1)",
+            "style": "solid"
+          },
+          "corner": {
+            "topLeft": 0,
+            "topRight": 0,
+            "bottomLeft": 0,
+            "bottomRight": 0
+          },
+          "shadow": {
+            "blur": 0,
+            "spread": 0,
+            "offsetX": 0,
+            "offsetY": 0,
+            "color": "rgba(255,255,255,1)",
+            "type": "outset"
+          },
+          "bg": "rgba(255,255,255,0)",
+          "font": {
+            "size": 12,
+            "color": "rgba(140,140,140,1)"
+          },
+          "align": {
+            "x": "flex-start",
+            "y": "flex-start"
+          },
+          "fontStyle": [],
+          "decorator": "none",
+          "fontData": "今日新增",
+          "spacing": {
+            "height": 1,
+            "width": 0
+          }
+        }
+      ]
+    },
+    {
+      "type": "block",
+      "alias": "Block",
+      "zIndex": -1,
+      "id": "sb_5531929496160",
+      "selected": false,
+      "transform": {
+        "x": 600,
+        "y": 95,
+        "width": 180,
+        "height": 90,
+        "rotation": 0
+      },
+      "interactions": [],
+      "animations": {},
+      "settings": {
+        "fixation": false,
+        "hover": true,
+        "resize": null,
+        "ratio": false,
+        "isHide": false,
+        "overflow": ""
+      },
+      "border": {
+        "width": 0,
+        "color": "rgba(224,224,224,1)",
+        "style": "solid"
+      },
+      "corner": {
+        "topLeft": 0,
+        "topRight": 0,
+        "bottomLeft": 0,
+        "bottomRight": 0
+      },
+      "shadow": {
+        "blur": 0,
+        "spread": 0,
+        "offsetX": 0,
+        "offsetY": 0,
+        "color": "rgba(255,255,255,1)",
+        "type": "outset"
+      },
+      "bg": "rgba(255,255,255,0)",
+      "items": [
+        {
+          "type": "rect",
+          "alias": "矩形",
+          "zIndex": 1033,
+          "id": "sub_c19",
+          "selected": false,
+          "transform": {
+            "x": 600,
+            "y": 95,
+            "width": 180,
+            "height": 90,
+            "rotation": 0
+          },
+          "interactions": [],
+          "animations": {},
+          "settings": {
+            "fixation": false,
+            "hover": true,
+            "resize": null,
+            "ratio": false,
+            "isHide": false,
+            "overflow": "",
+            "isLock": true
+          },
+          "border": {
+            "width": 1,
+            "color": "rgba(238,240,244,1)",
+            "style": "solid"
+          },
+          "corner": {
+            "topLeft": 10,
+            "topRight": 10,
+            "bottomLeft": 10,
+            "bottomRight": 10
+          },
+          "shadow": {
+            "blur": 12,
+            "spread": 0,
+            "offsetX": 0,
+            "offsetY": 2,
+            "color": "rgba(0,0,0,0.06)",
+            "type": "outset"
+          },
+          "bg": "rgba(255,255,255,1)"
+        },
+        {
+          "type": "rect",
+          "alias": "矩形",
+          "zIndex": 1034,
+          "id": "sub_c20",
+          "selected": false,
+          "transform": {
+            "x": 600,
+            "y": 95,
+            "width": 4,
+            "height": 90,
+            "rotation": 0
+          },
+          "interactions": [],
+          "animations": {},
+          "settings": {
+            "fixation": false,
+            "hover": true,
+            "resize": null,
+            "ratio": false,
+            "isHide": false,
+            "overflow": "",
+            "isLock": true
+          },
+          "border": {
+            "width": 1,
+            "color": "rgba(221,221,221,1)",
+            "style": "solid"
+          },
+          "corner": {
+            "topLeft": 10,
+            "topRight": 0,
+            "bottomLeft": 10,
+            "bottomRight": 0
+          },
+          "shadow": {
+            "blur": 0,
+            "spread": 0,
+            "offsetX": 0,
+            "offsetY": 0,
+            "color": "rgba(255,255,255,1)",
+            "type": "outset"
+          },
+          "bg": "rgba(155,89,182,1)"
+        },
+        {
+          "type": "text",
+          "alias": "文本",
+          "zIndex": 1035,
+          "id": "sub_c21",
+          "selected": false,
+          "transform": {
+            "x": 620,
+            "y": 111,
+            "width": 150,
+            "height": 30,
+            "rotation": 0
+          },
+          "interactions": [],
+          "animations": {},
+          "settings": {
+            "fixation": false,
+            "hover": true,
+            "resize": null,
+            "ratio": false,
+            "isHide": false,
+            "overflow": "",
+            "isLock": true
+          },
+          "border": {
+            "width": 0,
+            "color": "rgba(224,224,224,1)",
+            "style": "solid"
+          },
+          "corner": {
+            "topLeft": 0,
+            "topRight": 0,
+            "bottomLeft": 0,
+            "bottomRight": 0
+          },
+          "shadow": {
+            "blur": 0,
+            "spread": 0,
+            "offsetX": 0,
+            "offsetY": 0,
+            "color": "rgba(255,255,255,1)",
+            "type": "outset"
+          },
+          "bg": "rgba(255,255,255,0)",
+          "font": {
+            "size": 24,
+            "color": "rgba(155,89,182,1)"
+          },
+          "align": {
+            "x": "flex-start",
+            "y": "flex-start"
+          },
+          "fontStyle": [
+            "bold"
+          ],
+          "decorator": "none",
+          "fontData": "68%",
+          "spacing": {
+            "height": 1,
+            "width": 0
+          }
+        },
+        {
+          "type": "text",
+          "alias": "文本",
+          "zIndex": 1036,
+          "id": "sub_c22",
+          "selected": false,
+          "transform": {
+            "x": 620,
+            "y": 149,
+            "width": 150,
+            "height": 18,
+            "rotation": 0
+          },
+          "interactions": [],
+          "animations": {},
+          "settings": {
+            "fixation": false,
+            "hover": true,
+            "resize": null,
+            "ratio": false,
+            "isHide": false,
+            "overflow": "",
+            "isLock": true
+          },
+          "border": {
+            "width": 0,
+            "color": "rgba(224,224,224,1)",
+            "style": "solid"
+          },
+          "corner": {
+            "topLeft": 0,
+            "topRight": 0,
+            "bottomLeft": 0,
+            "bottomRight": 0
+          },
+          "shadow": {
+            "blur": 0,
+            "spread": 0,
+            "offsetX": 0,
+            "offsetY": 0,
+            "color": "rgba(255,255,255,1)",
+            "type": "outset"
+          },
+          "bg": "rgba(255,255,255,0)",
+          "font": {
+            "size": 12,
+            "color": "rgba(140,140,140,1)"
+          },
+          "align": {
+            "x": "flex-start",
+            "y": "flex-start"
+          },
+          "fontStyle": [],
+          "decorator": "none",
+          "fontData": "次月留存率",
+          "spacing": {
+            "height": 1,
+            "width": 0
+          }
+        }
+      ]
+    }
+  ]
+}

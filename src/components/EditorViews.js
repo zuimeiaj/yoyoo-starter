@@ -22,6 +22,8 @@ import { proxyTransformOffset } from '@/lib/util/controllers';
 import { MasterProperties } from '@/lib/properties/group';
 import { getQuery, uuid } from '@/lib/util/helper';
 import { message } from 'antd';
+import LinkLayer from '../lib/Widget/LinkLayer';
+import LinkAnchors from '../lib/Widget/LinkAnchors';
 
 export default class EditorViews extends React.Component {
   containerId = 'layout-editor-view';
@@ -105,6 +107,9 @@ export default class EditorViews extends React.Component {
         {/* All components */}
         <Stage zoomable={true} className={'editor-control-panel'}>
           <EditorControllers />
+          {/* 连线层（SVG 曲线，随 Stage 缩放/滚动）与选中组件连线锚点 */}
+          <LinkLayer />
+          <LinkAnchors />
         </Stage>
 
         {/*No ZOOM*/}

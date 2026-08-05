@@ -91,6 +91,7 @@ import {
   saveToRemoteFromStorage,
   selectPage,
   setPageData,
+  getPageDataWithId,
   updatePageGuides,
   updatePageInfo,
 } from '../lib/util/page'
@@ -108,6 +109,8 @@ import {
   context_show,
   context_unpack,
   controllers_apply_group,
+  link_remove,
+  link_remove_anchor,
   workspace_part_master,
   workspace_save_master,
   workspace_scroll_center,
@@ -237,6 +240,8 @@ class EditorControllers extends React.Component {
     Event.listen(app_toggle_selection_type, this.handleSelectionTypeChange)
     Event.listen(controllers_apply_group, this.handleApplyGroup)
     Event.listen(component_empty, this.handleEmpty)
+    Event.listen(link_remove, this.handleLinkRemove)
+    Event.listen(link_remove_anchor, this.handleLinkRemoveAnchor)
     Event.listen(context_unpack, this.handleApplyUngroup)
     Event.listen(workspace_save_master, this.handleSaveMaster)
     Event.listen(workspace_part_master, this.handlePartMaster)
@@ -249,6 +254,53 @@ class EditorControllers extends React.Component {
 
   handleEmpty = () => {
     clearUnlockedView()
+  }
+
+  /**
+   * 删除一条连线（LinkLayer 派发 link_remove）：在树内定位含该连线 id 的起点组件，
+   * 过滤后走标准 setState（持久化 + PATHES 重建 + 撤销栈），不依赖任何组件实例引用
+   */
+  handleLinkRemove = (linkId) => {
+    let updated = false
+    let walk = (list) =>
+      list.map((item) => {
+        if (!updated && item.connections && item.connections.some((c) => c.id === linkId)) {
+          item = createViewFrom(item)
+          item.connections = item.connections.filter((c) => c.id !== linkId)
+          updated = true
+        }
+        if (item.items && item.items.length > 0) item.items = walk(item.items)
+        return item
+      })
+    let newItems = walk(this.state.items)
+    if (!updated) return
+    this.setState({ items: newItems })
+  }
+
+  /**
+   * 删除指定锚点的全部连线（LinkAnchors 轻点锚点派发 link_remove_anchor）：
+   * 出边（本组件 connections 中 anchor 匹配）+ 入边（其他组件指向本组件该锚点的线）。
+   * 只删出边会漏掉从其他组件连向该锚点的线（线存在起点组件那边），残留会导致后续重连异常
+   */
+  handleLinkRemoveAnchor = ({ uid, anchor }) => {
+    let updated = false
+    let walk = (list) =>
+      list.map((item) => {
+        let conns = item.connections || []
+        let filtered = conns.filter(
+          (c) => !(c.anchor === anchor && c.targetId == uid) && !(item.id == uid && c.anchor === anchor)
+        )
+        if (filtered.length !== conns.length) {
+          item = createViewFrom(item)
+          item.connections = filtered
+          updated = true
+        }
+        if (item.items && item.items.length > 0) item.items = walk(item.items)
+        return item
+      })
+    let newItems = walk(this.state.items)
+    if (!updated) return
+    this.setState({ items: newItems })
   }
   _currentPage = null
   handleEditorModeChange = (type, masterId) => {
@@ -395,7 +447,12 @@ class EditorControllers extends React.Component {
   handlePasteToMouse = (target, event) => {
     let data = getClipboardData()
     if (!data) return
+    // 源组件旧 id（顺序对应 parseJSON 后的 views，供入边复制）
+    let sourceIds = (isArray(data) ? data : [data]).map((d) => d.id)
     let views = parseJSON(data, true)
+    // 生成新 id + 重写连线记录（parseJSON 的 isGenerateId 只在无 id 时生成，剪贴板数据都有 id，
+    // 不处理会导致粘贴副本与原件 id 冲突、连线 id/targetId 指向原件）
+    views.forEach((view) => refreshViewId(view))
     let { x, y } = pointToWorkspaceCoords(event)
     let diffx = x - views[0].transform.x
     let diffy = y - views[0].transform.y
@@ -403,7 +460,7 @@ class EditorControllers extends React.Component {
       this._applyBlockOffset(item, diffx, diffy)
       return item
     })
-    this.handleAppendChild(views)
+    this.handleAppendChild(views, null, sourceIds)
     setTimeout(() => {
       if (data.length > 1) {
         Event.dispatch(
@@ -557,6 +614,10 @@ class EditorControllers extends React.Component {
    */
   handlePageSelect = (pageid) => {
     selectPage(pageid).then(async (items) => {
+      // 恢复页面保存的连线样式（window 全局，LinkLayer 渲染读取）；
+      // 页面无 linkStyle 时重置为默认，避免沿用上一页的样式
+      let page = getPageDataWithId(pageid)
+      window.__linkStyle = (page && page.linkStyle) || 'curve'
       // 页面变化后，由于组件id未改变，导致component数据被共享了。
       // 需要 彻底卸载之前的数据
       await super.setState({ items: [] })
@@ -646,12 +707,16 @@ class EditorControllers extends React.Component {
   handlePaste = () => {
     let data = getClipboardData()
     if (!data) return
+    // 源组件旧 id（顺序对应 parseJSON 后的 views，供入边复制）
+    let sourceIds = (isArray(data) ? data : [data]).map((d) => d.id)
     let views = parseJSON(data, true)
+    // 生成新 id + 重写连线记录（同 handlePasteToMouse）
+    views.forEach((view) => refreshViewId(view))
     views = views.map((item) => {
       this._applyBlockOffset(item, 0, views[0].transform.height)
       return item
     })
-    this.handleAppendChild(views)
+    this.handleAppendChild(views, null, sourceIds)
     setTimeout(() => {
       if (data.length > 1) {
         Event.dispatch(
@@ -699,18 +764,22 @@ class EditorControllers extends React.Component {
   handleDuplicate = (target) => {
     let views = []
     let block = null
+    // 源组件旧 id（顺序对应 views，供入边复制）
+    let sourceIds = []
     if (target.isTemporaryGroup) {
       views = target.view.getItems().map((item) => this._clone(item))
+      sourceIds = target.view.getItems().map((item) => item.id)
       if (target.view.group[0]._parent) {
         block = target.view.group[0]._parent.properties.id
       }
     } else {
       views = this._clone(target)
+      sourceIds = [target.id]
       if (target.view._parent) {
         block = target.view._parent.properties.id
       }
     }
-    this.handleAppendChild(views, block)
+    this.handleAppendChild(views, block, sourceIds)
     setTimeout(() => {
       if (target.isTemporaryGroup) {
         Event.dispatch(
@@ -788,12 +857,50 @@ class EditorControllers extends React.Component {
     }
     return items
   }
+  /**
+   * 复制组件后把指向源组件的入边一并复制（线段跟着复制）：
+   * 入边存在其他组件（如 a）的 connections 里（targetId 指向被复制组件 b），
+   * 复制后让 a 也连向新组件 b'（线 id 重新生成，避免与原件冲突）。
+   * 起点组件自身也在复制集内时跳过（其副本的出边已由 refreshViewId 重映射，原组件不应多线）
+   */
+  _appendIncomingLinks = (stateItems, sourceIds, targetItems) => {
+    let idMap = {}
+    sourceIds.forEach((oldId, i) => {
+      idMap[oldId] = targetItems[i] && targetItems[i].id
+    })
+    let updated = false
+    let walk = (list) =>
+      list.map((item) => {
+        let conns = item.connections || []
+        if (!idMap[item.id]) {
+          let add = conns
+            .filter((c) => idMap[c.targetId])
+            .map((c) => ({
+              id: uuid('lnk_'),
+              anchor: c.anchor,
+              targetId: idMap[c.targetId],
+              targetAnchor: c.targetAnchor,
+            }))
+          if (add.length > 0) {
+            item = createViewFrom(item)
+            item.connections = conns.concat(add)
+            updated = true
+          }
+        }
+        if (item.items && item.items.length > 0) item.items = walk(item.items)
+        return item
+      })
+    let newItems = walk(stateItems)
+    return updated ? newItems : stateItems
+  }
   handleDeleteChild = (ids) => {
     let items = this._deleteItems(this.state.items, ids)
     this.setState({ items }, this.pushHistory)
   }
-  handleAppendChild = (target, block) => {
+  handleAppendChild = (target, block, copyFrom) => {
     let items = this._appendItems(this.state.items, target, block)
+    // copyFrom：复制/粘贴操作传入源组件旧 id（顺序对应 target），复制入边
+    if (copyFrom) items = this._appendIncomingLinks(items, copyFrom, Array.isArray(target) ? target : [target])
     this.setState({ items }, this.pushHistory)
   }
   _handleSelectionWithType = (t, screen, offset, rect) => {

@@ -33,11 +33,12 @@ export default class OutlineComponents extends CacheState {
   }
 }
 
-// 基础组件分组：基础（默认展开）/ 表单 / 图表（默认折叠）
+// 基础组件分组：基础（默认展开）/ 表单 / 图表 / 数据展示（默认折叠）
 const CATEGORIES = [
   { key: 'base', name: '基础' },
   { key: 'form', name: '表单' },
   { key: 'chart', name: '图表' },
+  { key: 'data', name: '数据展示' },
 ];
 class WrapperBase extends React.PureComponent {
   render() {

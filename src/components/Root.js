@@ -12,6 +12,7 @@ import Event from '../lib/Base/Event';
 import InspectorProps from './Inspector';
 import { LocaleProvider } from 'antd';
 import zhCN from 'antd/lib/locale-provider/zh_CN';
+import Preview from './Preview';
 export default class Component extends React.Component {
   onClick = () => {
     Event.dispatch(context_hide_menu);
@@ -28,6 +29,8 @@ export default class Component extends React.Component {
             <Editor />
             <InspectorProps />
           </div>
+          {/* 预览全屏遮罩（顶部"预览"按钮触发，需盖住 Header 设置面板） */}
+          <Preview />
         </div>
       </LocaleProvider>
     );

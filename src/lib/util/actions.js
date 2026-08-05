@@ -418,6 +418,33 @@ export const app_toggle_selection_type = 'app/toggle_selection_type';
 export const context_mode_change = 'app/context/mode_change';
 export const context_outline_menu_change = 'app/context/menu_change';
 export const context_outline_delete_master = 'app/context/delete_master';
+/**
+ * 预览弹窗开关
+ * @type {string}
+ */
+export const preview_open = 'preview/open';
+export const preview_close = 'preview/close';
+/**
+ * 删除一条连线（LinkLayer 派发，EditorControllers 在树内定位删除，参数为连线 id）
+ * @type {string}
+ */
+export const link_remove = 'link/remove';
+/**
+ * 连线样式变化（曲线 curve / 直角曲线 corner），HeaderLinkStyle 派发，LinkLayer/LinkAnchors 刷新
+ * @type {string}
+ */
+export const link_style_change = 'link/style_change';
+/**
+ * 连线工具模式开关：开启后所有组件显示连线锚点（无需选中即可连线），设计/拖拽功能不受影响
+ * @type {string}
+ */
+export const link_tool_active = 'link/tool_active';
+export const link_tool_close = 'link/tool_close';
+/**
+ * 删除指定锚点的全部连线（含出边与指向该锚点的入边），参数 { uid, anchor }
+ * @type {string}
+ */
+export const link_remove_anchor = 'link/remove_anchor';
 export const NeedResponderAction = {
   [component_inactive]: 1,
   [component_drag]: 1,

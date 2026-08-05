@@ -126,13 +126,16 @@ export const deletePage = (id) => {
 }
 
 //update
+// 注意：写 Dexie 必须用记录里的真实主键 item.id（数字），不能直接用外部传入的 id ——
+// 刷新后 pageid 从 localStorage 读出会变成字符串（localStorage 只存字符串），
+// 而 IndexedDB 主键是数字（Date.now()），数字/字符串主键不匹配时 Dexie update 会静默不写入
 export const updateName = (name = '', id) => {
   if (!name.trim()) return Promise.reject()
   return new Promise((resolve) => {
     let item = getPageDataWithId(id)
     if (!item) return
     item.alias = name
-    updatePageToSorage(id, item)
+    updatePageToSorage(item.id, item)
   })
 }
 export const updatePageInfo = (id, key, value) => {
@@ -141,7 +144,7 @@ export const updatePageInfo = (id, key, value) => {
     let item = pages.find((item) => item.id == id)
     if (!item) return
     item[key] = value
-    updatePageToSorage(id, item)
+    updatePageToSorage(item.id, item)
   })
 }
 export const updatePageGuides = (id, key, value) => {
@@ -150,7 +153,7 @@ export const updatePageGuides = (id, key, value) => {
     let item = pages.find((item) => item.id == id)
     if (!item) return
     item.guides[key] = value
-    updatePageToSorage(id, item)
+    updatePageToSorage(item.id, item)
   })
 }
 export const generateNewPage = (pid) => ({
@@ -167,20 +170,27 @@ export const generateNewPage = (pid) => ({
   },
   nodes: [],
 })
-// 无任何页面时的默认数据源：public/user-profile-dashboard.json（用户画像看板示例）
-const DEFAULT_PAGE_URL = (process.env.PUBLIC_URL || '') + '/user-profile-dashboard.json'
+// 无任何页面时的默认数据源：public/init/manifest.json 清单（可多个初始化页面，
+// 按清单顺序导入，首个为默认展示页；后续新增初始化页面只需往清单加一行）
+const INIT_DIR = (process.env.PUBLIC_URL || '') + '/init'
 
-const loadDefaultPage = async () => {
+const loadDefaultPages = async () => {
   try {
-    let res = await fetch(DEFAULT_PAGE_URL)
-    if (!res.ok) throw new Error('default page not found')
-    let data = await res.json()
-    data.id = Date.now() // 覆盖 id 避免与历史数据冲突
-    data.alias = data.alias || '用户画像'
-    data.parentid = null
-    await addPage(data)
+    let res = await fetch(INIT_DIR + '/manifest.json')
+    if (!res.ok) throw new Error('init manifest not found')
+    let manifest = await res.json()
+    let index = 0
+    for (let item of manifest.pages || []) {
+      let r = await fetch(INIT_DIR + '/' + item.file)
+      if (!r.ok) continue
+      let data = await r.json()
+      data.id = Date.now() + index++ // 覆盖 id 避免与历史数据冲突（逐个导入时 Date.now() 可能相同）
+      data.alias = data.alias || item.alias || '新页面'
+      data.parentid = null
+      await addPage(data)
+    }
   } catch (e) {
-    // 默认页加载失败（文件缺失/网络）时兜底：创建空白页
+    // 初始化页加载失败（文件缺失/网络）时兜底：创建空白页
     await createNewPage()
   }
 }
@@ -188,7 +198,7 @@ const loadDefaultPage = async () => {
 export const getPageListFromStorage = async () => {
   let pages = await getPages()
   if (pages.length == 0) {
-    await loadDefaultPage()
+    await loadDefaultPages()
     pages = await getPages()
     if (pages.length == 0) {
       await createNewPage()

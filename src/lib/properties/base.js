@@ -21,6 +21,8 @@ export default class ViewProperties {
     };
     this.interactions = [];
     this.animations = {};
+    // 连线（出边）：{ id, anchor, targetId, targetAnchor }，anchor 为当前组件锚点方向（left/top/right/bottom）
+    this.connections = [];
     // resize  默认为全部
     // null = ['rotation', 'tl', 'tm', 'tr', 'r', 'br', 'bm', 'bl', 'l', 'borderTop', 'borderRight', 'borderBottom', 'borderLeft']
     this.settings = {
@@ -190,6 +192,7 @@ const SerializableKeys = {
   transform: 1,
   interactions: 1,
   animations: 1,
+  connections: 1,
   border: 1,
   shadow: 1,
   corner: 1,
@@ -210,6 +213,15 @@ const SerializableKeys = {
   selectOptions: 1,
   radioOptions: 1,
   checkboxOptions: 1,
+  // 数据展示组件（antd 封装）专有配置
+  tagConfig: 1,
+  rateConfig: 1,
+  progressConfig: 1,
+  statisticConfig: 1,
+  badgeConfig: 1,
+  avatarConfig: 1,
+  alertConfig: 1,
+  stepsConfig: 1,
   direction: 1,
   triangle: 1,
   curve: 1,

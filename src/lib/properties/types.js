@@ -11,6 +11,14 @@ import jQuery from 'jquery';
 import { BlockProperties, MasterProperties } from '@/lib/properties/group';
 import { CommentProperties } from '@/lib/properties/text';
 import TableProperties from './table';
+import TagProperties from './tag';
+import RateProperties from './rate';
+import ProgressProperties from './progress';
+import StatisticProperties from './statistic';
+import BadgeProperties from './badge';
+import AvatarProperties from './avatar';
+import AlertProperties from './alert';
+import StepsProperties from './steps';
 
 const ViewTypes = {
   group: Group,
@@ -40,6 +48,15 @@ const ViewTypes = {
   area: AreaProperties,
   pie: PieProperties,
   radar: RadarProperties,
+  // 数据展示组件（antd 封装）
+  tag: TagProperties,
+  rate: RateProperties,
+  progress: ProgressProperties,
+  statistic: StatisticProperties,
+  badge: BadgeProperties,
+  avatar: AvatarProperties,
+  alert: AlertProperties,
+  steps: StepsProperties,
 };
 /**
  *
@@ -83,6 +100,10 @@ export const parseJSON = (json, isGenerateId) => {
     if (!ViewTypes[item.type]) item.type = 'rect';
     let view = new View();
     for (let key in item) {
+      // 无边框组件（radio/checkbox，属性类已 delete border）：忽略数据中残留的 border，保证右侧面板不出现边框项
+      if (key === 'border' && view.noBorder) continue;
+      // 组件明确不需要的面板字段（数据展示类组件按需裁剪）：忽略残留数据，避免右侧面板出现无意义属性项
+      if (view.noPanelKeys && view.noPanelKeys.indexOf(key) > -1) continue;
       view[key] = item[key];
       if (key === 'items' && item[key].length > 0) {
         // 已废弃
@@ -108,19 +129,33 @@ export const parseOjbect = (jsonObject, isGenerateId) => {
   return parseJSON([jsonObject], isGenerateId)[0];
 };
 /**
- *
+ * 重新生成整棵树的组件 id，并重写连线记录（复制/粘贴/副本时调用）：
+ * - 连线 id（c.id）必须重新生成 —— 与原件共用会导致 LinkLayer 的 React key 冲突、
+ *   hover/选中同时命中两条线、删除互相干扰
+ * - targetId 按旧 id → 新 id 映射表改写；目标不在复制集内的连线（指向外部组件）直接丢弃，
+ *   否则副本与原件会画出重叠的线
  * @param view {ViewProperties}
  *
  */
 export const refreshViewId = (view) => {
-  view.id = uuid('sb_');
-  if (view.items) {
-    for (let i = 0, j = view.items.length; i < j; i++) {
-      let item = view.items[i];
-      if (item.items && item.items.length > 0) refreshViewId(item);
-      else item.id = uuid('sb_');
+  const idMap = {};
+  // 第一遍：所有节点（含嵌套 block 子节点）生成新 id，记录旧 id → 新 id 映射
+  const assignIds = (v) => {
+    idMap[v.id] = uuid('sb_');
+    v.id = idMap[v.id];
+    if (v.items && v.items.length > 0) v.items.forEach(assignIds);
+  };
+  assignIds(view);
+  // 第二遍：重写连线记录（映射表已完整，父级连线才能正确引用子级新 id）
+  const remapLinks = (v) => {
+    if (v.connections && v.connections.length > 0) {
+      v.connections = v.connections
+        .filter((c) => idMap[c.targetId])
+        .map((c) => Object.assign({}, c, { id: uuid('lnk_'), targetId: idMap[c.targetId] }));
     }
-  }
+    if (v.items && v.items.length > 0) v.items.forEach(remapLinks);
+  };
+  remapLinks(view);
 };
 export const deepCopyPages = (page) => {};
 

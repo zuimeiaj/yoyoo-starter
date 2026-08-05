@@ -1,0 +1,49 @@
+.preview-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  // 高于 Header 设置面板（z-index: 1000000000），保证遮罩覆盖所有编辑 UI
+  z-index: 1000000001;
+
+  .preview-title {
+    position: fixed;
+    top: 22px;
+    left: 24px;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.85);
+  }
+
+  .preview-close {
+    position: fixed;
+    top: 14px;
+    right: 16px;
+    display: flex;
+    align-items: center;
+    padding: 8px 16px;
+    border-radius: 4px;
+    color: #fff;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.16);
+    transition: background 0.2s;
+
+    .icon-text_icon {
+      margin-right: 4px;
+      font-size: 14px;
+    }
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+  }
+
+  .preview-page {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    overflow: hidden;
+    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.5);
+  }
+}

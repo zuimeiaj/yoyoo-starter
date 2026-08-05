@@ -92,21 +92,49 @@ export default class ViewChart extends ViewController {
       backgroundColor: bg || 'transparent',
       textStyle: { color: fontColor },
     };
+    // 图例行数估算：模拟 ECharts 贪心换行（放不下才换行，末行常半空，求和取整会低估行数）
+    // 每项 = 色块 25px + 文字 12px/字（保守按全宽字符估），行内间距 itemGap 8px
+    let legendRowsOf = (items) => {
+      let containerW = Math.max((this.properties.transform.width || 300) - 20, 100);
+      let rows = 1;
+      let cur = 0;
+      items.forEach((name) => {
+        let w = 25 + String(name || '').length * 12;
+        if (cur + w > containerW) {
+          rows++;
+          cur = w;
+        } else {
+          cur += w + 8;
+        }
+      });
+      return rows;
+    };
+    // 多系列/饼图底部图例：ECharts 6 图例默认在底部（defaultOption 已移除 top），必须显式预留防与图表/X 轴重叠
+    // 图例项 = 饼图类目 / 柱线系列名；预留 = 行高 22px（itemHeight 14 + itemGap 8）× 行数 + padding 10 + 间距 8
+    let legendReserve = 0;
+    if (series.length > 1 || sts.includes('pie')) {
+      let items = sts.includes('pie') ? categories : series.map((s) => s.name);
+      legendReserve = legendRowsOf(items) * 22 + 18;
+    }
+    // 饼图用 series.bottom 收缩布局区（饼图不支持 grid）；上限容器高度 60%，极端多类目时保底不压没饼图
+    let pieBottom = 0;
+    if (sts.includes('pie')) {
+      let chartH = Math.max(this.properties.transform.height || 300, 100);
+      pieBottom = Math.min(legendReserve, chartH * 0.6);
+    }
     // 含笛卡尔坐标系系列（柱/线/面积）时配轴
     if (sts.some((t) => t === 'bar' || t === 'line' || t === 'area')) {
       let axis = chartAxis || {}; // X/Y 轴刻度标签显示开关（缺省显示）
       base.xAxis = { type: 'category', data: categories, axisLabel: { show: axis.xLabel !== false, color: fontColor } };
       base.yAxis = { type: 'value', axisLabel: { show: axis.yLabel !== false, color: fontColor } };
-      // 多系列图例占位：按系列名长度估算图例行数，grid.top 动态预留（组件内部自适应，不依赖外部）
-      // 每项约 28px（色块+间距）+ 名称 12px/字；单系列或含饼图（图例在底部）不预留
-      let legendRows = 0;
-      if (series.length > 1 && !sts.includes('pie')) {
-        let totalW = series.reduce((sum, s) => sum + 28 + String(s.name || '').length * 12, 0);
-        let containerW = Math.max((this.properties.transform.width || 300) - 20, 100);
-        legendRows = Math.max(1, Math.ceil(totalW / containerW));
-      }
-      // 紧凑布局：containLabel 使 grid 包含轴标签不裁切
-      base.grid = { left: 10, right: 10, top: legendRows ? 8 + legendRows * 22 : 10, bottom: 10, containLabel: true };
+      // 紧凑布局：containLabel 使 grid 包含轴标签不裁切；底部预留图例空间
+      base.grid = {
+        left: 10,
+        right: 10,
+        top: 10,
+        bottom: legendReserve || 10,
+        containLabel: true,
+      };
     }
     // 含雷达系列时配雷达坐标系（指标 max 取数据最大值 1.2 倍）
     if (sts.includes('radar')) {
@@ -121,9 +149,8 @@ export default class ViewChart extends ViewController {
         axisName: { color: fontColor },
       };
     }
-    // 图例：含饼图放底部，多系列在顶部，单系列隐藏
-    if (sts.includes('pie')) base.legend = { orient: 'horizontal', bottom: 0 };
-    else if (series.length > 1) base.legend = {};
+    // 图例：统一放底部（留 8px 内边距，ECharts 6 默认即底部）；单系列无饼图时隐藏
+    if (series.length > 1 || sts.includes('pie')) base.legend = { orient: 'horizontal', bottom: 8 };
     else base.legend = { show: false };
     base.series = series.map((s, i) => {
       let st = sts[i];
@@ -132,6 +159,8 @@ export default class ViewChart extends ViewController {
         return {
           type: 'pie',
           radius: '70%',
+          // 底部图例占位：收缩饼图布局区，防多维度图例与饼图重叠
+          ...(pieBottom ? { bottom: pieBottom } : {}),
           label: { color: fontColor },
           // 扇形按 categories 索引着色
           data: categories.map((name, j) => ({ name, value: (s.data || [])[j] || 0, color: colors[j] || undefined })),

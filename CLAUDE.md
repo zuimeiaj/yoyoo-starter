@@ -100,6 +100,42 @@ Root
          → global/instance 状态更新 → React 重新渲染
 ```
 
+## 连线功能（Link）
+
+组件间贝塞尔曲线连线：选中组件四边出现锚点（外移 16px，避免与 ViewResizable 边中点手柄重叠），按住拖出虚线、悬停目标锚点（12px 阈值）高亮吸附、松开建立连接。
+
+### 数据模型（只存引用，不存坐标）
+
+- `properties.connections = [{ id: 'lnk_xxx', anchor: 'left'|'top'|'right'|'bottom', targetId, targetAnchor }]` —— 当前组件的**出边**，多对多（同锚点可连多个目标，入边存在对方组件的 connections 里）
+- **端点坐标渲染时由 transform 实时计算** → 组件拖动/缩放/Stage 缩放/滚动时连线自动跟随，零同步逻辑
+- block/group 子组件 transform 是相对坐标，锚点需沿 `parent` 链累加（`absolutePos`）
+- 悬空引用（目标组件已删除）在 `collectLinks` 渲染时过滤
+
+### 核心文件
+
+| 文件 | 职责 |
+|------|------|
+| `src/lib/Widget/LinkLayer.js` | SVG 连线层 + 几何工具（anchorPoint/linkControls/linkPath/linkArrowPath/collectLinks/indexItems/absolutePos/ANCHOR_OFFSET）+ 线交互 |
+| `src/lib/Widget/LinkAnchors.js` | 锚点渲染 + 拖线交互（仅编辑器） |
+| `EditorControllers.handleLinkRemove` | `link_remove` 事件处理：树内定位含该连线 id 的起点组件 → 过滤 → 标准 setState |
+
+### 渲染与交互要点
+
+- 覆盖层 SVG 挂 Stage 内（`EditorViews`）与组件同坐标系；**必须显式大尺寸 viewport（20000×20000）**——editor-control-panel 无显式尺寸（内容全 absolute），`width/height: 100%` 解析为 0×0 线不可见
+- 整层 `pointer-events: none`；线删除热区单独开 `pointerEvents="visibleStroke"`（透明 12px 加粗，mousedown stopPropagation 不清除选中）；预览模式（props.items 只读）不挂热区
+- 贝塞尔控制点按**锚点轴系**定向（left/right → 水平、top/bottom → 垂直，方向取连接方向）→ 终点切线恒等于连接方向，箭头不会回折（曾用锚点方向/起点终点方向均产生箭头朝向 bug）
+- 渲染顺序：线最底 → 起点圆点/终点箭头最上（线画在箭头上会穿出三角形露"尾巴"）
+- 删除交互：hover（临时高亮）/点击（选中保持高亮）→ Delete/Backspace；轻点锚点断开该锚点全部；点击线再点取消选中；`component_inactive`（点空白）清选中
+- 自连禁止：`findAnchor` 排除自身 + `setLink` 入口校验双保险
+
+### 踩坑总结
+
+1. **keydown 必须挂 `document.addEventListener('keydown', handler, true)`（capture）** —— Events.js 的 document 冒泡监听对所有键 stopPropagation，冒泡阶段收不到；挂法与 PenTool 一致
+2. **删除连线用事件桥**（LinkLayer dispatch `link_remove` → EditorControllers 树内处理），不要用 `window.allWidgets[id].view` 找实例 —— 属性变更后 allWidgets 重建、实例查找链路脆弱
+3. **`handleLinkRemove` 必须先 walk 再判断 updated**（曾写成先 `if (!updated) return` 后 `walk(...)`，walk 永不执行）
+4. **连线变更（拖线创建/删除）都走 `component_properties_change` / 标准 setState** —— 持久化 + PATHES 重建 + controllers_change 刷新连线层
+5. 锚点 mousedown 用**原生 capture**（挂锚点 DOM），否则冒泡到画布会触发选中清除（inactive）导致拖线中断
+
 ## 事件触发时序（开发组件必读，含踩坑总结）
 
 ### 三层事件通道

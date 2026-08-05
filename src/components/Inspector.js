@@ -22,6 +22,7 @@ import {
   InspectorSpacing,
   InspectorTransform,
   InspectorChartConfig,
+  InspectorFields,
 } from '../lib/ui/InspectorControls';
 import InspectorTableCell from '../lib/ui/InspectorTableCell';
 import { getFirstResponder } from '../lib/global/instance';
@@ -285,6 +286,15 @@ const LABELS = {
   animations: ['动画', 'donghua'],
   interactions: ['交互', 'shoushidianji', 'controlled'],
   chartType: ['维度配置', 'tubiao'],
+  // 数据展示组件专有配置
+  tagConfig: ['标签', 'tubiao'],
+  rateConfig: ['评分', 'tubiao'],
+  progressConfig: ['进度条', 'tubiao'],
+  statisticConfig: ['统计数值', 'tubiao'],
+  badgeConfig: ['徽标', 'tubiao'],
+  avatarConfig: ['头像', 'tubiao'],
+  alertConfig: ['警告提示', 'tubiao'],
+  stepsConfig: ['步骤条', 'tubiao'],
 };
 const Trigger = {
   interactions: 'click',
@@ -307,6 +317,15 @@ const InspectorControls = {
   animations: InspectorAnimation,
   interactions: InspectorInteraction,
   chartType: InspectorChartConfig,
+  // 数据展示组件专有配置（InspectorFields 内部按 field 查表）
+  tagConfig: InspectorFields,
+  rateConfig: InspectorFields,
+  progressConfig: InspectorFields,
+  statisticConfig: InspectorFields,
+  badgeConfig: InspectorFields,
+  avatarConfig: InspectorFields,
+  alertConfig: InspectorFields,
+  stepsConfig: InspectorFields,
 };
 const Order = {
   transform: 1,
@@ -325,4 +344,13 @@ const Order = {
   animations: 14,
   interactions: 15,
   cellStyles: 16,
+  // 数据展示组件专有配置
+  tagConfig: 20,
+  rateConfig: 21,
+  progressConfig: 22,
+  statisticConfig: 23,
+  badgeConfig: 24,
+  avatarConfig: 25,
+  alertConfig: 26,
+  stepsConfig: 27,
 };

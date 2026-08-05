@@ -159,6 +159,79 @@ export const BaseComponents = [
     width: 400,
     height: 200,
   },
+  // ================= 数据展示（antd 组件封装） =================
+  {
+    // 标签：圆角矩形 + 小尖角
+    icon: 'svg:<path d="M3 4h18v13h-8l-4 4v-4H3z"/>',
+    name: '标签',
+    category: 'data',
+    type: 'tag',
+    width: 100,
+    height: 28,
+  },
+  {
+    // 评分：五角星
+    icon: 'svg:<path d="M12 3l2.6 5.6 6.1.8-4.5 4.2 1.1 6-5.3-3-5.3 3 1.1-6L3.3 9.4l6.1-.8z"/>',
+    name: '评分',
+    category: 'data',
+    type: 'rate',
+    width: 120,
+    height: 24,
+  },
+  {
+    // 进度条：轨道 + 填充
+    icon: 'svg:<rect x="3" y="10" width="18" height="4" rx="2"/><rect x="3" y="10" width="11" height="4" rx="2"/>',
+    name: '进度条',
+    category: 'data',
+    type: 'progress',
+    width: 200,
+    height: 18,
+  },
+  {
+    // 统计数值：柱状图 + 上升
+    icon: 'svg:<rect x="4" y="12" width="4" height="8"/><rect x="10" y="7" width="4" height="13"/><rect x="16" y="3" width="4" height="17"/>',
+    name: '统计数值',
+    category: 'data',
+    type: 'statistic',
+    width: 120,
+    height: 48,
+  },
+  {
+    // 徽标：圆 + 感叹号
+    icon: 'svg:<circle cx="12" cy="12" r="8"/><path d="M12 8v5M12 16.5h.01"/>',
+    name: '徽标',
+    category: 'data',
+    type: 'badge',
+    width: 60,
+    height: 40,
+  },
+  {
+    // 头像：人形
+    icon: 'svg:<circle cx="12" cy="8" r="4.5"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+    name: '头像',
+    category: 'data',
+    type: 'avatar',
+    width: 48,
+    height: 48,
+  },
+  {
+    // 警告：三角 + 感叹号
+    icon: 'svg:<path d="M12 4L2.5 20h19z"/><path d="M12 10v4M12 17h.01"/>',
+    name: '警告提示',
+    category: 'data',
+    type: 'alert',
+    width: 300,
+    height: 48,
+  },
+  {
+    // 步骤条：三圆点 + 连线
+    icon: 'svg:<circle cx="4" cy="12" r="2.5"/><circle cx="12" cy="12" r="2.5"/><circle cx="20" cy="12" r="2.5"/><path d="M6.5 12h3M15.5 12h3"/>',
+    name: '步骤条',
+    category: 'data',
+    type: 'steps',
+    width: 300,
+    height: 48,
+  },
 ];
 export const ComponentIconMap = {
   select: 'xialaxuanze',
@@ -183,4 +256,12 @@ export const ComponentIconMap = {
   area: 'svg:<path d="M3 19V8l5 6 4-4 6 9v0H3z"/>',
   pie: 'svg:<path d="M12 3a9 9 0 1 1-9 9"/><path d="M12 12L12 3"/>',
   radar: 'svg:<path d="M12 3l7.9 5.7-3 9.3H7.1l-3-9.3z"/><path d="M12 3v9M19.9 8.7L12 12M7.1 12L4.1 17.7"/>',
+  tag: 'svg:<path d="M3 4h18v13h-8l-4 4v-4H3z"/>',
+  rate: 'svg:<path d="M12 3l2.6 5.6 6.1.8-4.5 4.2 1.1 6-5.3-3-5.3 3 1.1-6L3.3 9.4l6.1-.8z"/>',
+  progress: 'svg:<rect x="3" y="10" width="18" height="4" rx="2"/><rect x="3" y="10" width="11" height="4" rx="2"/>',
+  statistic: 'svg:<rect x="4" y="12" width="4" height="8"/><rect x="10" y="7" width="4" height="13"/><rect x="16" y="3" width="4" height="17"/>',
+  badge: 'svg:<circle cx="12" cy="12" r="8"/><path d="M12 8v5M12 16.5h.01"/>',
+  avatar: 'svg:<circle cx="12" cy="8" r="4.5"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+  alert: 'svg:<path d="M12 4L2.5 20h19z"/><path d="M12 10v4M12 17h.01"/>',
+  steps: 'svg:<circle cx="4" cy="12" r="2.5"/><circle cx="12" cy="12" r="2.5"/><circle cx="20" cy="12" r="2.5"/><path d="M6.5 12h3M15.5 12h3"/>',
 };

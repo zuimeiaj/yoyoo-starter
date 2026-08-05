@@ -8,13 +8,46 @@
 
 ## 一、整体结构
 
-页面 = **items 数组**（组件树，`group`/`block` 可嵌套子组件）。
+### 页面对象
 
-每个组件是一个 JSON 对象：**通用属性 + 类型特有属性**。`transform.x/y` 是相对父级（页面根组件相对画布原点）的坐标，单位 px。
+页面本身是一个 JSON 对象（`type: "PAGE"`），组件树存放在 **`nodes` 数组**；`block` 组件（分组容器，`group` 已废弃）通过自身的 **`items` 数组**嵌套子组件。
 
 ```json
 {
-  "id": "可选，加载时自动生成",
+  "type": "PAGE",
+  "alias": "新页面",
+  "id": "page_1785833475519",
+  "width": 800,
+  "height": 900,
+  "bg": "rgba(255,255,255,1)",
+  "parentid": null,
+  "projectid": "testid",
+  "guides": { "x": [], "y": [] },
+  "nodes": [
+    { "type": "block", "alias": "Block", "id": "sb_9873856462738", "transform": { "x": 40, "y": 80, "width": 187, "height": 79 }, "items": [/* 子组件 */] }
+  ]
+}
+```
+
+| 页面字段 | 类型 | 说明 |
+|---|---|---|
+| `type` | string | `"PAGE"`（页面）/ `"STATE"`（状态副本） |
+| `alias` | string | 页面名（大纲面板可见） |
+| `id` | string | 页面唯一 id（**`page_` 前缀**，如 `page_1785833475519`） |
+| `width` / `height` | number | 画布尺寸 px |
+| `bg` | string | 页面背景色（rgba） |
+| `parentid` | string/null | 父级 id，根页面为 `null` |
+| `projectid` | string | 项目 id（单机版固定 `"testid"`） |
+| `guides` | object | 参考线 `{x: [], y: []}` |
+| `nodes` | array | **组件树（顶层组件数组）** |
+
+### 组件对象
+
+每个组件是一个 JSON 对象：**通用属性 + 类型特有属性**。**所有组件（含 `block` 的 `items` 子组件）的 `transform.x/y` 都是绝对坐标**（相对画布原点），单位 px，无需相对父级换算。
+
+```json
+{
+  "id": "必填，唯一 id（sb_ 前缀，如 sb_9873856462738）",
   "alias": "组件名",
   "type": "text",
   "transform": { "x": 20, "y": 20, "width": 120, "height": 32, "rotation": 0 },
@@ -25,7 +58,11 @@
 }
 ```
 
-> **id 必填唯一**：`id` 是组件索引键，**缺失会导致组件间 id 冲突（点击/选中错乱）**。加载时缺失的 id 会自动生成（`sb_` 前缀），但建议生成时直接提供唯一 id（如 `c1`、`c2`...），保证数据稳定。
+> **id 必填唯一（生成时必须自己提供，不要让框架生成）**：`id` 是组件索引键，**缺失会导致组件间 id 冲突（点击/选中错乱）**。命名规则：
+> - **页面** id：**`page_` 前缀**（如 `page_1785833475519`）
+> - **组件/节点** id（**包括嵌套 `items` 里的子组件**）：**`sb_` 前缀**（如 `sb_9873856462738`）
+>
+> 框架虽然会在加载时自动补 id，但**不要依赖它**——请按上述规则为每个节点直接生成并提供全局唯一 id，保证数据稳定。
 
 ---
 
@@ -86,7 +123,7 @@
 | `circle` | 圆 | 无 |
 | `triangle` | 三角形 | 无 |
 | `rect` | 矩形 | 无（通用属性即全部） |
-| `group` | 分组 | `items`(子组件数组) |
+| `group` | 分组（**已废弃**，用 `block`） | `items`(子组件数组) |
 | `block` | 块容器 | `items`(子组件数组) |
 
 ---
@@ -301,31 +338,33 @@
 | `icon.data` | 图标 css class 名（iconfont 字体图标） |
 | `icon.content` | unicode 内容 |
 
-### 10. 分组 group / 块 block
+### 10. 块 block（分组容器，group 已废弃）
 
-> **推荐平铺（重要）**：生成页面时**所有元素都用绝对坐标、不嵌套 group**——视觉卡片用背景 rect + 内部元素平铺实现（当前版本 group 子组件的父级坐标累加不可靠，嵌套会导致手柄/吸附错位）。group 类型仍可在设计器内手动创建。
+`block` 是分组的标准容器（设计器「分组」操作生成的就是 `block`；**`group` 类型已废弃**，生成 JSON 一律用 `block`），通过 `items` 数组嵌套子组件。**嵌套是标准格式，框架自动处理**：
 
-平铺卡片示例（视觉同 group，坐标全部绝对）：
+- **所有组件（含 `items` 子组件）都是绝对坐标**（相对画布原点），坐标不能随意填
+- **block 自身的 transform 必须包围子组件**：x/y/width/height = 所有子组件的外接包围盒（子组件坐标的最小/最大值）；**子组件坐标保持不变**——分组不改变布局
+- block 通常 `zIndex: -1`（透明容器渲染在最底层，分组前后渲染结果完全一致）
+- 嵌套子组件会被标记 `settings.isLock: true`（锁定，需解锁才能单独编辑）
+
+设计器分组导出的真实结构：
 
 ```json
 {
-  "type": "rect",
-  "alias": "卡片背景",
-  "transform": { "x": 100, "y": 1100, "width": 300, "height": 200 },
-  "bg": "rgba(255,255,255,1)",
-  "border": { "width": 1, "color": "rgba(224,224,224,1)", "style": "solid" },
-  "corner": { "topLeft": 8, "topRight": 8, "bottomLeft": 8, "bottomRight": 8 }
-},
-{
-  "type": "text",
-  "alias": "卡片标题",
-  "transform": { "x": 120, "y": 1120, "width": 200, "height": 30 },
-  "fontData": "卡片标题",
-  "font": { "size": 16, "color": "rgba(0,0,0,1)" }
+  "type": "block",
+  "alias": "Block",
+  "id": "sb_9464147379999",
+  "zIndex": -1,
+  "transform": { "x": 500, "y": 775, "width": 280, "height": 230 },
+  "items": [
+    { "type": "rect", "id": "sub_c41", "transform": { "x": 500, "y": 775, "width": 280, "height": 230 }, "settings": { "isLock": true }, "bg": "rgba(255,255,255,1)" },
+    { "type": "text", "id": "sub_c42", "transform": { "x": 520, "y": 799, "width": 60, "height": 18 }, "settings": { "isLock": true }, "fontData": "北京" }
+  ]
 }
 ```
 
-> **嵌套 group 的注意**：如使用 `items`，子组件 `transform.x/y` 是**相对分组**的坐标——但当前版本对嵌套子组件的父级偏移计算不可靠（手柄位置/吸附会错位），**生成 JSON 请一律平铺绝对坐标**。
+> 完整序列化时每个组件还会带 `zIndex`、`selected`、`interactions`、`animations`、`settings`、`border`、`corner`、`shadow`、`bg`、`align`、`fontStyle`、`decorator`、`spacing` 等字段，均可用默认值省略。
+
 
 ### 11. 直线 line / 圆 circle / 三角形 triangle / 矩形 rect
 
@@ -347,10 +386,20 @@
 
 ```json
 {
-  "items": [
+  "type": "PAGE",
+  "alias": "登录页",
+  "id": "page_1785833475519",
+  "width": 800,
+  "height": 900,
+  "bg": "rgba(255,255,255,1)",
+  "parentid": null,
+  "projectid": "testid",
+  "guides": { "x": [], "y": [] },
+  "nodes": [
     {
       "type": "text",
       "alias": "标题",
+      "id": "sb_1001",
       "transform": { "x": 150, "y": 40, "width": 200, "height": 40 },
       "fontData": "欢迎登录",
       "font": { "size": 24, "color": "rgba(0,0,0,1)" },
@@ -360,6 +409,7 @@
     {
       "type": "input",
       "alias": "账号",
+      "id": "sb_1002",
       "transform": { "x": 120, "y": 120, "width": 240, "height": 32 },
       "fontData": "请输入账号",
       "border": { "width": 1, "color": "rgba(200,200,200,1)", "style": "solid" },
@@ -368,6 +418,7 @@
     {
       "type": "input",
       "alias": "密码",
+      "id": "sb_1003",
       "transform": { "x": 120, "y": 170, "width": 240, "height": 32 },
       "fontData": "请输入密码",
       "border": { "width": 1, "color": "rgba(200,200,200,1)", "style": "solid" },
@@ -376,6 +427,7 @@
     {
       "type": "radio",
       "alias": "记住我",
+      "id": "sb_1004",
       "transform": { "x": 120, "y": 220, "width": 120, "height": 24 },
       "radioOptions": "> 记住密码",
       "direction": "horizontal",
@@ -384,6 +436,7 @@
     {
       "type": "button",
       "alias": "登录",
+      "id": "sb_1005",
       "transform": { "x": 120, "y": 260, "width": 240, "height": 36 },
       "fontData": "登录",
       "bg": "rgba(0,150,136,1)",
@@ -393,6 +446,7 @@
     {
       "type": "chart",
       "alias": "月度统计",
+      "id": "sb_1006",
       "chartType": "bar",
       "transform": { "x": 120, "y": 330, "width": 300, "height": 200 },
       "chartData": {
@@ -408,10 +462,11 @@
 
 ## 六、生成建议
 
-1. **坐标从 0 开始规划**：**所有元素一律使用绝对坐标**（相对画布原点），不要嵌套 group（见 10 节）。同排组件对齐 y、间距建议 8/16/24 的倍数。
-2. **组件尺寸给足**：输入类 28-36px 高、按钮 ≥36px 高、图表 ≥200px 高，保证可读。
-3. **颜色用 rgba**：`rgba(r,g,b,a)` 格式（a=0 透明）。
-4. **文本内容放 `fontData`**（不是别的字段）。
-5. **图表数据**：categories 与各 series.data 长度一致；不需要的系列配置（chartSeries/chartAxis）可省略。
-6. **表单单选/多选**：选项换行分隔，`>` 标记默认选中。
-7. 生成后可导入设计器微调（拖拽、属性面板、双击编辑数据）。
+1. **id 自己生成**：页面 id 用 **`page_` 前缀**，每个组件/节点（**包括嵌套 `items` 里的子组件**）用 **`sb_` 前缀**，直接提供全局唯一 id——**不要让框架自动生成**（见第一节说明）。
+2. **坐标从 0 开始规划**：**所有组件一律绝对坐标**（相对画布原点，含嵌套 `items` 子组件）；**block 的 transform 必须包围其子组件**（= 子组件包围盒）。同排组件对齐 y、间距建议 8/16/24 的倍数。
+3. **组件尺寸给足**：输入类 28-36px 高、按钮 ≥36px 高、图表 ≥200px 高，保证可读。
+4. **颜色用 rgba**：`rgba(r,g,b,a)` 格式（a=0 透明）。
+5. **文本内容放 `fontData`**（不是别的字段）。
+6. **图表数据**：categories 与各 series.data 长度一致；不需要的系列配置（chartSeries/chartAxis）可省略。
+7. **表单单选/多选**：选项换行分隔，`>` 标记默认选中。
+8. 生成后可导入设计器微调（拖拽、属性面板、双击编辑数据）。

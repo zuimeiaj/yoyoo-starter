@@ -22,6 +22,14 @@ import ViewChart from './ViewChart';
 import { BlockView, MasterView } from '@/lib/Widget/ViewGroup';
 import CommentView from '@/lib/Widget/Comment';
 import ViewTable from './ViewTable';
+import ViewTag from './ViewTag';
+import ViewRate from './ViewRate';
+import ViewProgress from './ViewProgress';
+import ViewStatistic from './ViewStatistic';
+import ViewBadge from './ViewBadge';
+import ViewAvatar from './ViewAvatar';
+import ViewAlert from './ViewAlert';
+import ViewSteps from './ViewSteps';
 
 const maps = {
   text: Text,
@@ -51,6 +59,15 @@ const maps = {
   area: ViewChart,
   pie: ViewChart,
   radar: ViewChart,
+  // 数据展示组件（antd 封装）
+  tag: ViewTag,
+  rate: ViewRate,
+  progress: ViewProgress,
+  statistic: ViewStatistic,
+  badge: ViewBadge,
+  avatar: ViewAvatar,
+  alert: ViewAlert,
+  steps: ViewSteps,
 };
 export default class View extends React.PureComponent {
   static propTypes = {

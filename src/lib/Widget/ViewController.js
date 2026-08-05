@@ -623,11 +623,15 @@ export default class ViewController extends React.Component {
         'data-uid': this.properties.id,
       };
     }
-    return {};
+    // 只读渲染（预览/母版）：不派发 hover 事件，仅保留 uid 供预览事件委托定位
+    return { 'data-uid': this.properties.id };
   };
 
   render() {
     const { x, y, width, height, rotation } = this.properties.transform;
+    // 尺寸自适应：settings.autoSize = 'height' 高度由内容撑开（仅允许调宽度），
+    // 'all' 宽高都由内容决定（编辑框仍按 transform 数据渲染，用于选择/对齐）
+    const autoSize = this.properties.settings.autoSize;
     return (
       <div
         {...this.getMouseEvent()}
@@ -638,8 +642,8 @@ export default class ViewController extends React.Component {
           top: y,
           boxSizing: 'border-box',
           transform: `rotate(${rotation}deg)`,
-          width,
-          height,
+          width: autoSize === 'all' ? 'auto' : width,
+          height: autoSize ? 'auto' : height,
         }}
         ref={'container'}
       >
