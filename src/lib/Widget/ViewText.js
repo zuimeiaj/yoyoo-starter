@@ -10,8 +10,16 @@ import Event from '../Base/Event';
 import { component_close_edit_mode, component_edit_mode, component_properties_change } from '../util/actions';
 
 export default class ViewText extends ViewController {
-  // 文本组件只允许调整宽度（高度由 _fitHeight 自动包裹）：只显示左右圆点 + 包裹边框
-  getResizeHandles = () => ['borderLeft', 'borderRight', 'borderTop', 'borderBottom', 'l', 'r'];
+  // 按钮（ButtonProperties，fontData 'Button'）可自由调整宽高：全量手柄；
+  // 文本只允许调整宽度（高度由 _fitHeight 自动包裹）：只显示左右圆点 + 包裹边框。
+  // 注意：按钮与文本的 type 都是 'text'（反序列化后均为 TextProperties 实例），
+  // 只能用 fontData 数据标记区分；用户改字体预设后按钮会退化为文本手柄，属预期内
+  getResizeHandles = () => {
+    if (this.properties.fontData === 'Button') {
+      return ['rotation', 'tl', 'tm', 'tr', 'r', 'br', 'bm', 'bl', 'l', 'borderLeft', 'borderRight', 'borderTop', 'borderBottom'];
+    }
+    return ['borderLeft', 'borderRight', 'borderTop', 'borderBottom', 'l', 'r'];
+  };
 
   /**
    * @override
@@ -25,6 +33,7 @@ export default class ViewText extends ViewController {
       let measure = this.refs.measure;
       measure.setAttribute('contenteditable', true);
       measure.setAttribute('data-drag', false);
+      measure.setAttribute('data-event', 'ignore'); // 跳过全局快捷键（删除键等），否则编辑文本时按删除会删组件
       setCurrentEditor(this);
       measure.focus();
       selectTextRange(measure);
@@ -70,12 +79,18 @@ export default class ViewText extends ViewController {
     }
     wrapper.fontSize(size);
     wrapper.fontColor(color);
+    // 直接应用到 measure：字体样式只设容器靠继承时，编辑态（contenteditable）/结构变化可能失效
+    if (this.refs.measure) {
+      this.refs.measure.style.fontSize = size + 'px';
+      this.refs.measure.style.color = color;
+    }
   }
 
   setEditorBlur() {
     let measure = this.refs.measure;
     measure.blur();
     measure.removeAttribute('data-drag');
+    measure.removeAttribute('data-event');
     measure.removeAttribute('contenteditable');
     Event.dispatch(component_close_edit_mode);
     this._fitHeight(); // 编辑退出，内容定型后高度自适应
@@ -104,10 +119,12 @@ export default class ViewText extends ViewController {
     if (!measure) return;
     let h = Math.max(4, Math.ceil(measure.offsetHeight));
     if (Math.abs(h - this.properties.transform.height) >= 1) {
+      // 提交完整 transform（含拖拽/移动后的 x/y/width）：属性变更链路从 state.items 树合并，
+      // 只提交 {height} 会把拖拽后尚未落树的 width 重置回旧值（宽度坍塌）
       Event.dispatch(component_properties_change, {
         target: this,
         key: 'transform',
-        value: { height: h },
+        value: Object.assign({}, this.properties.transform, { height: h }),
       });
     }
   }

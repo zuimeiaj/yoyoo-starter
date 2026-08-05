@@ -30,6 +30,7 @@
     "dexie": "^3.2.4",
     "dotenv": "8.2.0",
     "dotenv-expand": "5.1.0",
+    "echarts": "^6.1.0",
     "es6-shim": "0.35.4",
     "eslint": "^6.6.0",
     "eslint-config-react-app": "^5.2.1",

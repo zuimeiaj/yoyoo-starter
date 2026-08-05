@@ -18,6 +18,7 @@ import ViewTriangle from './ViewTriangle';
 import ViewPolygon from './ViewPolygon';
 import ViewCircle from './ViewCircle';
 import ViewPath from './ViewPath';
+import ViewChart from './ViewChart';
 import { BlockView, MasterView } from '@/lib/Widget/ViewGroup';
 import CommentView from '@/lib/Widget/Comment';
 import ViewTable from './ViewTable';
@@ -44,6 +45,12 @@ const maps = {
   master: MasterView,
   comment: CommentView,
   table: ViewTable,
+  chart: ViewChart,
+  bar: ViewChart,
+  line: ViewChart,
+  area: ViewChart,
+  pie: ViewChart,
+  radar: ViewChart,
 };
 export default class View extends React.PureComponent {
   static propTypes = {

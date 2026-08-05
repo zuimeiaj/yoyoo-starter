@@ -6,6 +6,7 @@ import Image from './image';
 import SelectProperties from './select';
 import RadioProperties from './radio';
 import CheckboxProperties from './checkbox';
+import Chart, { BarProperties, LineProperties, AreaProperties, PieProperties, RadarProperties } from './chart';
 import jQuery from 'jquery';
 import { BlockProperties, MasterProperties } from '@/lib/properties/group';
 import { CommentProperties } from '@/lib/properties/text';
@@ -32,6 +33,13 @@ const ViewTypes = {
   master: MasterProperties,
   comment: CommentProperties,
   table: TableProperties,
+  // 图表：chart 为基类（反序列化用，chartType 区分具体图表），bar/line/area/pie/radar 为模板创建用子类
+  chart: Chart,
+  bar: BarProperties,
+  line: LineProperties,
+  area: AreaProperties,
+  pie: PieProperties,
+  radar: RadarProperties,
 };
 /**
  *
@@ -68,7 +76,8 @@ export const parseJSON = (json, isGenerateId) => {
   let result = [];
   for (let i = 0, j = json.length; i < j; i++) {
     let item = json[i];
-    if (isGenerateId) item.id = uuid('sb_');
+    // 仅无 id 时生成：避免覆盖已保存数据的 id（组件索引/母版引用依赖 id 稳定）
+    if (isGenerateId && !item.id) item.id = uuid('sb_');
     let View = ViewTypes[item.type] || DefaultView;
     // Default rect
     if (!ViewTypes[item.type]) item.type = 'rect';

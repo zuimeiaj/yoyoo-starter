@@ -11,6 +11,7 @@ import ColorInput from "./ColorInput";
 import {getFirstResponder} from "../global/instance";
 import Icon from "../Icon";
 import Button, {ButtonGroup} from "./Button";
+import Checkbox from "./Checkbox";
 import {Dropable} from "./NativeDragDrop";
 import {PresetIcon} from "../PresetIcons";
 import './InspectorControl.scss'
@@ -789,3 +790,88 @@ export class InspectorInteraction extends InspectorBase {
     }
 }
 
+
+/**
+ * 维度配置：每个维度一行【维度】【类型】【颜色】
+ * 类型（柱/线/面积/饼/雷达）决定该系列渲染，缺省跟随整体 chartType（新组件模板默认值）；
+ * 单系列图表选「饼」即整体饼图。配置存 chartSeries（与 series 索引对齐）
+ */
+export class InspectorChartConfig extends InspectorBase {
+    static SERIES_TYPES = [
+        {key : 'bar', label : '柱'},
+        {key : 'line', label : '线'},
+        {key : 'area', label : '面积'},
+        {key : 'pie', label : '饼'},
+        {key : 'radar', label : '雷达'},
+    ]
+
+    updateValues = () =>{
+        let view = getFirstResponder()
+        if (!view) return
+        let configs = view.properties.chartSeries || []
+        let series = this.getSeries()
+        series.forEach((s, i) =>{
+            let input = this.refs['color' + i]
+            if (input) input.setValue((configs[i] && configs[i].color) || '')
+        })
+        // 坐标轴标签开关回显（Checkbox 非受控，ref setValue）
+        let axis = view.properties.chartAxis || {}
+        if (this.refs.axisX) this.refs.axisX.setValue(axis.xLabel !== false)
+        if (this.refs.axisY) this.refs.axisY.setValue(axis.yLabel !== false)
+    }
+
+
+    getSeries = () =>{
+        let view = getFirstResponder()
+        let data = view && view.properties.chartData
+        return (data && data.series) || []
+    }
+
+
+    handleSeriesChange = (i, patch) =>{
+        let view = getFirstResponder()
+        let configs = ((view && view.properties.chartSeries) || []).slice()
+        configs[i] = Object.assign({}, configs[i], patch)
+        // 注意：不能用 handleChangeImp —— 它会把 onChange 的 key 强制成 this.props.field（chartType），
+        // 导致 chartType 被污染成数组（ECharts 系列 type 非法 → 白板）
+        this.props.onChange('chartSeries', configs)
+    }
+
+
+    handleAxisChange = (key, show) =>{
+        let view = getFirstResponder()
+        let axis = Object.assign({}, (view && view.properties.chartAxis) || {}, {[key] : show})
+        this.props.onChange('chartAxis', axis)
+    }
+
+
+    render(){
+        let series = this.getSeries()
+        let view = getFirstResponder()
+        let configs = (view && view.properties.chartSeries) || []
+        // 未配置时回显实际生效类型（整体 chartType 默认值）
+        let defaultType = view && typeof view.properties.chartType === 'string' ? view.properties.chartType : 'bar'
+        return (<InspectorControl className={'ins-control_chart-config'} label={'维度配置'}>
+            <div className={'chart-axis-row'}>
+                <Checkbox ref={'axisX'} label={'X 轴标签'} onChange={(v) => this.handleAxisChange('xLabel', v)} />
+            </div>
+            <div className={'chart-axis-row'}>
+                <Checkbox ref={'axisY'} label={'Y 轴标签'} onChange={(v) => this.handleAxisChange('yLabel', v)} />
+            </div>
+            {series.map((s, i) => (
+                <div className={'chart-series-row'} key={i}>
+                    <span className={'chart-series-name'} title={s.name}>{s.name}</span>
+                    <Select className={'chart-series-type'} options={InspectorChartConfig.SERIES_TYPES}
+                            value={(configs[i] && configs[i].type) || defaultType}
+                            onChange={(v) => this.handleSeriesChange(i, {type : v})}/>
+                    <ColorInput
+                        onPreview={(v) => this.handleSeriesChange(i, {color : v})}
+                        onChange={(v) => this.handleSeriesChange(i, {color : v})}
+                        ref={'color' + i}
+                    />
+                </div>
+            ))}
+            {!series.length && <div className={'chart-color-empty'}>暂无系列数据（双击图表添加）</div>}
+        </InspectorControl>)
+    }
+}

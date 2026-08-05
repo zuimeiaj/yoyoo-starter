@@ -179,3 +179,50 @@
     cursor: pointer;
   }
 }
+
+.chart-color-empty {
+  font-size: 12px;
+  color: #999;
+}
+
+// 图表维度配置：每行 = 维度名 + 类型下拉 + 颜色选择器
+.chart-series-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+  .chart-series-name {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 12px;
+    color: #444;
+    margin-right: 8px;
+  }
+  .chart-series-type {
+    width: 70px;
+    margin-right: 8px;
+  }
+}
+.chart-color-empty {
+  font-size: 12px;
+  color: #999;
+}
+
+// 图表配置面板：顶部整体类型下拉
+.chart-config-type {
+  margin-bottom: 8px;
+}
+
+// 图表坐标轴标签显示开关行
+.chart-axis-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  .chart-axis-name {
+    font-size: 12px;
+    color: #444;
+  }
+}

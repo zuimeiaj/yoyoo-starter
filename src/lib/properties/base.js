@@ -172,9 +172,10 @@ export class Bubble extends ViewProperties {
     this.alias = '气泡';
     this.transform.width = 400;
     this.border.width = 1;
-    this.bubble = {
-      left: 20,
-    };
+    // 三角沿内矩形周线（[10,10]→[w-10,h-10]）的像素弧长，0 = 顶边左端，顺时针；可绕主体一圈
+    // 不写默认值：模板会覆盖构造宽高（如 300×100），写死像素值会漂移；
+    // 新组件由 ViewPolygon._getPos 按实际尺寸兜底为底部中间
+    this.bubble = {};
     delete this.shadow;
     delete this.corner;
   }
@@ -215,6 +216,11 @@ const SerializableKeys = {
   circle: 1,
   path: 1,
   masterId: 1,
+  chartData: 1,
+  chartType: 1,
+  chartSeries: 1,
+  chartAxis: 1,
+  chartColors: 1, // 旧版维度颜色（chartSeries 兼容回退）
   tableData: 1,
   rowRatios: 1,
   colRatios: 1,

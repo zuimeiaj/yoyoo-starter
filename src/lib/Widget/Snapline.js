@@ -114,33 +114,43 @@ export default class Snapline extends NoZoomTransform {
   // ==================== 间距标注（Figma 风格） ====================
 
   // 水平间距标注：连接线从 t1 右缘连到 t2 左缘，数字在间隙中心
-  showHDist = (t1, t2, dx) => {
+  // skipLine：中心对齐（hc）时 hcline 已画在同一 y 上，跳过独立连接线让数字直接骑在辅助线上
+  showHDist = (t1, t2, dx, skipLine = false) => {
     let scale = getScreeTransform().scale;
     let cx = (t1.x + t1.width + t2.x) / 2; // 间隙中点 x（工作区）
     let cy = (t1.y + t1.height / 2 + t2.y + t2.height / 2) / 2; // 两组件垂直中心中点
     this.refs.hlabel.innerHTML = Math.round(Math.abs(dx));
     this.hlabel.left(cx * scale).top(cy * scale).show();
-    // 连接线：从 t1 右缘到 t2 左缘（间隙宽度），位于两组件垂直中心
-    this.hline
-      .left((t1.x + t1.width) * scale)
-      .top(cy * scale)
-      .width(Math.abs(dx) * scale)
-      .show();
+    if (skipLine) {
+      this.hline.hide();
+    } else {
+      // 连接线：从 t1 右缘到 t2 左缘（间隙宽度），位于两组件垂直中心
+      this.hline
+        .left((t1.x + t1.width) * scale)
+        .top(cy * scale)
+        .width(Math.abs(dx) * scale)
+        .show();
+    }
   };
 
   // 垂直间距标注：连接线从 t1 底缘连到 t2 顶缘，数字在间隙中心
-  showVDist = (t1, t2, dy) => {
+  // skipLine：中心对齐（vc）时 vcline 已画在同一 x 上，跳过独立连接线让数字直接骑在辅助线上
+  showVDist = (t1, t2, dy, skipLine = false) => {
     let scale = getScreeTransform().scale;
     let cy = (t1.y + t1.height + t2.y) / 2; // 间隙中点 y（工作区）
     let cx = (t1.x + t1.width / 2 + t2.x + t2.width / 2) / 2; // 两组件水平中心中点
     this.refs.vlabel.innerHTML = Math.round(Math.abs(dy));
     this.vlabel.left(cx * scale).top(cy * scale).show();
-    // 连接线：从 t1 底缘到 t2 顶缘（间隙高度），位于两组件水平中心
-    this.vline
-      .left(cx * scale)
-      .top((t1.y + t1.height) * scale)
-      .height(Math.abs(dy) * scale)
-      .show();
+    if (skipLine) {
+      this.vline.hide();
+    } else {
+      // 连接线：从 t1 底缘到 t2 顶缘（间隙高度），位于两组件水平中心
+      this.vline
+        .left(cx * scale)
+        .top((t1.y + t1.height) * scale)
+        .height(Math.abs(dy) * scale)
+        .show();
+    }
   };
 
   hideDist = () => {
@@ -152,7 +162,10 @@ export default class Snapline extends NoZoomTransform {
 
   // 相邻间隙检测（Figma 风格间距标注，与吸附解耦）：
   // 与目标在垂直/水平方向重叠的组件，若间隙在 DIST_MAX 内则显示间距数字
-  checkDistances = (t2) => {
+  // 互斥规则（避免与辅助线重复）：
+  //  - gap < 吸附阈值 P：同一对组件处于吸附中，只显示辅助线，不显示间距数字
+  //  - 中心对齐（slots.hc/vc === t1）：数字骑在中心辅助线上，跳过独立连接线
+  checkDistances = (t2, slots) => {
     let items = this.arrayItems;
     let DIST_MAX = 60; // 显示间距标注的最大间隙（px）
     for (let i = 0, j = items.length; i < j; i++) {
@@ -160,26 +173,26 @@ export default class Snapline extends NoZoomTransform {
       // 垂直重叠 → 水平间隙（t1 在左或右）
       if (t1.y < t2.y + t2.height && t1.y + t1.height > t2.y) {
         let gap = t2.x - (t1.x + t1.width);
-        if (gap > 0 && gap <= DIST_MAX) {
-          this.showHDist(t1, t2, gap);
+        if (gap >= P && gap <= DIST_MAX) {
+          this.showHDist(t1, t2, gap, slots.hc === t1);
           return;
         }
         gap = t1.x - (t2.x + t2.width);
-        if (gap > 0 && gap <= DIST_MAX) {
-          this.showHDist(t2, t1, gap);
+        if (gap >= P && gap <= DIST_MAX) {
+          this.showHDist(t2, t1, gap, slots.hc === t1);
           return;
         }
       }
       // 水平重叠 → 垂直间隙（t1 在上或下）
       if (t1.x < t2.x + t2.width && t1.x + t1.width > t2.x) {
         let gap = t2.y - (t1.y + t1.height);
-        if (gap > 0 && gap <= DIST_MAX) {
-          this.showVDist(t1, t2, gap);
+        if (gap >= P && gap <= DIST_MAX) {
+          this.showVDist(t1, t2, gap, slots.vc === t1);
           return;
         }
         gap = t1.y - (t2.y + t2.height);
-        if (gap > 0 && gap <= DIST_MAX) {
-          this.showVDist(t2, t1, gap);
+        if (gap >= P && gap <= DIST_MAX) {
+          this.showVDist(t2, t1, gap, slots.vc === t1);
           return;
         }
       }
@@ -235,7 +248,7 @@ export default class Snapline extends NoZoomTransform {
       let right = Math.max(t1.x + t1.width, t.x + t.width) * scale;
       line.left(left).width(right - left).show();
     } else {
-      line.left(0).width(10000).show();
+      line.left(0).width(config.viewport.width * scale).show();
     }
   };
   showHBLine = (t, t1) => {
@@ -247,7 +260,7 @@ export default class Snapline extends NoZoomTransform {
       let right = Math.max(t1.x + t1.width, t.x + t.width) * scale;
       line.left(left).width(right - left).show();
     } else {
-      line.left(0).width(10000).show();
+      line.left(0).width(config.viewport.width * scale).show();
     }
   };
 
@@ -260,7 +273,7 @@ export default class Snapline extends NoZoomTransform {
       let right = Math.max(t1.x + t1.width, t.x + t.width) * scale;
       line.left(left).width(right - left).show();
     } else {
-      line.left(0).width(10000).show();
+      line.left(0).width(config.viewport.width * scale).show();
     }
   }
 
@@ -273,7 +286,7 @@ export default class Snapline extends NoZoomTransform {
       let bottom = Math.max(t1.y + t1.height, t.y + t.height) * scale;
       line.top(top).height(bottom - top).show();
     } else {
-      line.top(0).height(10000).show();
+      line.top(0).height(config.viewport.height * scale).show();
     }
   }
 
@@ -286,7 +299,7 @@ export default class Snapline extends NoZoomTransform {
       let bottom = Math.max(t1.y + t1.height, t.y + t.height) * scale;
       line.top(top).height(bottom - top).show();
     } else {
-      line.top(0).height(10000).show();
+      line.top(0).height(config.viewport.height * scale).show();
     }
   }
 
@@ -299,14 +312,20 @@ export default class Snapline extends NoZoomTransform {
       let bottom = Math.max(t1.y + t1.height, t.y + t.height) * scale;
       line.top(top).height(bottom - top).show();
     } else {
-      line.top(0).height(10000).show();
+      line.top(0).height(config.viewport.height * scale).show();
     }
   }
 
+  hideAllLines = () => {
+    ['ht', 'hc', 'hb', 'vl', 'vc', 'vr'].forEach((k) => this[k + 'line'].hide());
+  };
   onComponentDrag = (target, options = {}) => {
-    if (options.hideGuides) return;
-    if (options.from === 'Snapline') return;
     this.hideDist(); // 每帧先隐藏间距标注，匹配到再显示
+    // 程序化变换（对齐/属性修改/Snapline 自身回显）路径：清除残留辅助线
+    if (options.hideGuides || options.from === 'Snapline') {
+      this.hideAllLines();
+      return;
+    }
     // Refresh current position
     this.setBoundingRect();
     // 未旋转边缘：与 arrayItems 同一坐标系，线贴组件真实边缘
@@ -323,9 +342,8 @@ export default class Snapline extends NoZoomTransform {
       hc: (a, b) => this.showHCLine(a, b),
       hb: (a, b) => this.showHBLine(a, b),
     };
-    let lines = { ht: this.htline, hc: this.hcline, hb: this.hbline, vl: this.vlline, vc: this.vcline, vr: this.vrline };
     // 先全部隐藏（组件间短线段 ↔ 画布贯穿线切换时不残留）
-    Object.keys(lines).forEach((k) => lines[k].hide());
+    this.hideAllLines();
     // 逐方向渲染：组件匹配优先（两组件范围），画布对齐兜底（贯穿线）
     for (let i = 0; i < order.length; i++) {
       let k = order[i];
@@ -339,7 +357,7 @@ export default class Snapline extends NoZoomTransform {
         Event.dispatch(component_snap_change_end, i);
       }
     }
-    this.checkDistances(t2); // 相邻间隙间距标注（与吸附独立）
+    this.checkDistances(t2, slots); // 相邻间隙间距标注（与吸附独立，传 slots 判断中心对齐骑线）
     this.matched = slots;
     this.cmatched = cmatched;
   };
@@ -361,18 +379,14 @@ export default class Snapline extends NoZoomTransform {
     let dx = 0 - t.x,
       dx2 = vw / 2 - (t.x + t.width / 2),
       dx3 = vw - (t.x + t.width);
-    if (Math.abs(dx) < P) matched[0] = dx;
-    // Left
-    else if (Math.abs(dx2) < P) matched[1] = dx2;
-    // Center
+    if (Math.abs(dx) < P) matched[0] = dx; // Left
+    else if (Math.abs(dx2) < P) matched[1] = dx2; // Center
     else if (Math.abs(dx3) < P) matched[2] = dx3; // Right
     dx = 0 - t.y;
     dx2 = vh / 2 - (t.y + t.height / 2);
     dx3 = vh - (t.y + t.height);
-    if (Math.abs(dx) < P) matched[3] = dx;
-    // Top
-    else if (Math.abs(dx2) < P) matched[4] = dx2;
-    //Middle
+    if (Math.abs(dx) < P) matched[3] = dx; // Top
+    else if (Math.abs(dx2) < P) matched[4] = dx2; // Middle
     else if (Math.abs(dx3) < P) matched[5] = dx3; // Bottom
     return matched;
   };
@@ -396,6 +410,11 @@ export default class Snapline extends NoZoomTransform {
   };
   // 每个 match 只记录最近匹配到 slots，不再直接渲染（渲染统一在 onComponentDrag 逐方向处理）
   matchVL = (t1, t2, slots) => {
+    // 先清空该方向旧标志，防止跨帧残留导致 dragend 使用过期 diff 吸附
+    t1._alignType_v_left = null;
+    t1._alignDiff_v_left = null;
+    t1._alignType_v_right_left = null;
+    t1._alignDiff_v_right_left = null;
     let dx = t1.x - t2.x,
       dx2 = t1.x + t1.width - t2.x;
     if (Math.abs(dx) < P) {
@@ -409,6 +428,8 @@ export default class Snapline extends NoZoomTransform {
     }
   };
   matchVC = (t1, t2, slots) => {
+    t1._alignType_v_center = null;
+    t1._alignDiff_v_center = null;
     let dx = t1.x + t1.width / 2 - (t2.x + t2.width / 2);
     if (Math.abs(dx) < P) {
       t1._alignType_v_center = true;
@@ -417,6 +438,10 @@ export default class Snapline extends NoZoomTransform {
     }
   };
   matchVR = (t1, t2, slots) => {
+    t1._alignType_v_right = null;
+    t1._alignDiff_v_right = null;
+    t1._alignType_v_left_right = null;
+    t1._alignDiff_v_left_right = null;
     let dx = t1.x + t1.width - (t2.x + t2.width),
       dx2 = t1.x - (t2.x + t2.width);
     if (Math.abs(dx) < P) {
@@ -430,6 +455,10 @@ export default class Snapline extends NoZoomTransform {
     }
   };
   matchHT = (t1, t2, slots) => {
+    t1._alignType_h_top = null;
+    t1._alignDiff_h_top = null;
+    t1._alignType_h_bottom_top = null;
+    t1._alignDiff_h_bottom_top = null;
     let dx = t1.y - t2.y,
       dx2 = t1.height + t1.y - t2.y;
     if (Math.abs(dx) < P) {
@@ -443,6 +472,8 @@ export default class Snapline extends NoZoomTransform {
     }
   };
   matchHC = (t1, t2, slots) => {
+    t1._alignType_h_center = null;
+    t1._alignDiff_h_center = null;
     let dx = t1.y + t1.height / 2 - (t2.y + t2.height / 2);
     if (Math.abs(dx) < P) {
       t1._alignType_h_center = true;
@@ -451,6 +482,10 @@ export default class Snapline extends NoZoomTransform {
     }
   };
   matchHB = (t1, t2, slots) => {
+    t1._alignType_h_bottom = null;
+    t1._alignDiff_h_bottom = null;
+    t1._alignType_h_top_bottom = null;
+    t1._alignDiff_h_top_bottom = null;
     let dx = t1.y + t1.height - (t2.y + t2.height),
       dx2 = t1.y - (t2.y + t2.height);
     if (Math.abs(dx) < P) {
@@ -464,16 +499,6 @@ export default class Snapline extends NoZoomTransform {
     }
   };
   checkGuidesDistance = () => {};
-  _getRectWithParent = () => {
-    return this.target.properties.parent
-      ? this.target.properties.parent.view.getOffsetRect()
-      : {
-          x: 0,
-          y: 0,
-          width: config.viewport.width,
-          height: config.viewport.height,
-        };
-  };
   onComponentDragEnd = () => {
     this.htline.hide();
     this.hcline.hide();
@@ -492,42 +517,45 @@ export default class Snapline extends NoZoomTransform {
     let vl = matched.vl,
       vc = matched.vc,
       vr = matched.vr;
+    // 组件间匹配的 diff 在绝对坐标中算出（拖拽帧用 getOffsetRect 计算），
+    // properties.transform 是父级相对坐标 —— 嵌套组件（group 子元素）需换算回去；顶层组件 offX/offY 为 0，行为不变
     let t2 = this.target.properties.transform;
-    let parent = this.target.properties.parent;
-    let pRect = this._getRectWithParent();
+    let absT2 = this.target.getOffsetRect();
+    let offX = absT2.x - t2.x;
+    let offY = absT2.y - t2.y;
     let x, y;
     if (ht) {
       if (ht._alignType_h_top) {
-        y = t2.y + ht._alignDiff_h_top;
+        y = absT2.y + ht._alignDiff_h_top - offY;
       } else if (ht._alignType_h_bottom_top) {
-        y = t2.y + ht._alignDiff_h_bottom_top;
+        y = absT2.y + ht._alignDiff_h_bottom_top - offY;
       }
     }
     if (hc) {
-      y = t2.y + hc._alignDiff_h_center;
+      y = absT2.y + hc._alignDiff_h_center - offY;
     }
     if (hb) {
       if (hb._alignType_h_bottom) {
-        y = t2.y + hb._alignDiff_h_bottom;
+        y = absT2.y + hb._alignDiff_h_bottom - offY;
       } else if (hb._alignType_h_top_bottom) {
-        y = t2.y + hb._alignDiff_h_top_bottom;
+        y = absT2.y + hb._alignDiff_h_top_bottom - offY;
       }
     }
     if (vl) {
       if (vl._alignType_v_left) {
-        x = t2.x + vl._alignDiff_v_left;
+        x = absT2.x + vl._alignDiff_v_left - offX;
       } else if (vl._alignType_v_right_left) {
-        x = t2.x + vl._alignDiff_v_right_left;
+        x = absT2.x + vl._alignDiff_v_right_left - offX;
       }
     }
     if (vc) {
-      x = t2.x + vc._alignDiff_v_center;
+      x = absT2.x + vc._alignDiff_v_center - offX;
     }
     if (vr) {
       if (vr._alignType_v_right) {
-        x = t2.x + vr._alignDiff_v_right;
+        x = absT2.x + vr._alignDiff_v_right - offX;
       } else if (vr._alignType_v_left_right) {
-        x = t2.x + vr._alignDiff_v_left_right;
+        x = absT2.x + vr._alignDiff_v_left_right - offX;
       }
     }
     if (cmatched[0] !== void 0) {
@@ -581,9 +609,10 @@ export default class Snapline extends NoZoomTransform {
         from: 'Snapline',
       });
     }
-    matched.forEach((item) => {
+    // 清理全部匹配标志（不只最终匹配项：中间帧匹配过、后被更近组件顶掉的项也会残留，导致下次拖拽错误吸附）
+    this.arrayItems.forEach((item) => {
       for (let key in item) {
-        if (key.startsWith('_alignType')) {
+        if (key.startsWith('_align')) {
           item[key] = null;
         }
       }

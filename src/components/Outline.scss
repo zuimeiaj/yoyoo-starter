@@ -80,8 +80,9 @@
 .root-layout-side-components {
   .component-group-content {
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between; // 奇数条目时最后一行靠左（space-around 会居中）
     flex-wrap: wrap;
+    padding: 0 10px 10px; // 左右与分组边缘间距 + 底部与下一个分组标题的间距
   }
   .aj-component-draggable {
     display: inline-flex;
@@ -224,7 +225,7 @@
     border-top: 0;
     padding-top: 12px;
     &:hover{
-      background: #f8f8f8;
+      background: rgba(0, 150, 136, 0.06); // 主色（$primary-bg #009688）淡底
     }
 
     >div{
@@ -361,3 +362,4 @@
     }
   }
 }
+

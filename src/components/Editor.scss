@@ -75,6 +75,11 @@
     &:hover {
       cursor: pointer;
     }
+    // 自绘 SVG 图标（svg: 前缀）无 1em 内联尺寸，此处显式定尺寸（与字体图标 20px 一致）
+    svg {
+      width: 20px;
+      height: 20px;
+    }
     .icon-tupian-copy-copy {
       font-size: 20px;
       font-weight: 700;

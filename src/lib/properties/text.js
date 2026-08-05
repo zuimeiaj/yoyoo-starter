@@ -7,7 +7,7 @@ export default class TextProperties extends ViewProperties {
     this.type = 'text';
     this.alias = '文本';
     this.font = {
-      size: 14,
+      size: 12, // 默认高度与字号一致（12px，行高 spacing.height=1）
       color: 'rgba(0,0,0,1)',
     };
     this.align = {

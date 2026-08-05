@@ -21,6 +21,7 @@ import {
   InspectorShadow,
   InspectorSpacing,
   InspectorTransform,
+  InspectorChartConfig,
 } from '../lib/ui/InspectorControls';
 import InspectorTableCell from '../lib/ui/InspectorTableCell';
 import { getFirstResponder } from '../lib/global/instance';
@@ -283,6 +284,7 @@ const LABELS = {
   cellStyles: ['单元格样式', 'beijingyanse'],
   animations: ['动画', 'donghua'],
   interactions: ['交互', 'shoushidianji', 'controlled'],
+  chartType: ['维度配置', 'tubiao'],
 };
 const Trigger = {
   interactions: 'click',
@@ -304,21 +306,23 @@ const InspectorControls = {
   cellStyles: InspectorTableCell,
   animations: InspectorAnimation,
   interactions: InspectorInteraction,
+  chartType: InspectorChartConfig,
 };
 const Order = {
   transform: 1,
-  direction: 2,
-  border: 2,
-  shadow: 3,
-  corner: 4,
-  bg: 5,
-  font: 6,
-  align: 7,
-  fontStyle: 8,
-  decorator: 9,
-  spacing: 10,
-  icon: 11,
-  animations: 12,
-  interactions: 13,
-  cellStyles: 14,
+  chartType: 2,
+  direction: 4,
+  border: 4,
+  shadow: 5,
+  corner: 6,
+  bg: 7,
+  font: 8,
+  align: 9,
+  fontStyle: 10,
+  decorator: 11,
+  spacing: 12,
+  icon: 13,
+  animations: 14,
+  interactions: 15,
+  cellStyles: 16,
 };

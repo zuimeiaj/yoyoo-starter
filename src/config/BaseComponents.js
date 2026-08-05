@@ -9,13 +9,15 @@ export const BaseComponents = [
   {
     icon: 'text',
     name: '文本',
+    category: 'base',
     type: 'text',
-    height: 28,
+    height: 12, // 默认高度 = 字号（12px），换行时由 _fitHeight 自动撑高
     width: 100,
   },
   {
     icon: 'anniu1',
     name: '按钮',
+    category: 'base',
     type: 'button',
     height: 32,
     width: 100,
@@ -23,6 +25,7 @@ export const BaseComponents = [
   {
     icon: 'juxing',
     name: '矩形',
+    category: 'base',
     type: 'rect',
     width: 100,
     height: 100,
@@ -30,6 +33,7 @@ export const BaseComponents = [
   {
     icon: 'Triangle',
     name: '三角形',
+    category: 'base',
     type: 'triangle',
     width: 100,
     height: 100,
@@ -37,13 +41,55 @@ export const BaseComponents = [
   {
     icon: 'qipao',
     name: '气泡',
+    category: 'base',
     type: 'bubble',
     width: 300,
     height: 100,
   },
   {
+    icon: 'svg:<path d="M4 20h16"/><rect x="6" y="11" width="3.5" height="9" rx="1"/><rect x="10.5" y="6" width="3.5" height="14" rx="1"/><rect x="15" y="13" width="3.5" height="7" rx="1"/>',
+    name: '柱状图',
+    category: 'chart',
+    type: 'bar',
+    width: 300,
+    height: 200,
+  },
+  {
+    icon: 'svg:<path d="M3 20h18"/><path d="M3 16l5-6 4 3 6-8"/>',
+    name: '折线图',
+    category: 'chart',
+    type: 'line',
+    width: 300,
+    height: 200,
+  },
+  {
+    icon: 'svg:<path d="M3 19V8l5 6 4-4 6 9v0H3z"/>',
+    name: '面积图',
+    category: 'chart',
+    type: 'area',
+    width: 300,
+    height: 200,
+  },
+  {
+    icon: 'svg:<path d="M12 3a9 9 0 1 1-9 9"/><path d="M12 12L12 3"/>',
+    name: '饼图',
+    category: 'chart',
+    type: 'pie',
+    width: 300,
+    height: 200,
+  },
+  {
+    icon: 'svg:<path d="M12 3l7.9 5.7-3 9.3H7.1l-3-9.3z"/><path d="M12 3v9M19.9 8.7L12 12M7.1 12L4.1 17.7"/>',
+    name: '雷达图',
+    category: 'chart',
+    type: 'radar',
+    width: 300,
+    height: 200,
+  },
+  {
     icon: 'xianduanceliang',
     name: '直线',
+    category: 'base',
     type: 'line',
     width: 200,
     height: 1,
@@ -51,6 +97,7 @@ export const BaseComponents = [
   {
     icon: 'icon_yuanxing',
     name: '圆',
+    category: 'base',
     type: 'circle',
     width: 150,
     height: 150,
@@ -58,6 +105,7 @@ export const BaseComponents = [
   {
     icon: 'danhangshuru',
     name: '单行输入',
+    category: 'form',
     type: 'input',
     width: 180,
     height: 28,
@@ -65,6 +113,7 @@ export const BaseComponents = [
   {
     icon: 'fuhao-duohangshurukuang',
     name: '多行输入',
+    category: 'form',
     type: 'textarea',
     width: 200,
     height: 100,
@@ -72,6 +121,7 @@ export const BaseComponents = [
   {
     icon: 'xialaxuanze',
     name: '下拉选择',
+    category: 'form',
     type: 'select',
     height: 28,
     width: 180,
@@ -79,6 +129,7 @@ export const BaseComponents = [
   {
     icon: 'radio',
     name: '单选',
+    category: 'form',
     type: 'radio',
     height: 66,
     width: 180,
@@ -86,6 +137,7 @@ export const BaseComponents = [
   {
     icon: 'checkboxlist',
     name: '多选',
+    category: 'form',
     type: 'checkbox',
     height: 66,
     width: 180,
@@ -93,6 +145,7 @@ export const BaseComponents = [
   {
     icon: 'tupian-copy-copy',
     name: '图片',
+    category: 'base',
     type: 'image',
     height: 80,
     width: 80,
@@ -101,6 +154,7 @@ export const BaseComponents = [
     // iconfont 无表格字形，用自绘 SVG（Icon 组件 svg: 前缀）：外框 + 表头横线 + 纵向分列线
     icon: 'svg:<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18"/>',
     name: '表格',
+    category: 'base',
     type: 'table',
     width: 400,
     height: 200,
@@ -123,4 +177,10 @@ export const ComponentIconMap = {
   icon: 'tubiao',
   block: 'group',
   table: 'table',
+  chart: 'tubiao',
+  bar: 'svg:<path d="M4 20h16"/><rect x="6" y="11" width="3.5" height="9" rx="1"/><rect x="10.5" y="6" width="3.5" height="14" rx="1"/><rect x="15" y="13" width="3.5" height="7" rx="1"/>',
+  line: 'tubiao',
+  area: 'svg:<path d="M3 19V8l5 6 4-4 6 9v0H3z"/>',
+  pie: 'svg:<path d="M12 3a9 9 0 1 1-9 9"/><path d="M12 12L12 3"/>',
+  radar: 'svg:<path d="M12 3l7.9 5.7-3 9.3H7.1l-3-9.3z"/><path d="M12 3v9M19.9 8.7L12 12M7.1 12L4.1 17.7"/>',
 };

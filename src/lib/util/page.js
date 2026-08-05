@@ -53,7 +53,8 @@ export const selectPage = (pageid) => {
   return new Promise((resolve) => {
     setCurrentPage(pageid)
     getCurrentControllersByPage(pageid).then((data) => {
-      let items = parseJSON(data)
+      // isGenerateId：外部数据（如默认 dashboard JSON）可能无 id，加载时自动生成唯一 id（已有 id 保留）
+      let items = parseJSON(data, true)
       Event.dispatch(outline_page_select_end, { id: pageid, data: getPageData().find((item) => item.id == pageid) })
       resolve(items)
     })
@@ -166,11 +167,33 @@ export const generateNewPage = (pid) => ({
   },
   nodes: [],
 })
+// 无任何页面时的默认数据源：public/user-profile-dashboard.json（用户画像看板示例）
+const DEFAULT_PAGE_URL = (process.env.PUBLIC_URL || '') + '/user-profile-dashboard.json'
+
+const loadDefaultPage = async () => {
+  try {
+    let res = await fetch(DEFAULT_PAGE_URL)
+    if (!res.ok) throw new Error('default page not found')
+    let data = await res.json()
+    data.id = Date.now() // 覆盖 id 避免与历史数据冲突
+    data.alias = data.alias || '用户画像'
+    data.parentid = null
+    await addPage(data)
+  } catch (e) {
+    // 默认页加载失败（文件缺失/网络）时兜底：创建空白页
+    await createNewPage()
+  }
+}
+
 export const getPageListFromStorage = async () => {
   let pages = await getPages()
   if (pages.length == 0) {
-    await createNewPage()
+    await loadDefaultPage()
     pages = await getPages()
+    if (pages.length == 0) {
+      await createNewPage()
+      pages = await getPages()
+    }
   }
   return pages
 }

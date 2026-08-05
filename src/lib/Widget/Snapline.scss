@@ -10,15 +10,14 @@
   top: 0;
 }
 // Figma 风格辅助线：半透明红实线（与间距连接线统一），细且醒目
+// 注意：不可加 transform 平移 —— JS 动态设置 left/top/width/height，translate 会让线整体偏移半个线长
 .snapline-h {
   height: 1px;
   border-top: 1px solid rgba(255, 59, 48, 0.8);
   width: 10000px;
-  transform: translateX(-50%);
 }
 .snapline-v {
   height: 10000px;
-  transform: translateY(-50%);
   width: 1px;
   border-left: 1px solid rgba(255, 59, 48, 0.8);
 }

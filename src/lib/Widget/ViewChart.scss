@@ -1,0 +1,23 @@
+// 图表数据编辑弹窗：portal 挂载到 body（脱离组件层叠上下文），fixed 定位跟随组件屏幕位置
+.view-chart-poplist {
+  position: fixed;
+  display: none;
+  z-index: 99999;
+  box-sizing: border-box;
+  // 固定弹窗宽度（portal 在 body 下，min-width 百分比会相对视口撑满，必须用固定值）
+  width: 300px;
+  height: 260px;
+  min-height: 120px;
+  padding: 6px 8px;
+  background: #fff;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+  font-family: Menlo, Consolas, monospace;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #333;
+  resize: both;
+  white-space: pre;
+  word-break: break-all;
+}

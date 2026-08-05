@@ -33,17 +33,33 @@ export default class OutlineComponents extends CacheState {
   }
 }
 
+// 基础组件分组：基础（默认展开）/ 表单 / 图表（默认折叠）
+const CATEGORIES = [
+  { key: 'base', name: '基础' },
+  { key: 'form', name: '表单' },
+  { key: 'chart', name: '图表' },
+];
 class WrapperBase extends React.PureComponent {
   render() {
     return (
-      <div className={'component-group-content'}>
-        {BaseComponents.map((item) => {
+      <div>
+        {CATEGORIES.map((cat) => {
+          let items = BaseComponents.filter((item) => (item.category || 'base') === cat.key);
+          if (!items.length) return null;
           return (
-            <Draggable key={item.name} params={item}>
-              <IconText className={'base-component'} icon={item.icon}>
-                {item.name}
-              </IconText>
-            </Draggable>
+            <Collapse key={cat.key} className={'component-group-title'} title={cat.name}>
+              <div className={'component-group-content'}>
+                {items.map((item) => {
+                  return (
+                    <Draggable key={item.name} params={item}>
+                      <IconText className={'base-component'} icon={item.icon}>
+                        {item.name}
+                      </IconText>
+                    </Draggable>
+                  );
+                })}
+              </div>
+            </Collapse>
           );
         })}
       </div>

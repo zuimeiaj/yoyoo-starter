@@ -24,6 +24,8 @@ export default class Ruler extends React.Component {
       } else {
         this.ruler = new VerticalRuler(this.refs.canvas);
       }
+      // 通知容器标尺已就绪（容器补推选中组件包围盒缩影，避免创建延迟期间选中变化丢失）
+      Event.dispatch(ruler_ready, this.ruler);
     }, 800);
   }
   render() {

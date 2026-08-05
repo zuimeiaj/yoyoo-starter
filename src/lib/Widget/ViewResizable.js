@@ -287,10 +287,15 @@ export default class ViewResizable extends NoZoomTransform {
           h = Math.max(Math.round(h), self.minHeight);
 
           // 判断当前控制点是否为宽度缩放还是高度缩放
+          // 未旋转组件的边中手柄（l/r/tm/bm）直接用鼠标到固定边（opposite）的距离：
+          // 角度法（sin/cos）对矮宽/高瘦组件极不稳定（如文本 200×28 拖一下宽度骤变 = "缩到一起"）；
+          // 不能用 x/y（含 offsetX 手柄中心偏移，起始即半宽会缩半），须用鼠标绝对坐标减 opposite
+          // 旋转组件才需要角度法（边中手柄方向已旋转）
+          let rotation = self.target.properties.transform.rotation;
           if (widthMap[type] && !ratio) {
-            transform.width = w;
+            transform.width = rotation === 0 ? Math.max(Math.round(Math.abs(mouseX - opposite.x)), self.minWidth) : w;
           } else if (heightMap[type] && !ratio) {
-            transform.height = h;
+            transform.height = rotation === 0 ? Math.max(Math.round(Math.abs(mouseY - opposite.y)), self.minHeight) : h;
           } else {
             transform.width = w;
             transform.height = h;
@@ -317,7 +322,10 @@ export default class ViewResizable extends NoZoomTransform {
     this.show(true);
   };
   onCloseEditMode = () => {
+    // 编辑模式下 resizeWrapper 被整体 hide，直接 show 会把非白名单手柄全部显示出来
+    // （如按钮/表格只显示左右手柄，退出编辑后 8 个圆点全显）——按白名单恢复
     Dom.of(this.refs.resizeWrapper).show();
+    this.applyResizeHandles();
   };
   onOpenEditMode = () => {
     Dom.of(this.refs.resizeWrapper).hide();
@@ -360,14 +368,37 @@ export default class ViewResizable extends NoZoomTransform {
     Event.dispatch(component_drag, this.target, { from: 'Rotatable' });
   }
 
-  onComponentDrag = (target) => {
+  onComponentDrag = (target, options = {}) => {
     let t = target.properties.transform;
-    // if (!this._isHide) {
-    //   this._isHide = true;
-    //   this.show(false);
-    // }
+    // 组件本体拖拽（from: 'Draggable'）时隐藏 resize 手柄，避免遮挡辅助线/视图；
+    // 程序化变换不隐藏：Resizable/Rotatable（正在拖手柄）、Snapline 吸附回显、对齐工具栏（hideGuides）
+    if (!this._isHide && options.from === 'Draggable') {
+      this._isHide = true;
+      this.show(false);
+    }
     this.setBoundingRect(t);
   };
+  // 按白名单重设手柄显隐：先全隐藏 gResize，再显示白名单。
+  // 白名单是唯一控制源，不依赖 inactive 清场（否则普通组件残留显示的圆点/旋转手柄
+  // 会出现在白名单排除它们的组件上）
+  applyResizeHandles = () => {
+    let resize;
+    if (this.target && typeof this.target.getResizeHandles === 'function') {
+      // 组件实例自定义手柄白名单（如单选/多选禁用缩放旋转，只显示包裹边框）；
+      // 放实例属性而非 properties，不随序列化/历史数据丢失
+      resize = this.target.getResizeHandles();
+    } else {
+      resize = this.target ? this.target.properties.settings.resize : null;
+      if (resize === null) resize = gResize;
+    }
+    gResize.forEach((item) => {
+      Dom.of(this.refs[item]).hide();
+    });
+    (resize || gResize).forEach((item) => {
+      Dom.of(this.refs[item]).show();
+    });
+  };
+
   onComponentActive = (target) => {
     this.target = target;
     this.show(true);
@@ -385,23 +416,7 @@ export default class ViewResizable extends NoZoomTransform {
       if (min.width) this.minWidth = min.width;
       if (min.height) this.minHeight = min.height;
     }
-    let resize;
-    if (typeof target.getResizeHandles === 'function') {
-      // 组件实例自定义手柄白名单（如单选/多选禁用缩放旋转，只显示包裹边框）；
-      // 放实例属性而非 properties，不随序列化/历史数据丢失
-      resize = target.getResizeHandles();
-    } else {
-      resize = target.properties.settings.resize;
-      if (resize === null) resize = gResize;
-    }
-    // 先全隐藏再按白名单显示：resize 白名单是唯一控制源，不依赖 inactive 清场
-    // （否则普通组件残留显示的圆点/旋转手柄会出现在白名单排除它们的组件上）
-    gResize.forEach((item) => {
-      Dom.of(this.refs[item]).hide();
-    });
-    resize.forEach((item) => {
-      Dom.of(this.refs[item]).show();
-    });
+    this.applyResizeHandles();
   };
   onComponentInactive = () => {
     this.show(false);

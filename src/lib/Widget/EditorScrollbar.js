@@ -201,7 +201,7 @@ export default class EditorScrollbar extends PureComponent {
 
   // ========= 居中 ==========
   handlePanToCenter = () => {
-    if (this.tween) return;
+    if (this.tween) TWEEN.remove(this.tween); // 动画中再次点击：停掉旧动画重新居中（否则点击无反应）
 
     const halfW = (window.innerWidth - (config.editorDomRect.left + config.editorDomRect.right)) / 2;
     const halfH = (window.innerHeight - config.editorDomRect.top) / 2;
@@ -210,14 +210,17 @@ export default class EditorScrollbar extends PureComponent {
     let targetX = config.viewport.width / 2, targetY = config.viewport.height / 2;
     const responder = getFirstResponder();
     if (responder) {
-      const t = responder.properties.transform;
+      // 用 getOffsetRect（绝对坐标）：properties.transform 是父级相对坐标，嵌套组件会居中错位
+      const t = responder.getOffsetRect();
       targetX = t.x + t.width / 2;
       targetY = t.y + t.height / 2;
     }
 
     // 使 target 显示在视口中心所需的新 pan
-    const targetPosX = targetX - (halfW - config.originCoords.x) / this.scale;
-    const targetPosY = targetY - (halfH - config.originCoords.y) / this.scale;
+    // 屏幕位置 = (originCoords + workspace - pan) * scale（w 容器定位在 originCoords*scale），
+    // 故 originCoords 不能除以 scale —— 旧公式 (halfW - originCoords)/scale 缩放后偏差 originCoords*(1-1/scale)
+    const targetPosX = targetX + config.originCoords.x - halfW / this.scale;
+    const targetPosY = targetY + config.originCoords.y - halfH / this.scale;
 
     const startX = this.positionX;
     const startY = this.positionY;

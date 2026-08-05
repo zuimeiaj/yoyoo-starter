@@ -9,13 +9,14 @@
   }
   .collapse-title {
     display: flex;
-    padding: 10px;
-    padding-left: 0;
+    padding: 6px 10px; // 通用标题：紧凑上下间距 + 左右间距
+    background: rgba(0, 150, 136, 0.06); // 主色（$primary-bg #009688）淡底
     &:hover {
       cursor: pointer;
-      background: #f8f8f8;
+      background: rgba(0, 150, 136, 0.1);
     }
     .iconfont {
+      font-size: 12px; // 折叠箭头尺寸
       transition: all 300ms;
     }
     .left-title {

@@ -28,6 +28,11 @@
     color: #bbb;
     margin-right: 5px;
     font-size: 12px;
+    svg {
+      // 自绘 SVG 图标（svg: 前缀）无 1em 内联尺寸，显式跟随节点字号
+      width: 12px;
+      height: 12px;
+    }
   }
   .tree-node-name {
     padding: 4px 6px;
