@@ -296,11 +296,15 @@ export default class ViewResizable extends NoZoomTransform {
           // 角度法（sin/cos）对矮宽/高瘦组件极不稳定（如文本 200×28 拖一下宽度骤变 = "缩到一起"）；
           // 不能用 x/y（含 offsetX 手柄中心偏移，起始即半宽会缩半），须用鼠标绝对坐标减 opposite
           // 旋转组件才需要角度法（边中手柄方向已旋转）
+          // 边热区 8px 外扩（抓取点 ≠ 组件边）：边应跟随抓取点（mousedown 位置 + 鼠标位移），
+          // 即 edge = mouse - offset —— 直接用鼠标位置测距会让边在首帧跳变（最多 8px，"跳动"）
           let rotation = self.target.properties.transform.rotation;
           if (widthMap[type] && !ratio) {
-            transform.width = rotation === 0 ? Math.max(Math.round(Math.abs(mouseX - opposite.x)), self.minWidth) : w;
+            let edge = mouseX - offsetX;
+            transform.width = rotation === 0 ? Math.max(Math.round(Math.abs(edge - opposite.x)), self.minWidth) : w;
           } else if (heightMap[type] && !ratio) {
-            transform.height = rotation === 0 ? Math.max(Math.round(Math.abs(mouseY - opposite.y)), self.minHeight) : h;
+            let edge = mouseY - offsetY;
+            transform.height = rotation === 0 ? Math.max(Math.round(Math.abs(edge - opposite.y)), self.minHeight) : h;
           } else {
             transform.width = w;
             transform.height = h;
@@ -349,6 +353,8 @@ export default class ViewResizable extends NoZoomTransform {
     Event.dispatch(component_resize_start, this.target);
   };
   setScaleStatus = () => {
+    // 临时调试：mouseup 时的最终 transform
+    console.log('[resize] mouseup transform=', JSON.stringify(this.target.properties.transform));
     this.target.resizeEnd(); // 同旋转原理
     Event.dispatch(component_resize_end);
     this.show(true);

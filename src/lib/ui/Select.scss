@@ -31,7 +31,7 @@
     position: absolute;
     right: 5px;
     top: 8px;
-    color: #989898;
+    color: var(--yoo-text-tertiary);
     transition: transform 300ms;
   }
   .arrow-down {
@@ -42,8 +42,8 @@
     right: 5px;
     top: 50%;
     margin-top: -6px;
-    color: #d3d3d3;
-    background: #ffffff;
+    color: var(--yoo-text-tertiary);
+    background: var(--yoo-surface);
     line-height: 12px;
     display: none;
     border-radius: 12px;
@@ -51,7 +51,7 @@
     width: 10px;
     height: 10px;
     &:hover {
-      color: #989898;
+      color: var(--yoo-text-secondary);
     }
   }
 
@@ -64,7 +64,7 @@
     margin-top: 8px;
     animation: show linear;
     z-index: 10;
-    box-shadow: 2px 2px 5px 2px rgba(0, 0, 0, 0.1);
+    box-shadow: 2px 2px 5px 2px var(--yoo-shadow);
 
     .aj-select-scroll {
       max-height: 260px;
@@ -75,13 +75,13 @@
       padding: 5px 10px;
       position: relative;
       font-size: 12px;
-      color: #444;
+      color: var(--yoo-text-primary);
       &:hover {
-        background: #ececec;
+        background: var(--yoo-surface-hover);
         cursor: pointer;
       }
       &.checked {
-        background: #ececec;
+        background: var(--yoo-surface-hover);
       }
     }
     .arrow-up {
@@ -89,11 +89,11 @@
       position: absolute;
       top: -11px;
       left: 10px;
-      color: #d3d3d3;
+      color: var(--yoo-text-tertiary);
       font-size: 14px;
     }
     .arrow-up-white {
-      color: #ffffff;
+      color: var(--yoo-surface);
       top: -10px;
     }
   }

@@ -4,12 +4,12 @@
   padding: 5px 0;
   padding-left: 5px;
   &.selected {
-    background: #ececec;
+    background: var(--yoo-surface-hover);
     border-radius: 4px;
   }
   .iconfont{
     margin-left: 5px;
-    color: #666666;
+    color: var(--yoo-text-secondary);
   }
   .edit-view-name {
     flex: 1;

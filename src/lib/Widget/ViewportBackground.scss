@@ -1,17 +1,17 @@
 @import '../../styles/color';
 
 .viewport-background {
-  background: #ffffff;
+  background: var(--yoo-surface);
   position: absolute;
-  box-shadow: 0 0 30px 0px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 0 30px 0px var(--yoo-shadow);
   .resize {
     height: 26px;
     position: absolute;
     bottom: -30px;
     width: 100%;
     cursor: move;
-    color: #989898;
-    background: #ffffff;
+    color: var(--yoo-text-tertiary);
+    background: var(--yoo-surface);
     text-align: center;
     line-height: 26px;
     overflow: hidden;

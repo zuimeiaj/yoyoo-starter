@@ -8,9 +8,9 @@ body,
   padding: 0;
 }
 
-// 苹果毛玻璃底色：细腻蓝灰渐变，作为面板半透明模糊的内容源
+// 苹果毛玻璃底色：细腻蓝灰渐变，作为面板半透明模糊的内容源（暗色主题下由 CSS 变量切换）
 body {
-  background: linear-gradient(135deg, #e8edf4 0%, #f6f8fb 45%, #e9eef5 100%);
+  background: linear-gradient(135deg, var(--yoo-body-grad-1, #e8edf4) 0%, var(--yoo-body-grad-2, #f6f8fb) 45%, var(--yoo-body-grad-3, #e9eef5) 100%);
 }
 
 $inspectorWith: 260px;
@@ -51,11 +51,10 @@ ul li {
   height: 20px;
   background: $primary-bg;
   border-top: 1px solid $primary-border;
-  color: #444;
+  color: var(--yoo-text-secondary);
   font-size: 12px;
   line-height: 20px;
   padding-left: 10px;
-  color: #666666;
 }
 
 .view-text {
@@ -128,8 +127,8 @@ ul li {
     width: 10px;
     height: 10px;
     border-radius: 50%;
-    background: #fff;
-    border: 2px solid #1890ff;
+    background: var(--yoo-surface);
+    border: 2px solid var(--yoo-assist-color);
     cursor: crosshair;
     z-index: 2;
   }
@@ -140,7 +139,7 @@ ul li {
   outline: none;
   border: 1px solid $border;
   padding-left: 8px;
-  color: #444;
+  color: var(--yoo-text-primary);
   border-radius: $input-radius;
   &:focus {
     border: 1px solid $primary-bg;
@@ -179,13 +178,13 @@ ul li {
 .component-active {
   .component-control-dot {
     display: block;
-    stroke: rgba(33, 150, 243, 1);
-    fill: rgba(33, 150, 243, 0.2);
+    stroke: var(--yoo-assist-color);
+    fill: var(--yoo-assist-alpha);
     stroke-width: 2;
     cursor: move;
     &:hover {
-      fill: rgba(33, 150, 243, 1);
-      stroke: rgba(33, 150, 243, 0.5);
+      fill: var(--yoo-assist-color);
+      stroke: var(--yoo-assist-alpha-2);
     }
   }
 }
@@ -201,5 +200,5 @@ ul li {
 .view-text_comment {
   padding: 10px;
   font-size: 14px;
-  color: #381616;
+  color: var(--yoo-text-primary);
 }

@@ -16,7 +16,7 @@
   }
 
   .aj-number-addon {
-    color: #888888;
+    color: var(--yoo-text-tertiary);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -26,7 +26,7 @@
     }
   }
   .aj-number-label {
-    color: #888888;
+    color: var(--yoo-text-tertiary);
     font-size: 12px;
     height: 100%;
     display: flex;
@@ -51,6 +51,6 @@
     width: 100%;
     height: 100%;
     background: none;
-    color: #444;
+    color: var(--yoo-input-font-color);
   }
 }

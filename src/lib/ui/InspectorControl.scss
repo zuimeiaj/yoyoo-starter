@@ -7,14 +7,14 @@
 .ins-control_wrapper-label {
   color: #ffffff;
   padding: 5px 0px;
-  border-bottom: 1px solid #ececec;
+  border-bottom: 1px solid var(--yoo-border-1);
   margin-bottom: 8px;
   cursor: pointer;
   .iconfont {
     float: right;
     display: inline-block;
     transition: all 300ms;
-    color: #989898;
+    color: var(--yoo-text-tertiary);
     font-size: 12px;
   }
 }
@@ -86,7 +86,7 @@
       }
       &:nth-child(2) {
         .iconfont {
-          color: #989898;
+          color: var(--yoo-text-tertiary);
         }
       }
     }
@@ -130,7 +130,7 @@
       align-items: center;
       padding-left: 10px;
       height: $input-height;
-      color: #989898;
+      color: var(--yoo-text-tertiary);
       border: 1px solid $border;
       background: $input-bg;
     }
@@ -141,7 +141,7 @@
   &.font-content-drop {
     line-height: $input-height;
     padding-left: 10px;
-    color: #989898;
+    color: var(--yoo-text-tertiary);
     .preseticons {
       font-size: 20px;
       color: #f44336;
@@ -151,7 +151,7 @@
 
 .ins-content_control-label {
   width: 35px;
-  color: #c0c0c0;
+  color: var(--yoo-text-tertiary);
 }
 
 .ins-control_interactions-list {
@@ -170,7 +170,7 @@
 }
 
 .ins-content_drop-item {
-  color: #333333;
+  color: var(--yoo-text-primary);
   padding: 5px 10px;
 
   .iconfont {
@@ -182,7 +182,7 @@
 
 .chart-color-empty {
   font-size: 12px;
-  color: #999;
+  color: var(--yoo-text-tertiary);
 }
 
 // 图表维度配置：每行 = 维度名 + 类型下拉 + 颜色选择器
@@ -197,7 +197,7 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     font-size: 12px;
-    color: #444;
+    color: var(--yoo-text-primary);
     margin-right: 8px;
   }
   .chart-series-type {
@@ -207,7 +207,7 @@
 }
 .chart-color-empty {
   font-size: 12px;
-  color: #999;
+  color: var(--yoo-text-tertiary);
 }
 
 // 图表配置面板：顶部整体类型下拉
@@ -223,6 +223,6 @@
   margin-bottom: 6px;
   .chart-axis-name {
     font-size: 12px;
-    color: #444;
+    color: var(--yoo-text-primary);
   }
 }

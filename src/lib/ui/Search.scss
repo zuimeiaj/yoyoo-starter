@@ -7,7 +7,7 @@ $h: 28px;
   display: inline-flex;
   border-radius: 4px;
   .icon-search {
-    color: #989898;
+    color: var(--yoo-text-tertiary);
     font-size: 12px;
     margin-right: 5px;
     margin-left: 10px;
@@ -17,6 +17,6 @@ $h: 28px;
     background: none;
     outline: none;
     font-size: 12px;
-    color: #989898;
+    color: var(--yoo-input-font-color);
   }
 }

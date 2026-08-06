@@ -1,22 +1,22 @@
 .context-menu{
   width: 200px;
-  background: #ffffff;
+  background: var(--yoo-surface);
   border-radius: 2px;
   padding: 0;
   margin: 0;
-  box-shadow: 2px 2px 10px 0 rgba(0,0,0,0.1);
+  box-shadow: 2px 2px 10px 0 var(--yoo-shadow);
   z-index: 999;
   li{
     list-style:none;
     padding: 8px 15px;
-    color: #555555;
+    color: var(--yoo-text-primary);
     font-size: 12px;
     &:hover{
-      background: #f5f5f5;
+      background: var(--yoo-surface-hover);
       cursor: pointer;
     }
     &.disabled{
-      color: #d3d3d3;
+      color: var(--yoo-text-tertiary);
       &:hover{
         cursor: not-allowed;
       }
@@ -24,11 +24,11 @@
   }
   .context-group-line{
     height: 1px;
-    background: #ececec;
+    background: var(--yoo-border-1);
     padding: 0;
   }
   .shortcutkey{
     float: right;
-    color: #888888;
+    color: var(--yoo-text-tertiary);
   }
 }

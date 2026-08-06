@@ -1,0 +1,277 @@
+/* ============================================================
+ * yoyoo 主题令牌（CSS 变量）
+ *
+ * 用法：
+ *  - _color.scss 的 SCSS 变量全部改为 var(--yoo-*) 引用 —— 编译产物为运行时变量，
+ *    28 个 @import 'color' 的组件样式自动获得主题能力，无需逐文件重编译
+ *  - <html data-theme="light|dark"> 切换主题（由 ThemeToggle 写入，
+ *    system 模式监听 matchMedia('(prefers-color-scheme: dark)')）
+ *  - antd 3.x 无官方暗色主题：暗色下对常用组件做定向覆盖（见文件底部）
+ * ============================================================ */
+
+/* ---------- 浅色（默认） ---------- */
+:root {
+  /* 品牌/强调色（_color.scss 原有语义）
+   * 换主题色只需改 --yoo-primary-bg / --yoo-assist-color 两个主值，
+   * 派生色（-tint/-alpha）按需同步 */
+  --yoo-primary-bg: #009688;
+  --yoo-primary-tint: rgba(0, 150, 136, 0.06); /* 主色淡底（分组标题/悬停） */
+  --yoo-primary-tint-strong: rgba(0, 150, 136, 0.1);
+  --yoo-primary-border: #f5f5f5;
+  --yoo-primary-font-color: #222;
+  --yoo-primary-font-alpha-color: #fff;
+  --yoo-primary-selected: #dadada;
+  --yoo-primary-selected-color: #474747;
+  --yoo-primary-light: #ffffff;
+  --yoo-primary-blur: #999999;
+  --yoo-assist-color: #2196f3;
+  --yoo-assist-alpha: rgba(33, 150, 243, 0.3);
+  --yoo-assist-alpha-2: rgba(33, 150, 243, 0.5);
+  --yoo-assist-tint: rgba(24, 144, 255, 0.12);
+  --yoo-dialog-bg: linear-gradient(to bottom, rgba(156, 39, 176, 0.3), rgba(244, 67, 54, 0.2));
+
+  /* 输入/边框 */
+  --yoo-border: #ffffff;
+  --yoo-input-bg: #f1f1f1;
+  --yoo-primary-alpha: #ffffff;
+  --yoo-input-font-color: #222;
+  --yoo-input-disabled: rgba(0, 0, 0, 0.1);
+
+  /* 布局表面（硬编码颜色收敛用） */
+  --yoo-surface: #ffffff;        /* 面板/主背景 */
+  --yoo-surface-2: #fbfbfb;      /* 画布编辑区背景 */
+  --yoo-surface-3: #f1f3f5;      /* 悬停/次级面板 */
+  --yoo-surface-hover: #f5f7fa;  /* 列表悬停 */
+  --yoo-text-primary: #222222;
+  --yoo-text-secondary: #666666;
+  --yoo-text-tertiary: #999999;
+  --yoo-border-1: #ececec;       /* 分隔线/描边 */
+  --yoo-header-bg: #ffffff;
+  --yoo-shadow: rgba(0, 0, 0, 0.08);
+
+  /* 毛玻璃面板（Header/Outline/Inspector） */
+  --yoo-glass-bg: rgba(255, 255, 255, 0.62);
+  --yoo-glass-bg-2: rgba(255, 255, 255, 0.35);
+  --yoo-glass-border: rgba(255, 255, 255, 0.65);
+  --yoo-glass-border-2: rgba(255, 255, 255, 0.7);
+  --yoo-glass-highlight: rgba(255, 255, 255, 0.8);
+  --yoo-glass-shadow: 0 4px 20px rgba(31, 45, 61, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  --yoo-glass-shadow-lg: 0 8px 32px rgba(31, 45, 61, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+
+  /* 滚动条 */
+  --yoo-scroll-track: rgba(0, 0, 0, 0.08);
+  --yoo-scroll-thumb: rgba(0, 0, 0, 0.25);
+
+  /* body 毛玻璃底渐变 */
+  --yoo-body-grad-1: #e8edf4;
+  --yoo-body-grad-2: #f6f8fb;
+  --yoo-body-grad-3: #e9eef5;
+}
+
+/* ---------- 暗色 ---------- */
+:root[data-theme='dark'] {
+  --yoo-primary-bg: #26a69a;
+  --yoo-primary-tint: rgba(38, 166, 154, 0.12);
+  --yoo-primary-tint-strong: rgba(38, 166, 154, 0.2);
+  --yoo-primary-border: #2a2f3a;
+  --yoo-primary-font-color: #e8e8e8;
+  --yoo-primary-font-alpha-color: #ffffff;
+  --yoo-primary-selected: #3a4150;
+  --yoo-primary-selected-color: #d6d9de;
+  --yoo-primary-light: #1e222b;
+  --yoo-primary-blur: #8b93a1;
+  --yoo-assist-color: #4db6ff;
+  --yoo-assist-alpha: rgba(77, 166, 255, 0.22);
+  --yoo-assist-alpha-2: rgba(77, 166, 255, 0.5);
+  --yoo-assist-tint: rgba(77, 166, 255, 0.15);
+  --yoo-dialog-bg: linear-gradient(to bottom, rgba(156, 39, 176, 0.35), rgba(244, 67, 54, 0.25));
+
+  --yoo-border: #2a2f3a;
+  --yoo-input-bg: #2a2f3a;
+  --yoo-primary-alpha: #1e222b;
+  --yoo-input-font-color: #e8e8e8;
+  --yoo-input-disabled: rgba(255, 255, 255, 0.12);
+
+  --yoo-surface: #1e222b;
+  --yoo-surface-2: #171a21;
+  --yoo-surface-3: #262b35;
+  --yoo-surface-hover: #2a303c;
+  --yoo-text-primary: #e8e8e8;
+  --yoo-text-secondary: #a2a9b4;
+  --yoo-text-tertiary: #6d7580;
+  --yoo-border-1: #2a2f3a;
+  --yoo-header-bg: #1e222b;
+  --yoo-shadow: rgba(0, 0, 0, 0.4);
+
+  --yoo-glass-bg: rgba(30, 34, 43, 0.72);
+  --yoo-glass-bg-2: rgba(38, 43, 53, 0.6);
+  --yoo-glass-border: rgba(255, 255, 255, 0.08);
+  --yoo-glass-border-2: rgba(255, 255, 255, 0.12);
+  --yoo-glass-highlight: rgba(255, 255, 255, 0.06);
+  --yoo-glass-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  --yoo-glass-shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+
+  --yoo-scroll-track: rgba(255, 255, 255, 0.06);
+  --yoo-scroll-thumb: rgba(255, 255, 255, 0.2);
+
+  --yoo-body-grad-1: #141822;
+  --yoo-body-grad-2: #1b202b;
+  --yoo-body-grad-3: #161a23;
+}
+
+/* ---------- 全局滚动条（跟随主题） ---------- */
+::-webkit-scrollbar-track {
+  background: var(--yoo-scroll-track);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--yoo-scroll-thumb);
+}
+
+/* ============================================================
+ * antd 3.x 暗色覆盖（antd 无官方 dark theme，定向覆盖常用组件）
+ * ============================================================ */
+:root[data-theme='dark'] {
+  /* Modal */
+  .ant-modal-content {
+    background: var(--yoo-surface);
+  }
+  .ant-modal-header {
+    background: var(--yoo-surface);
+    border-bottom: 1px solid var(--yoo-border-1);
+  }
+  .ant-modal-title,
+  .ant-modal-close,
+  /* Modal.confirm 用 confirm 结构，标题/正文是另一套类 */
+  .ant-modal-confirm-body .ant-modal-confirm-title {
+    color: var(--yoo-text-primary);
+  }
+  .ant-modal-body,
+  .ant-modal-confirm-body .ant-modal-confirm-content {
+    color: var(--yoo-text-secondary);
+  }
+  .ant-modal-footer {
+    border-top: 1px solid var(--yoo-border-1);
+  }
+
+  /* 输入类 */
+  .ant-input,
+  .ant-input-number,
+  .ant-select-selection,
+  .ant-cascader-picker,
+  .ant-input-affix-wrapper .ant-input {
+    background: var(--yoo-input-bg);
+    border-color: var(--yoo-border-1);
+    color: var(--yoo-input-font-color);
+  }
+  .ant-input::placeholder,
+  .ant-input-number-input::placeholder {
+    color: var(--yoo-text-tertiary);
+  }
+
+  /* 下拉/弹出层 */
+  .ant-select-dropdown,
+  .ant-dropdown-menu,
+  .ant-menu,
+  .ant-popover-inner,
+  .ant-tooltip-inner {
+    background: var(--yoo-surface-3);
+  }
+  .ant-select-dropdown-menu-item,
+  .ant-dropdown-menu-item {
+    color: var(--yoo-text-primary);
+  }
+  .ant-select-dropdown-menu-item:hover,
+  .ant-dropdown-menu-item:hover {
+    background: var(--yoo-surface-hover);
+  }
+  .ant-dropdown-menu-item-selected {
+    color: var(--yoo-assist-color);
+    background: var(--yoo-assist-alpha);
+  }
+  .ant-tooltip-inner {
+    color: var(--yoo-text-primary);
+  }
+  .ant-popover-inner-content {
+    color: var(--yoo-text-secondary);
+  }
+
+  /* 折叠面板（大纲树）：antd 3 的 header 颜色规则优先级 (0,3,0) 高于普通覆盖，必须同优先级 */
+  .ant-collapse {
+    background: transparent;
+    border-color: var(--yoo-border-1);
+  }
+  .ant-collapse > .ant-collapse-item {
+    border-bottom-color: var(--yoo-border-1);
+  }
+  .ant-collapse > .ant-collapse-item > .ant-collapse-header {
+    color: var(--yoo-text-primary);
+  }
+
+  /* 大纲树节点（ant-tree 同 (0,3,0) 深选择器） */
+  .ant-tree li .ant-tree-node-content-wrapper {
+    color: var(--yoo-text-secondary);
+  }
+  .ant-tree li .ant-tree-node-content-wrapper:hover {
+    background-color: var(--yoo-surface-hover);
+  }
+
+  /* 表单/开关/按钮 */
+  .ant-radio-wrapper,
+  .ant-checkbox-wrapper,
+  .ant-form label,
+  .ant-form,
+  .ant-form-item {
+    color: var(--yoo-text-secondary);
+  }
+  .ant-form-item-label > label {
+    color: var(--yoo-text-primary);
+  }
+  .ant-form-explain,
+  .ant-form-extra {
+    color: var(--yoo-text-tertiary);
+  }
+  .ant-switch {
+    background: var(--yoo-primary-selected);
+  }
+  .ant-btn {
+    background: var(--yoo-surface-3);
+    border-color: var(--yoo-border-1);
+    color: var(--yoo-text-primary);
+  }
+  .ant-btn:hover,
+  .ant-btn:focus {
+    background: var(--yoo-surface-hover);
+    border-color: var(--yoo-assist-color);
+    color: var(--yoo-assist-color);
+  }
+
+  /* Radio.Button 模式切换（设计/钢笔/连线） */
+  .ant-radio-button-wrapper {
+    background: var(--yoo-surface-3);
+    border-color: var(--yoo-border-1);
+    color: var(--yoo-text-secondary);
+  }
+  .ant-radio-button-wrapper:hover {
+    color: var(--yoo-assist-color);
+  }
+  .ant-radio-button-wrapper-checked {
+    background: var(--yoo-primary-bg);
+    border-color: var(--yoo-primary-bg);
+    color: var(--yoo-primary-font-alpha-color);
+  }
+  .ant-radio-button-wrapper-checked:hover {
+    color: var(--yoo-primary-font-alpha-color);
+  }
+
+  /* 消息/通知 */
+  .ant-message-notice-content {
+    background: var(--yoo-surface-3);
+    color: var(--yoo-text-primary);
+    box-shadow: 0 4px 16px var(--yoo-shadow);
+  }
+
+  /* 菜单分隔线 */
+  .ant-dropdown-menu-item-divider {
+    background: var(--yoo-border-1);
+  }
+}

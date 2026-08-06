@@ -2,9 +2,9 @@
   .ins-card-title {
     line-height: 30px;
     padding-left: 10px;
-    color: #000000;
-    border-top: 1px solid #ececec;
-    background: #f5f5f5;
+    color: var(--yoo-text-primary);
+    border-top: 1px solid var(--yoo-border-1);
+    background: var(--yoo-surface-3);
     .iconfont {
       font-size: 14px;
       margin-right: 3px;
@@ -13,7 +13,7 @@
       float: right;
       margin-right: 5px;
       transition: transform 300ms;
-      color: #989898;
+      color: var(--yoo-text-tertiary);
       &:hover {
         cursor: pointer;
       }
@@ -29,7 +29,7 @@
       width: 26px;
       display: flex;
       align-items: center;
-      color: #666666;
+      color: var(--yoo-text-secondary);
     }
   }
 }

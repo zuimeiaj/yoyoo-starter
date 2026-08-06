@@ -20,12 +20,12 @@
       position: relative;
       float: right;
       margin-left: 10px;
-      color: #999999;
+      color: var(--yoo-text-tertiary);
     }
   }
   .settings_overflow {
     label {
-      color: #666666;
+      color: var(--yoo-text-secondary);
       padding-left: 4px;
       padding-right: 10px;
     }

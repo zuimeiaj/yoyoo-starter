@@ -5,7 +5,7 @@
 
 .preferences-title {
   padding-bottom: 6px;
-  color: #555555;
+  color: var(--yoo-text-primary);
 }
 
 .preferences-content {
@@ -19,6 +19,6 @@
   }
 }
 .preferences-form-item_extra {
-  color: #989898;
+  color: var(--yoo-text-tertiary);
   padding-top: 5px;
 }

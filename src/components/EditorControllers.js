@@ -1047,8 +1047,12 @@ class EditorControllers extends React.Component {
     this.handleComponentActive(target)
   }
   handleComponentResizend = () => {
+    // 临时调试：提交前后树节点的 transform 对比（排查 resize 结束组件位移）
+    let before = getFirstResponder() && JSON.stringify(getFirstResponder().properties.transform)
     this.handleComponentDragend()
     this.handleComponentActive(getFirstResponder())
+    let after = getFirstResponder() && JSON.stringify(getFirstResponder().properties.transform)
+    console.log('[resize] commit before=', before, 'after=', after)
   }
   /**
    * 根据block的新

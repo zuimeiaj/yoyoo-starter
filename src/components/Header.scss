@@ -4,15 +4,15 @@ $header_height: 50px;
   height: $header_height;
   display: flex;
   align-items: center;
-  // 苹果毛玻璃：半透明白 + 背景模糊 + 高光底边
-  background: rgba(255, 255, 255, 0.62);
+  // 苹果毛玻璃：半透明白 + 背景模糊 + 高光底边（暗色主题由 CSS 变量切换）
+  background: var(--yoo-glass-bg);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
   backdrop-filter: blur(24px) saturate(180%);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.65);
-  box-shadow: 0 4px 20px rgba(31, 45, 61, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  border-bottom: 1px solid var(--yoo-glass-border);
+  box-shadow: var(--yoo-glass-shadow);
   display: flex;
   position: relative;
-  color: #666;
+  color: var(--yoo-text-secondary);
   z-index: 999;
 
   .header-logo {
@@ -71,10 +71,10 @@ $header_height: 50px;
       animation: loading 1s infinite;
     }
     &.disabled {
-      color: #c0c0c0;
+      color: var(--yoo-text-tertiary);
       cursor: not-allowed;
       .iconfont {
-        color: #c0c0c0;
+        color: var(--yoo-text-tertiary);
       }
     }
     .iconfont {
@@ -104,11 +104,13 @@ $header_height: 50px;
 }
 
 .header_settings-panel {
-  background: rgba(255, 255, 255, 0.72);
+  background: var(--yoo-glass-bg-2);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
   backdrop-filter: blur(24px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.7);
-  box-shadow: 0 8px 32px rgba(31, 45, 61, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  border: 1px solid var(--yoo-glass-border-2);
+  box-shadow: var(--yoo-glass-shadow-lg);
+  // 面板整体文字色：快捷键列表/偏好设置各项继承，暗色下可读
+  color: var(--yoo-text-primary);
   width: 800px;
   position: fixed;
   right: 10px;
@@ -129,14 +131,14 @@ $header_height: 50px;
     display: flex;
     align-items: flex-end;
     justify-content: flex-end;
-    border-top: 1px solid #ececec;
+    border-top: 1px solid var(--yoo-border-1);
   }
   .header_shortcuts {
     position: relative;
     height: 100%;
     display: flex;
     flex-direction: column;
-    border-right: 1px solid #ececec;
+    border-right: 1px solid var(--yoo-border-1);
     flex: 1;
   }
   .header-shortcuts-wrapper {
@@ -194,9 +196,9 @@ $header_height: 50px;
 }
 
 .header_extra-actions {
-  color: #555555;
+  color: var(--yoo-text-primary);
   .iconfont {
-    color: #666;
+    color: var(--yoo-text-secondary);
     margin-right: 5px;
   }
 }
@@ -226,7 +228,7 @@ $header_height: 50px;
     height: 22px;
     border-radius: 4px;
     cursor: pointer;
-    color: rgba(0, 0, 0, 0.55);
+    color: var(--yoo-text-secondary);
     transition: all 0.2s;
 
     .iconfont {
@@ -234,12 +236,12 @@ $header_height: 50px;
     }
 
     &:hover {
-      background: rgba(0, 0, 0, 0.06);
+      background: var(--yoo-surface-hover);
     }
 
     &.active {
-      color: #1890ff;
-      background: rgba(24, 144, 255, 0.12);
+      color: var(--yoo-assist-color);
+      background: var(--yoo-assist-tint);
     }
   }
 }

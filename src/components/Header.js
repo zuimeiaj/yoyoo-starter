@@ -8,6 +8,7 @@ import HeaderAlignment from './HeaderAlignment'
 import HistoryControl from './HistoryControl'
 import HeaderCoverage from './HeaderCoverage'
 import HeaderUser from './HeaderUser'
+import ThemeToggle from './ThemeToggle'
 import HeaderPanToCenter from './HeaderPanToCenter'
 import HeaderGuides from './HeaderGuides'
 import Event from '../lib/Base/Event'
@@ -75,6 +76,7 @@ export default class Header extends React.Component {
         <div className={'header_user'}>
           <HeaderSettings />
           <HeaderExport />
+          <ThemeToggle />
           <HeaderUser />
         </div>
       </div>

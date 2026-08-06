@@ -8,12 +8,12 @@
   .root-layout-side-menu {
     width: 50px;
     padding-top: 10px;
-    // 苹果毛玻璃：半透明白 + 背景模糊 + 高光右边
-    border-right: 1px solid rgba(255, 255, 255, 0.65);
-    background: rgba(255, 255, 255, 0.55);
+    // 苹果毛玻璃：半透明白 + 背景模糊 + 高光右边（暗色主题由 CSS 变量切换）
+    border-right: 1px solid var(--yoo-glass-border);
+    background: var(--yoo-glass-bg);
     -webkit-backdrop-filter: blur(24px) saturate(180%);
     backdrop-filter: blur(24px) saturate(180%);
-    box-shadow: inset -1px 0 0 rgba(255, 255, 255, 0.5);
+    box-shadow: inset -1px 0 0 var(--yoo-glass-highlight);
     height: 100%;
     margin-bottom: 0;
 
@@ -32,7 +32,7 @@
       margin-bottom: 20px;
       .iconfont {
         font-size: 20px;
-        color: #555;
+        color: var(--yoo-text-secondary);
       }
       &:hover {
         cursor: pointer;
@@ -57,14 +57,16 @@
     flex: 1;
     overflow-y: auto;
     // 半透明透出外层菜单栏的模糊背景，保持玻璃感统一
-    background: rgba(255, 255, 255, 0.35);
+    background: var(--yoo-glass-bg-2);
+    // 显式文字色：组件列表/分组标题继承此色，暗色主题下可读（原继承 body 默认黑色）
+    color: var(--yoo-text-primary);
     .aj-ui-search {
       width: 100%;
       margin-bottom: 10px;
     }
     .editable-component_text {
       border-bottom: none;
-      color: #454545;
+      color: var(--yoo-text-primary);
     }
   }
 }
@@ -89,11 +91,11 @@
     align-items: center;
     overflow: hidden;
     position: relative;
-    border: 1px solid rgba(255, 255, 255, 0.7);
+    border: 1px solid var(--yoo-glass-border-2);
     padding: 6px 6px;
     margin-top: 10px;
     border-radius: 8px;
-    background: rgba(255, 255, 255, 0.6);
+    background: var(--yoo-glass-bg-2);
     width: 45%;
     &:hover {
       z-index: 10;
@@ -112,13 +114,13 @@
     background-size: contain;
     .aj-component-draggable {
       &:hover {
-        background: #ececec;
+        background: var(--yoo-surface-hover);
       }
     }
     .iconfont {
       font-size: 12px;
       margin-right: 4px;
-      color: #666;
+      color: var(--yoo-text-secondary);
       padding: 4px;
       height: 22px;
       width: 22px;
@@ -169,7 +171,7 @@
       aspect-ratio: 1;
       position: relative;
       .preseticons {
-        color: #444;
+        color: var(--yoo-text-primary);
       }
       &:hover {
         border-radius: 5px;
@@ -208,7 +210,7 @@
 .root-layout-side-assets {
   min-height: 100%;
   >div:first-child{
-    border-bottom: 1px solid #ececec;
+    border-bottom: 1px solid var(--yoo-border-1);
   }
   .aj-ui-search {
     flex: 1;
@@ -216,16 +218,16 @@
   }
   .side-assets_image-item {
     width: 50%;
-    border: 1px solid #ececec;
+    border: 1px solid var(--yoo-border-1);
     float: left;
     text-align: center;
-    color: #989898;
+    color: var(--yoo-text-tertiary);
     border-left: 0;
     position: relative;
     border-top: 0;
     padding-top: 12px;
     &:hover{
-      background: rgba(0, 150, 136, 0.06); // 主色（$primary-bg #009688）淡底
+      background: var(--yoo-primary-tint); // 主色淡底
     }
 
     >div{
@@ -249,7 +251,7 @@
 }
 
 .side-coverage_empty {
-  color: #989898;
+  color: var(--yoo-text-tertiary);
   display: block;
   margin: 20px auto;
   text-align: center;
@@ -259,10 +261,10 @@
 }
 
 .side-assets_empty {
-  border: 1px dashed #ececec;
+  border: 1px dashed var(--yoo-border-1);
   margin: 20px;
   border-radius: 10px;
-  color: #989898;
+  color: var(--yoo-text-tertiary);
   text-align: center;
   padding: 20px 5px;
   .iconfont {
@@ -276,7 +278,7 @@
 .side-prefabs_tips {
   display: flex;
   margin: 20px 5px;
-  color: #666666;
+  color: var(--yoo-text-secondary);
   .iconfont {
     margin-right: 5px;
     color: #ffc107;
@@ -325,7 +327,7 @@
   .node-title-wrapper {
     display: flex;
     &.hide {
-      color: #d3d3d3;
+      color: var(--yoo-text-tertiary);
     }
   }
   .aj-component-draggable {

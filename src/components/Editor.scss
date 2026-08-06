@@ -14,7 +14,7 @@
   bottom: 0px;
   position: absolute;
   overflow: hidden;
-  background: #fbfbfb;
+  background: var(--yoo-surface-2);
 }
 
 .editor-control-panel {
@@ -38,7 +38,7 @@
     height: 20px;
     width: 20px;
     top: 0;
-    background: #ffffff;
+    background: var(--yoo-surface);
   }
 }
 
@@ -67,9 +67,9 @@
   max-height: calc(100vh - 120px);
   overflow-y: auto;
   background: $primary-alpha;
-  border: 1px solid #ececec;
+  border: 1px solid var(--yoo-border-1);
   padding: 10px;
-  color: #666;
+  color: var(--yoo-text-secondary);
   box-shadow: 2px 0 20px 5px rgba(0, 0, 0, 0.05);
   .base-component_action-item {
     display: flex;

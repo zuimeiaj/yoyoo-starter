@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>功能特性 —— yoyoo 在线可视化设计器</title>
+  <meta name="description" content="yoyoo 功能详解：拖拽编辑、属性面板、连线流程图、图表组件、多页管理、图片导出。" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <nav class="site-nav">
+    <a class="logo" href="index.html"><span class="logo-mark">y</span>yoyoo</a>
+    <div class="nav-links">
+      <a href="index.html">首页</a>
+      <a href="features.html" class="active">功能</a>
+      <a href="guide.html">快速上手</a>
+      <a href="changelog.html">更新日志</a>
+    </div>
+    <a class="nav-cta" href="../">打开编辑器</a>
+  </nav>
+
+  <header class="page-head">
+    <h1>功能特性</h1>
+    <p>围绕「拖拽生成、零代码编辑」打造的一套完整能力</p>
+  </header>
+
+  <section class="section">
+    <h2 class="section-title">编辑器体验</h2>
+    <p class="section-desc">以专业设计工具的交互标准构建的画布编辑体验</p>
+    <div class="card-grid">
+      <div class="card">
+        <div class="icon">🖱️</div>
+        <h3>拖拽 / 缩放 / 旋转</h3>
+        <p>组件拖入画布，四边与四角手柄自由缩放，外侧圆弧手柄旋转。移动量化 1px 级跟手。</p>
+      </div>
+      <div class="card">
+        <div class="icon">📐</div>
+        <h3>对齐与辅助线</h3>
+        <p>拖拽中自动吸附参考线，显示与相邻组件的对齐提示与间距标注，排版对齐零心算。</p>
+      </div>
+      <div class="card">
+        <div class="icon">🔲</div>
+        <h3>框选批操作</h3>
+        <p>相交 / 包围两种框选模式，拖拽过程实时高亮命中组件，松手批量选中，一次移动 / 复制 / 删除。</p>
+      </div>
+      <div class="card">
+        <div class="icon">⚡</div>
+        <h3>快捷键与撤销</h3>
+        <p>复制粘贴、删除、分组、对齐、层级调整等常用操作全快捷键支持；撤销 / 重做多级历史。</p>
+      </div>
+      <div class="card">
+        <div class="icon">🧱</div>
+        <h3>分组（block）</h3>
+        <p>多组件打包成分组容器，整体移动缩放；分组前后渲染结果完全一致，可随时解组。</p>
+      </div>
+      <div class="card">
+        <div class="icon">📑</div>
+        <h3>多页面</h3>
+        <p>一个项目多页面，各自独立尺寸与背景；页面列表随时切换、复制、删除，数据互不干扰。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <h2 class="section-title">组件能力</h2>
+    <p class="section-desc">内置 30+ 常用组件，覆盖文本、表单、图形与数据展示</p>
+    <div class="card-grid">
+      <div class="card">
+        <div class="icon">📝</div>
+        <h3>文本与按钮</h3>
+        <p>双击直接编辑内容，字号 / 颜色 / 加粗 / 斜体 / 下划线 / 行高字距可调，高度自动包裹。</p>
+      </div>
+      <div class="card">
+        <div class="icon">⌨️</div>
+        <h3>表单组件</h3>
+        <p>单行 / 多行输入、下拉选择、单选多选，选项即配即用，默认选中项一键标记。</p>
+      </div>
+      <div class="card">
+        <div class="icon">📊</div>
+        <h3>数据图表</h3>
+        <p>柱状 / 折线 / 面积 / 饼 / 雷达五种图表，多系列混合展示，数据表格直接填写。</p>
+      </div>
+      <div class="card">
+        <div class="icon">🔷</div>
+        <h3>图形与流程节点</h3>
+        <p>矩形、圆、三角、直线、菱形（判断）、平行四边形（输入输出）、六边形（循环），双击加标签。</p>
+      </div>
+      <div class="card">
+        <div class="icon">🖼️</div>
+        <h3>图片与图标</h3>
+        <p>图片支持铺满 / 等比 / 拉伸三种填充模式，内置 iconfont 图标库即拖即用。</p>
+      </div>
+      <div class="card">
+        <div class="icon">📋</div>
+        <h3>表格</h3>
+        <p>二维数据直填，行高列宽占比、单元格合并、按单元格独立配色样式。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2 class="section-title">连线 —— 流程图 / 架构图 / 脑图</h2>
+    <p class="section-desc">组件四边锚点拖出连线，连接即跟随组件移动缩放</p>
+    <div class="card-grid">
+      <div class="card">
+        <div class="icon">🔗</div>
+        <h3>两种线型</h3>
+        <p>贝塞尔曲线与直角折线一键切换；直角线自动避障，绕开所有组件与自身，箭头永不穿组件。</p>
+      </div>
+      <div class="card">
+        <div class="icon">🧲</div>
+        <h3>锚点吸附</h3>
+        <p>按住锚点拖出虚线，悬停目标锚点自动高亮吸附；轻点已连接锚点可断开该点全部连线。</p>
+      </div>
+      <div class="card">
+        <div class="icon">🔄</div>
+        <h3>零同步成本</h3>
+        <p>连线只存引用不存坐标，组件拖动 / 缩放 / 画布缩放滚动，连线实时跟随，多对多自由连接。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <h2 class="section-title">产出与数据</h2>
+    <p class="section-desc">设计成果与数据都掌握在你自己手里</p>
+    <div class="card-grid">
+      <div class="card">
+        <div class="icon">🖼️</div>
+        <h3>图片导出</h3>
+        <p>当前页或整个项目导出 PNG / JPEG，或打包 ZIP 下载；连线、图表、圆角阴影完整保留。</p>
+      </div>
+      <div class="card">
+        <div class="icon">💾</div>
+        <h3>本地持久化</h3>
+        <p>页面数据自动存入浏览器 IndexedDB，刷新不丢失；结构化的 JSON 数据可导出迁移。</p>
+      </div>
+      <div class="card">
+        <div class="icon">📦</div>
+        <h3>AI 可生成</h3>
+        <p>页面由纯 JSON 描述（组件树 + 属性 + 连线），AI 按数据结构文档即可直接生成完整页面导入。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div style="text-align:center">
+      <a class="btn btn-primary" href="../">打开编辑器体验 →</a>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <p>yoyoo · 在线可视化设计器 &nbsp;|&nbsp; <a href="../">编辑器</a> · <a href="features.html">功能</a> · <a href="guide.html">快速上手</a> · <a href="changelog.html">更新日志</a></p>
+  </footer>
+
+</body>
+</html>

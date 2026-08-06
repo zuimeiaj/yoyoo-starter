@@ -256,6 +256,13 @@ Event.dispatch(component_properties_change, { target: view, key, value: 深拷�
 
 **历史栈（HistoryRecord/RedoRecord）是模块级全局数组（跨页共享）**：切换页面（`handlePageSelect`）必须清空两个栈（切 PROJECT/MASTER 模式已有，页面切换曾漏掉）—— 不清会污染：新页 Ctrl+Z 回退成旧页内容，且 setState 后把旧页数据存成当前页（数据覆盖）。历史条目靠「每次 setState 都 createViewFrom 换新对象」保证不可变链；拖拽的原地改写安全是因为拖拽开始时 `component_active → handleComponentActive` 已先换新目标节点。
 
+## 主题系统（浅色 / 深色 / 跟随系统）
+
+- **令牌定义**：`src/styles/theme.scss` 定义 CSS 变量（`:root` 浅色 + `:root[data-theme='dark']` 深色）；`src/styles/_color.scss` 的 SCSS 变量全部映射为 `var(--yoo-*)` —— 编译产物是运行时变量，**切换 `<html data-theme>` 即全局换肤，无需重编译**，28 个 `@import 'color'` 的文件自动生效
+- **切换入口**：`ThemeToggle.js`（Header 右上角）浅色/深色/跟随系统；localStorage `yoyoo-theme` 持久化，默认跟随系统（matchMedia prefers-color-scheme 监听实时切换）；`index.js` 启动时按存储/系统值初始化 `data-theme` 防首屏闪烁
+- **新颜色规范**：布局表面色一律用令牌（`--yoo-surface/surface-2/...`、`--yoo-glass-*` 毛玻璃、`--yoo-text-*`、`--yoo-border-1`），**不要写死 hex**；用户画布内的设计数据色（组件 bg/文本色）不属于主题，保持原样
+- **antd 3.x 无官方暗色主题**：`[data-theme='dark']` 下对常用组件（Modal/Input/Select/Dropdown/Collapse/Tooltip/Switch/Button/Message）做了定向 CSS 覆盖，新增组件样式时注意同步
+
 ## 环境与启动（Node 22）
 
 - 项目原为 Node 14 + node-sass 环境；现已在 package.json 移除 `node-sass`（改用 dart-sass `sass`），三个 scripts 均加了 `NODE_OPTIONS=--openssl-legacy-provider`（webpack 4 的 MD4 哈希在 Node 17+ 被禁用，必须加）

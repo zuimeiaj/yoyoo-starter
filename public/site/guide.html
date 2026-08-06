@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>快速上手 —— yoyoo 在线可视化设计器</title>
+  <meta name="description" content="yoyoo 快速上手：拖入组件、编辑属性、绘制连线、管理页面、导出图片，5 分钟完成第一个页面。" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <nav class="site-nav">
+    <a class="logo" href="index.html"><span class="logo-mark">y</span>yoyoo</a>
+    <div class="nav-links">
+      <a href="index.html">首页</a>
+      <a href="features.html">功能</a>
+      <a href="guide.html" class="active">快速上手</a>
+      <a href="changelog.html">更新日志</a>
+    </div>
+    <a class="nav-cta" href="../">打开编辑器</a>
+  </nav>
+
+  <header class="page-head">
+    <h1>快速上手</h1>
+    <p>5 分钟完成你的第一个页面</p>
+  </header>
+
+  <section class="section">
+    <div class="steps">
+      <div class="step">
+        <div class="num">1</div>
+        <div>
+          <h3>打开编辑器</h3>
+          <p>点击右上角「打开编辑器」。首次打开会自动载入示例页面（介绍页 / 数据看板 / 系统架构图 / 协作脑图），无需注册登录，数据保存在浏览器本地。</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="num">2</div>
+        <div>
+          <h3>拖入组件</h3>
+          <p>编辑器左侧的图标工具条列着全部基础组件。按住图标拖到画布即可放置；点击选中组件，拖动移动，四角 / 四边手柄缩放，外侧圆弧手柄旋转。</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="num">3</div>
+        <div>
+          <h3>编辑属性</h3>
+          <p>选中组件后，右侧属性面板可调整：位置尺寸、旋转、背景色、边框、圆角、阴影、文本内容、对齐方式等。文本 / 形状 / 表格等组件也可<b>双击直接编辑内容</b>。</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="num">4</div>
+        <div>
+          <h3>绘制连线（流程图 / 脑图）</h3>
+          <p>顶部工具栏打开「连线」工具，所有组件四边出现锚点。按住锚点拖向目标组件锚点，松开即建立连接；轻点已连接锚点可断开。点击画布上的线可选中，Delete 删除。连线在组件移动缩放时自动跟随。</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="num">5</div>
+        <div>
+          <h3>管理页面</h3>
+          <p>左侧面板切换 / 新建 / 复制 / 删除页面，每个页面独立尺寸与背景色。分组：选中多个组件后按分组快捷键，打包成容器整体移动。</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="num">6</div>
+        <div>
+          <h3>导出成果</h3>
+          <p>顶部「导出」按钮：导出当前页为 PNG / JPEG 图片，或导出整个项目为 ZIP 压缩包。导出的图片包含连线、图表与全部样式，所见即所得。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <h2 class="section-title">小贴士</h2>
+    <div class="card-grid">
+      <div class="card">
+        <div class="icon">⌨️</div>
+        <h3>常用快捷键</h3>
+        <p>Ctrl+Z 撤销 / Ctrl+Shift+Z 重做 · Ctrl+C/V 复制粘贴 · Delete 删除 · Ctrl+Shift+O 切换框选模式（相交 / 包围）。</p>
+      </div>
+      <div class="card">
+        <div class="icon">🔄</div>
+        <h3>数据不丢</h3>
+        <p>所有编辑自动保存到浏览器本地。换浏览器 / 清缓存前可先导出项目 JSON 备份。</p>
+      </div>
+      <div class="card">
+        <div class="icon">🤖</div>
+        <h3>AI 生成页面</h3>
+        <p>页面数据是纯 JSON（组件树 + 属性 + 连线）。按 <code>AI_PAGE_GUIDE.md</code> 数据结构文档，让 AI 直接生成页面 JSON 导入即可渲染。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div style="text-align:center">
+      <a class="btn btn-primary" href="../">现在开始 →</a>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <p>yoyoo · 在线可视化设计器 &nbsp;|&nbsp; <a href="../">编辑器</a> · <a href="features.html">功能</a> · <a href="guide.html">快速上手</a> · <a href="changelog.html">更新日志</a></p>
+  </footer>
+
+</body>
+</html>

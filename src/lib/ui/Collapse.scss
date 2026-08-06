@@ -10,10 +10,13 @@
   .collapse-title {
     display: flex;
     padding: 6px 10px; // 通用标题：紧凑上下间距 + 左右间距
-    background: rgba(0, 150, 136, 0.06); // 主色（$primary-bg #009688）淡底
+    background: var(--yoo-primary-tint); // 主色淡底
+    // 公用组件（组件库/图标库/属性面板共用）：文字色必须显式走主题变量，
+    // 不能依赖继承 —— 各面板容器继承链不同，暗色下会继承到深色文字
+    color: var(--yoo-text-primary);
     &:hover {
       cursor: pointer;
-      background: rgba(0, 150, 136, 0.1);
+      background: var(--yoo-primary-tint-strong);
     }
     .iconfont {
       font-size: 12px; // 折叠箭头尺寸

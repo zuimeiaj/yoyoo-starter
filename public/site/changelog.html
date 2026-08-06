@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>更新日志 —— yoyoo 在线可视化设计器</title>
+  <meta name="description" content="yoyoo 更新日志：连线、框选、导出、图表等功能迭代记录。" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <nav class="site-nav">
+    <a class="logo" href="index.html"><span class="logo-mark">y</span>yoyoo</a>
+    <div class="nav-links">
+      <a href="index.html">首页</a>
+      <a href="features.html">功能</a>
+      <a href="guide.html">快速上手</a>
+      <a href="changelog.html" class="active">更新日志</a>
+    </div>
+    <a class="nav-cta" href="../">打开编辑器</a>
+  </nav>
+
+  <header class="page-head">
+    <h1>更新日志</h1>
+    <p>持续迭代，让工具更好用</p>
+  </header>
+
+  <section class="section">
+    <div class="changelog">
+
+      <div class="log-item">
+        <div class="date">2026-08</div>
+        <h3>框选能力升级</h3>
+        <ul>
+          <li>新增框选模式配置：相交（碰到即选中）/ 包围（完全包含），设置面板或 Ctrl+Shift+O 切换</li>
+          <li>框选拖拽中实时高亮命中组件（上层覆盖层渲染，不被组件遮挡）</li>
+          <li>框选支持画布平移补偿与边缘自动滚动，拖到边界自动续滚</li>
+        </ul>
+      </div>
+
+      <div class="log-item">
+        <div class="date">2026-08</div>
+        <h3>连线功能完善</h3>
+        <ul>
+          <li>新增菱形 / 平行四边形 / 六边形流程图形状，双击编辑标签</li>
+          <li>点击线段选中高亮（红色保持），Delete 精准删除；悬停快速删除</li>
+          <li>修复删除连线后无法再连线的历史问题（事件守卫拦截）</li>
+          <li>连线导出到图片：导出结果与画布一致</li>
+        </ul>
+      </div>
+
+      <div class="log-item">
+        <div class="date">2026-08</div>
+        <h3>导出优化</h3>
+        <ul>
+          <li>修复双屏（不同 DPR 显示器）下导出图片出现白色块的问题</li>
+          <li>导出清晰度统一为 2x，多屏幕结果一致</li>
+        </ul>
+      </div>
+
+      <div class="log-item">
+        <div class="date">2026-08</div>
+        <h3>编辑器体验</h3>
+        <ul>
+          <li>组件工具条改为两列网格布局，支持更多组件</li>
+          <li>移动量化改为 1px，拖拽完全跟手</li>
+          <li>修复上下 resize 手柄拖动时组件跳动的问题</li>
+          <li>修复切换页面后历史记录串页的问题</li>
+          <li>移除画布背景网格，界面更干净</li>
+        </ul>
+      </div>
+
+      <div class="log-item">
+        <div class="date">2026-08</div>
+        <h3>初始页面</h3>
+        <ul>
+          <li>内置示例：yoyoo 介绍页、用户数据看板、系统架构图、实时协作编辑器脑图</li>
+          <li>页面由纯 JSON 描述，AI 可依据数据结构文档直接生成</li>
+        </ul>
+      </div>
+
+      <div class="log-item">
+        <div class="date">2026-07</div>
+        <h3>可视化编辑基础能力</h3>
+        <ul>
+          <li>拖拽式组件编辑：移动 / 缩放 / 旋转 / 对齐吸附 / 分组</li>
+          <li>30+ 内置组件：文本、按钮、表单、图形、图片、图标、表格、图表</li>
+          <li>多页面管理、本地持久化（IndexedDB）、撤销重做</li>
+          <li>页面导出 PNG / JPEG / 项目 ZIP 打包</li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <p>yoyoo · 在线可视化设计器 &nbsp;|&nbsp; <a href="../">编辑器</a> · <a href="features.html">功能</a> · <a href="guide.html">快速上手</a> · <a href="changelog.html">更新日志</a></p>
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>yoyoo 在线可视化设计器 —— 拖拽式页面生成与编辑</title>
+  <meta name="description" content="yoyoo 是一款在线可视化网页生成/编辑器：拖拽组件、属性编辑、连线流程图、图表、多页管理，一键导出图片。" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <nav class="site-nav">
+    <a class="logo" href="index.html"><span class="logo-mark">y</span>yoyoo</a>
+    <div class="nav-links">
+      <a href="index.html" class="active">首页</a>
+      <a href="features.html">功能</a>
+      <a href="guide.html">快速上手</a>
+      <a href="changelog.html">更新日志</a>
+    </div>
+    <a class="nav-cta" href="../">打开编辑器</a>
+  </nav>
+
+  <header class="hero">
+    <h1>在线可视化设计器<br /><span class="grad">拖拽生成，零代码编辑</span></h1>
+    <p class="subtitle">
+      yoyoo 是一款浏览器里的可视化网页生成/编辑器。从组件库拖入元素、右侧面板调属性、连线画流程图与脑图、
+      多页面管理、一键导出图片 —— 不写一行代码，产出即可用。
+    </p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="../">立即开始设计</a>
+      <a class="btn btn-ghost" href="guide.html">查看快速上手</a>
+    </div>
+    <div class="badges">
+      <span>纯本地运行 · 数据存浏览器</span>
+      <span>拖拽 / 缩放 / 旋转</span>
+      <span>连线 · 流程图 · 脑图</span>
+      <span>图表组件</span>
+      <span>一键导出图片</span>
+    </div>
+
+    <div class="demo-window">
+      <div class="bar"><i></i><i></i><i></i></div>
+      <div class="body">
+        <div class="panel">组件库<br />文本 / 按钮 / 输入框 / 矩形 / 形状 / 图表…</div>
+        <div class="canvas">
+          <div class="demo-block" style="left:30px;top:26px;width:120px;height:56px;background:rgba(24,144,255,.85)">欢迎使用 yoyoo</div>
+          <div class="demo-line" style="left:150px;top:52px;width:70px"></div>
+          <div class="demo-block" style="left:220px;top:26px;width:90px;height:56px;background:rgba(0,150,136,.85)">处理</div>
+          <div class="demo-line" style="left:265px;top:82px;width:2px;height:50px;transform:rotate(0deg)"></div>
+          <div class="demo-block" style="left:100px;top:130px;width:160px;height:80px;border:2px solid #4db6ff;color:#4db6ff;background:transparent">判断条件？</div>
+          <div class="demo-block" style="left:330px;top:150px;width:100px;height:50px;background:rgba(114,46,209,.8)">结束</div>
+        </div>
+        <div class="panel">属性面板<br />位置 / 尺寸 / 背景 / 边框 / 圆角 / 文本 / 数据…</div>
+      </div>
+    </div>
+  </header>
+
+  <section class="section">
+    <h2 class="section-title">为什么选择 yoyoo</h2>
+    <p class="section-desc">一个轻量、开箱即用的页面设计工具，覆盖从原型到成品的全流程。</p>
+    <div class="card-grid">
+      <div class="card">
+        <div class="icon">🖱️</div>
+        <h3>拖拽式编辑</h3>
+        <p>组件拖入画布即用，拖动 / 缩放 / 旋转、对齐参考线与吸附、框选批量操作，编辑体验接近专业设计工具。</p>
+      </div>
+      <div class="card">
+        <div class="icon">🔗</div>
+        <h3>连线与流程图</h3>
+        <p>组件四边锚点拖出连线，贝塞尔曲线或直角避障路由自动绕开组件，流程图、架构图、脑图随手可画。</p>
+      </div>
+      <div class="card">
+        <div class="icon">📊</div>
+        <h3>数据组件</h3>
+        <p>柱状 / 折线 / 面积 / 饼 / 雷达图表，表格、单选多选、下拉、输入框 —— 表单与数据展示一站配齐。</p>
+      </div>
+      <div class="card">
+        <div class="icon">📄</div>
+        <h3>多页面管理</h3>
+        <p>一个项目多个页面，独立画布尺寸与背景，大纲面板管理页面与组件层级，分组（block）自由嵌套。</p>
+      </div>
+      <div class="card">
+        <div class="icon">🖼️</div>
+        <h3>一键导出</h3>
+        <p>页面导出 PNG / JPEG，整个项目打包 ZIP 下载。所见即所得，导出结果与画布一致（含连线）。</p>
+      </div>
+      <div class="card">
+        <div class="icon">🔒</div>
+        <h3>数据本地化</h3>
+        <p>页面数据保存在浏览器 IndexedDB，无需注册登录，开箱即用。撤销 / 重做、多级历史记录随时回退。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <h2 class="section-title">适合谁用</h2>
+    <p class="section-desc">从原型设计师到前端开发者，都能在 yoyoo 里找到效率。</p>
+    <div class="card-grid">
+      <div class="card">
+        <div class="icon">🧑‍🎨</div>
+        <h3>产品 / 设计师</h3>
+        <p>快速产出页面原型与流程图，和团队讨论交互与信息架构，导出图片直接放进文档。</p>
+      </div>
+      <div class="card">
+        <div class="icon">🧑‍💻</div>
+        <h3>前端开发者</h3>
+        <p>用可视化方式搭建页面骨架，连线表达模块依赖，图表与表格数据直接配置。</p>
+      </div>
+      <div class="card">
+        <div class="icon">🎓</div>
+        <h3>教学 / 演示</h3>
+        <p>画架构图、思维导图、数据看板原型，零成本上手，即时分享成果。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2 class="section-title">开始创作</h2>
+    <p class="section-desc">无需安装，打开浏览器即可开始。数据保存在本地，随时回来继续编辑。</p>
+    <div style="text-align:center;margin-top:10px">
+      <a class="btn btn-primary" href="../">打开编辑器 →</a>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <p>yoyoo · 在线可视化设计器 &nbsp;|&nbsp; <a href="../">编辑器</a> · <a href="features.html">功能</a> · <a href="guide.html">快速上手</a> · <a href="changelog.html">更新日志</a></p>
+  </footer>
+
+</body>
+</html>

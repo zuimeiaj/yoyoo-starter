@@ -10,13 +10,13 @@
   }
   .anchor-enabled{
     padding-left: 8px;
-    color: #989898;
+    color: var(--yoo-text-tertiary);
     display: flex;
     align-items: center;
 
     .iconfont{
       margin-left: 5px;
-      color: #989898;
+      color: var(--yoo-text-tertiary);
     }
     &.checked{
       .iconfont{

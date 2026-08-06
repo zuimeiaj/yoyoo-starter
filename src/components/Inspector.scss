@@ -4,12 +4,14 @@
   width: 260px;
   padding: 15px;
   overflow-y: auto;
-  // 苹果毛玻璃：半透明白 + 背景模糊 + 高光左边
-  background: rgba(255, 255, 255, 0.62);
+  // 苹果毛玻璃：半透明白 + 背景模糊 + 高光左边（暗色主题由 CSS 变量切换）
+  background: var(--yoo-glass-bg);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
   backdrop-filter: blur(24px) saturate(180%);
-  border-left: 1px solid rgba(255, 255, 255, 0.65);
-  box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.5);
+  border-left: 1px solid var(--yoo-glass-border);
+  box-shadow: inset 1px 0 0 var(--yoo-glass-highlight);
+  // 面板整体文字色：Checkbox 标签/控件 label 等纯文本继承此色，暗色下可读
+  color: var(--yoo-text-primary);
 }
 
 .root-layout-inspector {
@@ -35,10 +37,10 @@
 .ins-props-overlay {
   .icon-guanbi {
     float: right;
-    color: #989898;
+    color: var(--yoo-text-tertiary);
     cursor: pointer;
     &:hover {
-      color: #666666;
+      color: var(--yoo-text-secondary);
     }
   }
 }
@@ -49,12 +51,12 @@
   width: 22px;
   position: relative;
   overflow: hidden;
-  border: 1px solid #d3d3d3;
+  border: 1px solid var(--yoo-border-1);
   border-radius: 4px;
   margin-left: 2px;
   vertical-align: middle;
   &:hover {
-    border: 1px solid #989898;
+    border: 1px solid var(--yoo-text-tertiary);
     cursor: pointer;
     opacity: 0.8;
   }
