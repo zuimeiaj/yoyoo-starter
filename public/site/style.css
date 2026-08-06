@@ -234,7 +234,23 @@ a:hover {
   color: var(--text-light);
 }
 
-/* ===== 演示占位 ===== */
+/* ===== Hero 截图（边缘虚化） ===== */
+.hero-shot {
+  margin-top: 56px;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+  /* 边缘虚化：径向遮罩四周渐隐，融入深色 Hero 背景 */
+  -webkit-mask-image: radial-gradient(ellipse 72% 72% at 50% 50%, #000 52%, transparent 100%);
+  mask-image: radial-gradient(ellipse 72% 72% at 50% 50%, #000 52%, transparent 100%);
+}
+.hero-shot img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* ===== 演示占位（旧 CSS 手绘版，保留备用） ===== */
 .demo-window {
   border-radius: 14px;
   overflow: hidden;
