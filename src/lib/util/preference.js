@@ -19,8 +19,7 @@ let config = {
     bottom: 0,
   },
   selection: 'inner', // cross | inner
-  snap: { x: 10, y: 10 }, //  当前项目，移动增量
-  grid: true,
+  snap: { x: 1, y: 1 }, //  当前项目，移动增量（1px = 完全跟手，不做位置吸附）
   //  初始坐标
   originCoords: {
     x: width / 2,

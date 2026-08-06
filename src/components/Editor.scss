@@ -57,20 +57,22 @@
 }
 
 .base-components_action-bar {
-  display: flex;
-  flex-direction: column;
+  // 组件增多后一列放不下：两列网格 + 超高滚动兜底
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px 8px;
   position: fixed;
   left: 290px;
   top: 80px;
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
   background: $primary-alpha;
   border: 1px solid #ececec;
-  padding: 10px 1px;
+  padding: 10px;
   color: #666;
-  justify-content: center;
   box-shadow: 2px 0 20px 5px rgba(0, 0, 0, 0.05);
   .base-component_action-item {
     display: flex;
-    margin-bottom: 10px;
     justify-content: center;
     &:hover {
       cursor: pointer;

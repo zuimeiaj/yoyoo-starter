@@ -53,7 +53,9 @@ import {
   refresh_project_name,
   selection_change,
   selection_group,
+  selection_highlight,
   selection_start,
+  selection_update,
   show_create_project,
   workspace_push,
   workspace_redo,
@@ -200,6 +202,7 @@ class EditorControllers extends React.Component {
     //Add event listener
     Event.listen(selection_change, this.handleSelection)
     Event.listen(selection_start, this.handleSelectionStart)
+    Event.listen(selection_update, this.handleSelectionUpdate)
     Event.listen(controllers_append, this.handleAppendChild)
     Event.listen(controllers_delete, this.handleDeleteChild)
     Event.listen(context_copy, this.handleCopy)
@@ -614,6 +617,10 @@ class EditorControllers extends React.Component {
    */
   handlePageSelect = (pageid) => {
     selectPage(pageid).then(async (items) => {
+      // 切换页面必须清空历史栈：HistoryRecord 是模块级全局数组（跨页共享），
+      // 不清会污染 —— 新页 Ctrl+Z 会回退出旧页内容，且 setState 后把旧页数据存成当前页
+      HistoryRecord.length = 0
+      RedoRecord.length = 0
       // 恢复页面保存的连线样式（window 全局，LinkLayer 渲染读取）；
       // 页面无 linkStyle 时重置为默认，避免沿用上一页的样式
       let page = getPageDataWithId(pageid)
@@ -920,28 +927,52 @@ class EditorControllers extends React.Component {
     message.success(`已切换至${config.selection == 'cross' ? '相交' : '包含'}选择模式`)
   }
   /**
+   * 框选命中判定（相交/包围由 config.selection 决定，Ctrl+Shift+O 或设置面板切换）
+   * @param rect 已换算为画布坐标的选区
+   */
+  getSelectionMatches = (rect) => {
+    let screen = getScreeTransform()
+    let offset = getScreenOffset()
+    return this.state.items.filter((item) => {
+      // 不能选中已锁定的和隐藏的
+      if (item.settings.isHide) return false
+      return this._handleSelectionWithType(item.view.getOffsetTransform(), screen, offset, rect)
+    })
+  }
+
+  /**
    * 框选.暂时没有缓存位置信息
    * @param rect
    */
   handleSelection = (rect) => {
-    let screen = getScreeTransform()
-    let offset = getScreenOffset()
-    let group = this.state.items
-      .filter((item) => {
-        // 不能选中已锁定的和隐藏的
-        if (item.settings.isHide) return false
-        return this._handleSelectionWithType(item.view.getOffsetTransform(), screen, offset, rect)
-      })
-      .map((item) => item.view)
+    let group = this.getSelectionMatches(rect).map((item) => item.view)
     if (group.length > 1) Event.dispatch(selection_group, group)
     else if (group.length === 0) {
       setFirstResponder(null)
     } else {
       setFirstResponder(group[0])
     }
+    this.clearSelectionHighlight()
+  }
+
+  // 框选过程中实时高亮（selection_update 由 Selection.js 拖拽中派发）：
+  // 派发命中组件的画布坐标给 SelectionHighlight 覆盖层（上层渲染，不被组件遮挡）
+  handleSelectionUpdate = (rect) => {
+    let matched = this.getSelectionMatches(rect)
+    Event.dispatch(selection_highlight, {
+      items: matched.map((item) => {
+        let t = item.transform
+        return { id: item.id, x: t.x, y: t.y, width: t.width, height: t.height, rotation: t.rotation || 0 }
+      }),
+    })
+  }
+
+  clearSelectionHighlight = () => {
+    Event.dispatch(selection_highlight, { items: [] })
   }
   handleSelectionStart = () => {
     setFirstResponder(null)
+    this.clearSelectionHighlight()
   }
 
   componentWillUnmount() {
@@ -953,6 +984,7 @@ class EditorControllers extends React.Component {
     window.allWidgets = {}
     Event.destroy(selection_change, this.handleSelection)
     Event.destroy(selection_start, this.handleSelectionStart)
+    Event.destroy(selection_update, this.handleSelectionUpdate)
     Event.destroy(controllers_append, this.handleAppendChild)
     Event.destroy(controllers_delete, this.handleDeleteChild)
     Event.destroy(context_copy, this.handleCopy)

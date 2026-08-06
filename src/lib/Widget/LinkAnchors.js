@@ -12,7 +12,6 @@
 import React from 'react';
 import Event from '../Base/Event';
 import {
-  component_active,
   component_drag,
   component_dragend,
   component_inactive,
@@ -27,12 +26,13 @@ import { pointToWorkspaceCoords } from '../global';
 import { uuid } from '../util/helper';
 import { ANCHOR_OFFSET, ANCHORS, absolutePos, anchorPoint, cornerPath, linkArrowPath, linkPath } from './LinkLayer';
 
-// 命中阈值：鼠标距离目标锚点的最大像素（画布坐标）
-const HIT_DIST = 12;
+// 命中阈值：鼠标距离目标锚点的最大像素（画布坐标）。
+// 12 太紧：快速拖线（mousemove 间隔大）容易滑过锚点导致 hover 未命中、松手不建立连接
+const HIT_DIST = 16;
 
 export default class LinkAnchors extends React.Component {
   state = {
-    view: null, // 选中组件 ViewController 实例（component_active 携带）
+    dragging: false, // 用户拖动组件中（component_drag from Draggable），锚点隐藏
     tick: 0, // 强制刷新计数（transform/connections 变化时重新渲染锚点）
     drag: null, // { fromId, fromAnchor, start, mouse, hover }
     linkMode: false, // 连线模式：所有组件显示锚点
@@ -40,10 +40,9 @@ export default class LinkAnchors extends React.Component {
   };
 
   componentWillMount() {
-    Event.listen(component_active, this.handleActive);
     Event.listen(component_inactive, this.handleInactive);
-    Event.listen(component_drag, this.refresh);
-    Event.listen(component_dragend, this.refresh);
+    Event.listen(component_drag, this.handleDrag);
+    Event.listen(component_dragend, this.handleDragEnd);
     Event.listen(component_resize_end, this.refresh);
     Event.listen(component_properties_change, this.refresh);
     Event.listen(controllers_change, this.handleControllers);
@@ -52,10 +51,9 @@ export default class LinkAnchors extends React.Component {
   }
 
   componentWillUnmount() {
-    Event.destroy(component_active, this.handleActive);
     Event.destroy(component_inactive, this.handleInactive);
-    Event.destroy(component_drag, this.refresh);
-    Event.destroy(component_dragend, this.refresh);
+    Event.destroy(component_drag, this.handleDrag);
+    Event.destroy(component_dragend, this.handleDragEnd);
     Event.destroy(component_resize_end, this.refresh);
     Event.destroy(component_properties_change, this.refresh);
     Event.destroy(controllers_change, this.handleControllers);
@@ -69,21 +67,33 @@ export default class LinkAnchors extends React.Component {
     }
   }
 
-  handleActive = (view) => this.setState({ view, tick: this.state.tick + 1 });
-
-  handleInactive = () => this.setState({ view: null, drag: null });
+  handleInactive = () => this.setState({ drag: null, dragging: false });
 
   refresh = () => {
-    // 连线模式：重建全部锚点（拖动/属性变化时坐标实时跟随）；设计模式：强制重渲染选中锚点
+    // 连线模式：重建全部锚点（拖动/属性变化时坐标实时跟随）；设计模式不显示锚点
     if (this.state.linkMode) this.rebuildAnchors();
-    else if (this.state.view) this.setState({ tick: this.state.tick + 1 });
+  };
+
+  // 用户拖动组件时隐藏锚点（避免锚点乱飞/遮挡拖动视线）；松手恢复显示。
+  // 程序化变换（Snapline 吸附/对齐工具栏，from 非 Draggable）不隐藏
+  handleDrag = (target, options = {}) => {
+    let dragging = options.from === 'Draggable';
+    if (dragging !== this.state.dragging) this.setState({ dragging });
+    this.refresh();
+  };
+
+  handleDragEnd = () => {
+    if (this.state.dragging) this.setState({ dragging: false });
+    this.refresh();
   };
 
   /* ---------------- 连线工具模式（顶部「连线」按钮） ---------------- */
 
   handleToolActive = () => {
     window.__linkTool = true;
-    this.setState({ linkMode: true }, this.rebuildAnchors);
+    // 重置 dragging：拖动组件时 mouseup 丢失（拖出浏览器边界等）→ dragend 不派发 → dragging 卡 true
+    // 锚点被永久隐藏，连线模式无法拖线（间歇性"连不上"）——进入连线模式强制恢复锚点显示
+    this.setState({ linkMode: true, dragging: false }, this.rebuildAnchors);
   };
 
   handleToolClose = () => {
@@ -172,7 +182,12 @@ export default class LinkAnchors extends React.Component {
     // start 附带起点组件 bbox：直角曲线拐点约束（拖线预览不穿越组件）
     let start = Object.assign({}, p, { box: { x: abs.x, y: abs.y, width: item.transform.width || 0, height: item.transform.height || 0 } });
     this._moved = false;
-    this.setState({ drag: { fromId: uid, fromAnchor: anchor, start, mouse: { x: p.x, y: p.y }, hover: null } });
+    // view 在 mousedown 时锁定（锚点可见 = 渲染已完成，view 必然有效）：
+    // mouseup 时再查 allWidgets[fromId].view 可能为 null（删除线/属性变更后节点被 createViewFrom
+    // 换成新对象，.view 要等重渲染才挂上）→ 松手不建立连接
+    this.setState({
+      drag: { fromId: uid, fromAnchor: anchor, start, mouse: { x: p.x, y: p.y }, hover: null, view: item.view || null },
+    });
     document.addEventListener('mousemove', this.handleMouseMove);
     document.addEventListener('mouseup', this.handleMouseUp);
   };
@@ -194,9 +209,9 @@ export default class LinkAnchors extends React.Component {
     document.removeEventListener('mouseup', this.handleMouseUp);
     let { drag } = this.state;
     if (!drag) return;
-    // 起点组件实例：连线模式/设计模式都从 allWidgets 取（渲染过的组件 .view 有效）
-    let item = window.allWidgets[drag.fromId];
-    let view = item && item.view;
+    // 起点组件实例：优先用 mousedown 时锁定的引用（allWidgets 节点可能被 createViewFrom 换新，
+    // .view 要等重渲染才挂上，实时查询可能为 null）；兜底实时查询
+    let view = drag.view || (window.allWidgets[drag.fromId] && window.allWidgets[drag.fromId].view);
     if (view) {
       if (!this._moved) {
         // 轻点：断开该锚点的全部连线
@@ -236,7 +251,7 @@ export default class LinkAnchors extends React.Component {
 
   /* ---------------- 渲染 ---------------- */
 
-  // 渲染单个锚点（设计模式选中组件 / 连线模式全部组件共用）
+  // 渲染单个锚点（仅连线模式渲染；锚点铺满所有组件，用浅一档的蓝避免太抢眼）
   renderAnchor(key, uid, anchor, p, linked, hovering) {
     let size = 12;
     return (
@@ -255,8 +270,8 @@ export default class LinkAnchors extends React.Component {
           borderRadius: '50%',
           boxSizing: 'border-box',
           cursor: 'crosshair',
-          background: hovering ? '#ff7875' : linked ? '#1890ff' : '#ffffff',
-          border: linked ? '2px solid #1890ff' : '2px solid #91caff',
+          background: hovering ? '#ff7875' : linked ? '#69b1ff' : '#ffffff',
+          border: linked ? '2px solid #69b1ff' : '2px solid #bae7ff',
           // 高于组件 zIndex（从 1000 起递增），否则叠放组件会盖住锚点导致点不到/被遮挡
           zIndex: 999999,
           display: 'flex',
@@ -264,13 +279,13 @@ export default class LinkAnchors extends React.Component {
           justifyContent: 'center',
         }}
       >
-        {/* 中心定位点：未连接蓝点 / 已连接或悬停白点 */}
+        {/* 中心定位点：未连接浅蓝点 / 已连接或悬停白点 */}
         <div
           style={{
             width: 4,
             height: 4,
             borderRadius: '50%',
-            background: hovering || linked ? '#ffffff' : '#1890ff',
+            background: hovering || linked ? '#ffffff' : '#91caff',
           }}
         />
       </div>
@@ -278,9 +293,11 @@ export default class LinkAnchors extends React.Component {
   }
 
   render() {
-    let { view, drag, linkMode, allAnchors } = this.state;
+    let { drag, linkMode, allAnchors, dragging } = this.state;
+    // 连线控制点仅在连线模式显示（设计模式不再显示，避免干扰）；连线模式拖动组件中隐藏，松手恢复
     let anchors = [];
-    if (linkMode) {
+    if (dragging) {
+    } else if (linkMode) {
       // 连线模式：所有组件锚点（坐标已在 rebuildAnchors 缓存，拖动时实时重建）
       anchors = allAnchors.map((an) =>
         this.renderAnchor(
@@ -292,22 +309,6 @@ export default class LinkAnchors extends React.Component {
           !!(drag && drag.hover && drag.hover.id == an.id && drag.hover.anchor == an.anchor)
         )
       );
-    } else if (view) {
-      // 设计模式：选中组件锚点
-      let props = view.properties;
-      let abs = absolutePos(props);
-      let linkedAnchors = (props.connections || []).map((c) => c.anchor);
-      anchors = ANCHORS.map((a) => {
-        let p = anchorPoint({ x: abs.x, y: abs.y, transform: props.transform }, a, ANCHOR_OFFSET);
-        return this.renderAnchor(
-          props.id + '_' + a,
-          props.id,
-          a,
-          p,
-          linkedAnchors.indexOf(a) > -1,
-          !!(drag && drag.hover && drag.hover.id == props.id && drag.hover.anchor == a)
-        );
-      });
     }
     if (anchors.length === 0) return null;
     return (

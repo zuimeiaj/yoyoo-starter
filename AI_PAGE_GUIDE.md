@@ -123,6 +123,9 @@
 | `circle` | 圆 | 无 |
 | `triangle` | 三角形 | 无 |
 | `rect` | 矩形 | 无（通用属性即全部） |
+| `diamond` | 菱形（流程图判断） | `text`(标签) |
+| `parallelogram` | 平行四边形（流程图输入/输出） | `text`(标签) |
+| `hexagon` | 六边形（流程图循环/准备） | `text`(标签) |
 | `group` | 分组（**已废弃**，用 `block`） | `items`(子组件数组) |
 | `block` | 块容器 | `items`(子组件数组) |
 
@@ -378,6 +381,120 @@
 { "type": "line", "transform": { "x": 0, "y": 50, "width": 200, "height": 1 }, "border": { "width": 1, "color": "rgba(0,0,0,1)", "style": "solid" } }
 ```
 
+### 12. 流程图图形 diamond / parallelogram / hexagon（双击可编辑文本）
+
+流程图节点，标签文本存在 **`text` 字段**（不是 `fontData`），支持多行（`\n`）：
+
+```json
+{
+  "type": "diamond",
+  "alias": "判断",
+  "id": "sb_f1",
+  "transform": { "x": 300, "y": 220, "width": 200, "height": 120 },
+  "text": "条件成立？",
+  "bg": "rgba(255,255,255,1)",
+  "border": { "width": 1, "color": "rgba(0,0,0,1)", "style": "solid" }
+}
+```
+
+| 字段 | 说明 |
+|---|---|
+| `text` | 节点标签（字符串，`\n` 换行） |
+| `bg` / `border` | 通用属性，同其他组件 |
+
+### 13. 连线 connections（组件间连接，流程图/脑图核心）
+
+任意组件可携带 `connections` 数组，声明从该组件**出发**的连接（**出边只存在起点组件上**；入边存在于对方组件的 `connections` 里，两端不对称——连接两个节点只需在起点写一条）：
+
+```json
+{
+  "type": "rect",
+  "id": "sb_a",
+  "transform": { "x": 100, "y": 100, "width": 160, "height": 60 },
+  "text": "处理",
+  "connections": [
+    { "id": "lnk_1", "anchor": "right", "targetId": "sb_b", "targetAnchor": "left" }
+  ]
+}
+```
+
+| 字段 | 类型 | 说明 |
+|---|---|---|
+| `id` | string | 连接唯一 id，**`lnk_` 前缀**（如 `lnk_1`） |
+| `anchor` | string | 起点锚点：`left`/`top`/`right`/`bottom`（组件四边中点） |
+| `targetId` | string | 目标组件 id（**必须存在**，指向不存在的组件该连接会被忽略） |
+| `targetAnchor` | string | 目标锚点：`left`/`top`/`right`/`bottom` |
+
+规则与提示：
+
+- **多对多**：同一组件可有任意多条出边（同锚点也可连多个目标）
+- **禁止自连**：`targetId` 不能等于自身
+- **连线渲染样式由编辑器全局设置决定**（曲线贝塞尔 / 直角自动避障），**不在页面数据里**——AI 只需提供拓扑（锚点 + 目标），导入后按当前设置渲染，组件拖动/缩放时连线自动跟随
+- 悬空引用（targetId 不存在）自动过滤，不会报错
+
+**流程图完整示例**（开始 → 输入 → 判断 → 处理 → 结束）：
+
+```json
+{
+  "type": "PAGE",
+  "alias": "登录流程图",
+  "id": "page_flow_001",
+  "width": 800,
+  "height": 600,
+  "bg": "rgba(255,255,255,1)",
+  "parentid": null,
+  "projectid": "testid",
+  "guides": { "x": [], "y": [] },
+  "nodes": [
+    {
+      "type": "hexagon",
+      "id": "sb_f1",
+      "transform": { "x": 300, "y": 30, "width": 180, "height": 60 },
+      "text": "开始",
+      "connections": [{ "id": "lnk_1", "anchor": "bottom", "targetId": "sb_f2", "targetAnchor": "top" }]
+    },
+    {
+      "type": "parallelogram",
+      "id": "sb_f2",
+      "transform": { "x": 280, "y": 140, "width": 220, "height": 70 },
+      "text": "输入账号密码",
+      "connections": [{ "id": "lnk_2", "anchor": "bottom", "targetId": "sb_f3", "targetAnchor": "top" }]
+    },
+    {
+      "type": "diamond",
+      "id": "sb_f3",
+      "transform": { "x": 300, "y": 260, "width": 180, "height": 100 },
+      "text": "验证通过？",
+      "connections": [
+        { "id": "lnk_3", "anchor": "bottom", "targetId": "sb_f4", "targetAnchor": "top" },
+        { "id": "lnk_4", "anchor": "right", "targetId": "sb_f5", "targetAnchor": "left" }
+      ]
+    },
+    {
+      "type": "rect",
+      "id": "sb_f4",
+      "transform": { "x": 300, "y": 420, "width": 180, "height": 60 },
+      "text": "登录成功",
+      "connections": [{ "id": "lnk_5", "anchor": "bottom", "targetId": "sb_f6", "targetAnchor": "top" }]
+    },
+    {
+      "type": "rect",
+      "id": "sb_f5",
+      "transform": { "x": 560, "y": 300, "width": 180, "height": 60 },
+      "text": "提示错误"
+    },
+    {
+      "type": "hexagon",
+      "id": "sb_f6",
+      "transform": { "x": 300, "y": 540, "width": 180, "height": 60 },
+      "text": "结束"
+    }
+  ]
+}
+```
+
+> 生成建议：节点间留 ≥60px 间距（连线自动避障有首尾段长度约束）；锚点尽量用「上方组件 bottom → 下方组件 top」的垂直布局，脑图/树形结构用 left/right 水平展开。
+
 ---
 
 ## 五、完整页面示例
@@ -469,4 +586,5 @@
 5. **文本内容放 `fontData`**（不是别的字段）。
 6. **图表数据**：categories 与各 series.data 长度一致；不需要的系列配置（chartSeries/chartAxis）可省略。
 7. **表单单选/多选**：选项换行分隔，`>` 标记默认选中。
-8. 生成后可导入设计器微调（拖拽、属性面板、双击编辑数据）。
+8. **流程图/脑图**：节点用 `rect`/`diamond`/`parallelogram`/`hexagon`，标签放 `text` 字段；连线只在**起点组件**写 `connections`（`id` 用 `lnk_` 前缀，`anchor`/`targetAnchor` 用四边方向），垂直布局用 bottom→top、水平/树形用 right→left；节点间距 ≥60px 留给连线。
+9. 生成后可导入设计器微调（拖拽、属性面板、双击编辑数据）。

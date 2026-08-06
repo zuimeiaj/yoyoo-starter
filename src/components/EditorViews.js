@@ -24,6 +24,7 @@ import { getQuery, uuid } from '@/lib/util/helper';
 import { message } from 'antd';
 import LinkLayer from '../lib/Widget/LinkLayer';
 import LinkAnchors from '../lib/Widget/LinkAnchors';
+import SelectionHighlight from '../lib/Widget/SelectionHighlight';
 
 export default class EditorViews extends React.Component {
   containerId = 'layout-editor-view';
@@ -110,6 +111,8 @@ export default class EditorViews extends React.Component {
           {/* 连线层（SVG 曲线，随 Stage 缩放/滚动）与选中组件连线锚点 */}
           <LinkLayer />
           <LinkAnchors />
+          {/* 框选实时高亮层（上层覆盖，不被组件遮挡） */}
+          <SelectionHighlight />
         </Stage>
 
         {/*No ZOOM*/}

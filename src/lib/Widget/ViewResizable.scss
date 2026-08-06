@@ -9,7 +9,6 @@ $zindex: 10000000;
   height: $size;
   border: 1px solid $primary-bg;
   background: #ffffff;
-  border-radius: 50%;
   z-index: $zindex;
   display: none;
 }
@@ -27,13 +26,44 @@ $zindex: 10000000;
   }
 }
 
-.rotation-circle {
-  height: $size;
-  width: $size;
+// 边缩放热区：覆盖整条边外侧 8px 的透明条带，hover 出缩放光标、拖动即缩放；
+// z-index 低于角方块（$zindex - 1），角部命中始终归方块
+.resize-edge {
   position: absolute;
-  border: 1px solid $primary-bg;
-  border-radius: 50%;
+  z-index: $zindex - 1;
   display: none;
-  background: #ffffff;
+}
+
+.rotation-handle {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  display: none;
   cursor: crosshair;
+  z-index: $zindex;
+  svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  .rh-arc {
+    fill: none;
+    // 淡色半透明：旋转手柄弱化（次要操作），与实心角方块（缩放为主）形成层次
+    stroke: rgba($primary-bg, 0.35);
+    stroke-width: 1.6;
+    stroke-linecap: round;
+  }
+}
+// 1/4 圆弧缺口朝外：图形缺口在右上象限，各角按缺口朝向旋转，四段弧在组件外围成圆环感
+.rh-tl svg {
+  transform: rotate(-90deg);
+}
+.rh-tr svg {
+  transform: rotate(0deg);
+}
+.rh-br svg {
+  transform: rotate(90deg);
+}
+.rh-bl svg {
+  transform: rotate(180deg);
 }

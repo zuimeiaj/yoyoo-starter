@@ -15,6 +15,9 @@ import ViewRadio from './ViewRadio';
 import ViewCheckbox from './ViewCheckbox';
 import ViewLine from './ViewLine';
 import ViewTriangle from './ViewTriangle';
+import ViewDiamond from './ViewDiamond';
+import ViewParallelogram from './ViewParallelogram';
+import ViewHexagon from './ViewHexagon';
 import ViewPolygon from './ViewPolygon';
 import ViewCircle from './ViewCircle';
 import ViewPath from './ViewPath';
@@ -47,6 +50,9 @@ const maps = {
   select: ViewSelect,
   line: ViewLine,
   triangle: ViewTriangle,
+  diamond: ViewDiamond,
+  parallelogram: ViewParallelogram,
+  hexagon: ViewHexagon,
   bubble: ViewPolygon,
   circle: ViewCircle,
   path: ViewPath,

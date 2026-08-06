@@ -1,6 +1,3 @@
 {
-  "pages": [
-    { "file": "yoyoo-intro.json" },
-    { "file": "user-profile-dashboard.json" }
-  ]
+  "pages": [{ "file": "yoyoo-intro.json" }, { "file": "user-profile-dashboard.json" }]
 }

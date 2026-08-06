@@ -70,13 +70,19 @@ export default class ViewResizable extends NoZoomTransform {
     Event.listen(component_show_resizer, this.onComponentActive);
     Event.listen(component_edit_mode, this.onOpenEditMode);
     Event.listen(component_close_edit_mode, this.onCloseEditMode);
+    // 旋转手柄：四个角外侧各一个（Keynote 风格），拖任意一个绕组件中心旋转，
+    // 每角一个 Draggable，闭包变量独立；whitelist 通过 'rotation' 键统一控制四个显隐
+    ['rotationTL', 'rotationTR', 'rotationBR', 'rotationBL'].forEach((ref) => this.attachRotation(this.refs[ref]));
+    this.startResizeHandler();
+  }
+
+  attachRotation = (dom) => {
     let cx,
       cy,
       startAngle,
       currentAngle = 0,
       rotation = 0;
-    //rotation
-    new Draggable(this.refs.rotation, {
+    new Draggable(dom, {
       onDragStart: ({ mouseX, mouseY }, e) => {
         this._isRotate = true;
         let t = this.target.refs.container.getBoundingClientRect();
@@ -110,8 +116,7 @@ export default class ViewResizable extends NoZoomTransform {
         Event.dispatch(component_resize_end);
       },
     });
-    this.startResizeHandler();
-  }
+  };
 
   startResizeHandler = () => {
     let self = this;
@@ -378,6 +383,11 @@ export default class ViewResizable extends NoZoomTransform {
     }
     this.setBoundingRect(t);
   };
+  // 手柄名 → 实际 DOM refs：'rotation' 对应四角四个旋转钮（白名单只用 'rotation' 一个键），其余一一对应
+  handleRefs = (item) => {
+    if (item === 'rotation') return ['rotationTL', 'rotationTR', 'rotationBR', 'rotationBL'];
+    return [item];
+  };
   // 按白名单重设手柄显隐：先全隐藏 gResize，再显示白名单。
   // 白名单是唯一控制源，不依赖 inactive 清场（否则普通组件残留显示的圆点/旋转手柄
   // 会出现在白名单排除它们的组件上）
@@ -392,10 +402,10 @@ export default class ViewResizable extends NoZoomTransform {
       if (resize === null) resize = gResize;
     }
     gResize.forEach((item) => {
-      Dom.of(this.refs[item]).hide();
+      this.handleRefs(item).forEach((r) => Dom.of(this.refs[r]).hide());
     });
     (resize || gResize).forEach((item) => {
-      Dom.of(this.refs[item]).show();
+      this.handleRefs(item).forEach((r) => Dom.of(this.refs[r]).show());
     });
   };
 
@@ -422,7 +432,7 @@ export default class ViewResizable extends NoZoomTransform {
     this.show(false);
     this.target = null;
     gResize.forEach((item) => {
-      Dom.of(this.refs[item]).hide();
+      this.handleRefs(item).forEach((r) => Dom.of(this.refs[r]).hide());
     });
   };
 
@@ -464,14 +474,24 @@ export default class ViewResizable extends NoZoomTransform {
     this.setBorderWidth(borderRight, 1, height);
     //
     this.setPosition(tl, x - half, y - half);
-    this.setPosition(tm, x + width / 2 - half, y - half);
     this.setPosition(tr, x + width - half, y - half);
-    this.setPosition(r, x + width - half, y + height / 2 - half);
     this.setPosition(br, x + width - half, y + height - half);
-    this.setPosition(bm, x + width / 2 - half, y + height - half);
     this.setPosition(bl, x - half, y + height - half);
-    this.setPosition(l, x - half, y + height / 2 - half);
-    this.setPosition(this.refs.rotation, x + width / 2 - half, y - 24);
+    // 边热区：覆盖整条边、边外侧 8px（组件内侧归组件拖动，不重叠）
+    this.setPosition(tm, x, y - 8);
+    this.setBorderWidth(tm, width, 8);
+    this.setPosition(bm, x, y + height);
+    this.setBorderWidth(bm, width, 8);
+    this.setPosition(l, x - 8, y);
+    this.setBorderWidth(l, 8, height);
+    this.setPosition(r, x + width, y);
+    this.setBorderWidth(r, 8, height);
+    // 旋转手柄：四个角外侧各一个 SVG 1/4 圆弧（20×20，左上角相对角点外移 19px →
+    // SVG 中心对角方向距角约 9.2px，弧最近点距角 6px，贴着角上直角手柄外侧）
+    this.setPosition(this.refs.rotationTL, x - 19, y - 19);
+    this.setPosition(this.refs.rotationTR, x + width + 1, y - 19);
+    this.setPosition(this.refs.rotationBR, x + width + 1, y + height + 1);
+    this.setPosition(this.refs.rotationBL, x - 19, y + height + 1);
     wrapper.style.transform = `rotate(${rotation}deg)`;
     let ox = x + width / 2,
       oy = y + height / 2;
@@ -497,19 +517,41 @@ export default class ViewResizable extends NoZoomTransform {
         {/*Circle*/}
 
         <div ref={'resizeWrapper'}>
-          <div ref={'rotation'} className={'rotation-circle '}>
-            <div className={'r-line'}></div>
+          {/* 旋转手柄：四角外侧各一段 1/4 圆弧（90°），缺口朝外（rh-xx 按角旋转方向），
+              四段弧在组件外围成圆环感，白名单 'rotation' 键统一控制四个显隐 */}
+          <div ref={'rotationTL'} className={'rotation-handle rh-tl'}>
+            <svg viewBox='0 0 20 20'>
+              <path className={'rh-arc'} d='M 10 3 A 7 7 0 0 1 17 10' />
+            </svg>
+          </div>
+          <div ref={'rotationTR'} className={'rotation-handle rh-tr'}>
+            <svg viewBox='0 0 20 20'>
+              <path className={'rh-arc'} d='M 10 3 A 7 7 0 0 1 17 10' />
+            </svg>
+          </div>
+          <div ref={'rotationBR'} className={'rotation-handle rh-br'}>
+            <svg viewBox='0 0 20 20'>
+              <path className={'rh-arc'} d='M 10 3 A 7 7 0 0 1 17 10' />
+            </svg>
+          </div>
+          <div ref={'rotationBL'} className={'rotation-handle rh-bl'}>
+            <svg viewBox='0 0 20 20'>
+              <path className={'rh-arc'} d='M 10 3 A 7 7 0 0 1 17 10' />
+            </svg>
           </div>
 
           <div onMouseEnter={this.handleCursor} ref={'resize'}>
+            {/* 四角方块：对角缩放 */}
             <div data-type='nw' ref={'tl'} data-d='tl' className={'resizable-circle rc-tl'}></div>
-            <div data-type='n' ref={'tm'} data-d='tm' className={'resizable-circle rc-tm'}></div>
             <div data-type='ne' ref={'tr'} data-d='tr' className={'resizable-circle rc-tr'}></div>
-            <div data-type='e' ref={'r'} data-d='r' className={'resizable-circle rc-r'}></div>
             <div data-type='se' ref={'br'} data-d='br' className={'resizable-circle rc-br'}></div>
-            <div data-type='s' ref={'bm'} data-d='bm' className={'resizable-circle rc-bm'}></div>
             <div data-type='sw' ref={'bl'} data-d='bl' className={'resizable-circle rc-bl'}></div>
-            <div data-type='w' ref={'l'} data-d='l' className={'resizable-circle rc-l'}></div>
+            {/* 边热区：覆盖整条边外侧 8px 的透明条带，鼠标移到边任意位置 → 缩放光标，拖动即缩放；
+                z-index 低于角方块（$zindex-1），角部命中始终归方块 */}
+            <div data-type='n' ref={'tm'} data-d='tm' className={'resize-edge rv-tm'}></div>
+            <div data-type='s' ref={'bm'} data-d='bm' className={'resize-edge rv-bm'}></div>
+            <div data-type='w' ref={'l'} data-d='l' className={'resize-edge rv-l'}></div>
+            <div data-type='e' ref={'r'} data-d='r' className={'resize-edge rv-r'}></div>
           </div>
         </div>
       </div>

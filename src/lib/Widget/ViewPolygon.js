@@ -102,15 +102,15 @@ export default class ViewPolygon extends ViewController {
   };
 
   /**
-   * 三角尖端（slider 控制点位置：主体外缘再伸出 r）
+   * 三角滑块控制点位置：三角缺口中心向组件内部偏移（8px）——
+   * 避免与连线锚点（组件边缘外 16px）重叠；拖拽交互用鼠标坐标映射周线，控制点位置不影响逻辑
    */
-  _getTip = (pos) => {
-    let { width: w, height: h } = this.properties.transform;
+  _getSlider = (pos) => {
     let { edge, ix, iy } = this._getTipAndEdge(pos);
-    if (edge === 'top') return { x: ix, y: -BUBBLE_R };
-    if (edge === 'right') return { x: w + BUBBLE_R, y: iy };
-    if (edge === 'bottom') return { x: ix, y: h + BUBBLE_R };
-    return { x: -BUBBLE_R, y: iy };
+    if (edge === 'top') return { x: ix, y: iy + 8 };
+    if (edge === 'right') return { x: ix - 8, y: iy };
+    if (edge === 'bottom') return { x: ix, y: iy - 8 };
+    return { x: ix + 8, y: iy };
   };
 
   /**
@@ -135,9 +135,9 @@ export default class ViewPolygon extends ViewController {
   _applyPath = (pos) => {
     let p = pos !== undefined ? pos : this._getPos();
     this.refs.line.setAttribute('d', this._getPath(p));
-    let tip = this._getTip(p);
-    this.refs.slider.setAttribute('cx', tip.x);
-    this.refs.slider.setAttribute('cy', tip.y);
+    let slider = this._getSlider(p);
+    this.refs.slider.setAttribute('cx', slider.x);
+    this.refs.slider.setAttribute('cy', slider.y);
   };
 
   setColor(key, value) {
@@ -190,7 +190,7 @@ export default class ViewPolygon extends ViewController {
       bg,
     } = this.properties;
     let pos = this._getPos();
-    let tip = this._getTip(pos);
+    let slider = this._getSlider(pos);
     let strokeDash = {};
     if (style == 'dashed') {
       strokeDash.strokeDasharray = sw * 3;
@@ -199,11 +199,11 @@ export default class ViewPolygon extends ViewController {
       strokeDash.strokeDasharray = sw;
       strokeDash.strokeDashoffset = sw;
     }
-    // overflow visible：三角尖端与 slider 控制点探出主体外缘 r，SVG 默认 hidden 会裁剪
+    // overflow visible：三角尖端探出主体外缘 r，SVG 默认 hidden 会裁剪（slider 控制点在组件内部）
     return (
       <svg style={{ width: '100%', height: '100%', overflow: 'visible' }} xmlns={'http://www.w3.org/2000/svg'} data-uid={this.properties.id} className={'view-bubble'}>
         <path ref={'line'} d={this._getPath(pos)} {...strokeDash} style={{ stroke: color, fill: bg }} strokeWidth={sw} />
-        <circle ref={'slider'} className={'component-control-dot'} r={4} cx={tip.x} cy={tip.y} />
+        <circle ref={'slider'} className={'component-control-dot'} r={4} cx={slider.x} cy={slider.y} />
       </svg>
     );
   }

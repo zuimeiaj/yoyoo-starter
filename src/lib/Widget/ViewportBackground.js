@@ -52,7 +52,7 @@ export default class ViewportBackground extends NoZoomTransform {
   }
 
   refreshTarget = (config) => {
-    const { viewport, grid } = config;
+    const { viewport } = config;
     this.target = {
       getOffsetRect() {
         return {
@@ -66,7 +66,6 @@ export default class ViewportBackground extends NoZoomTransform {
     };
     this.setBoundingRect();
     this.setState({ width: config.viewport.width, height: config.viewport.height });
-    this.refs.grid.style.display = grid ? 'block' : 'none';
   };
 
   componentWillUnmount() {
@@ -106,18 +105,6 @@ export default class ViewportBackground extends NoZoomTransform {
             {this.state.width} x {this.state.height}
           </span>
         </div>
-        <svg ref={'grid'} width='100%' height='100%' xmlns='http://www.w3.org/2000/svg'>
-          <defs>
-            <pattern id='gridSmall' width='10' height='10' patternUnits='userSpaceOnUse'>
-              <path d='M 10 0 L 0 0 0 10' fill='none' stroke='rgba(207, 207, 207, 0.2)' strokeWidth={1}></path>
-            </pattern>
-            <pattern id='grid' width='100' height='100' patternUnits='userSpaceOnUse'>
-              <rect width='100' height='100' fill='url(#gridSmall)'></rect>
-              <path d='M 100 0 L 0 0 0 100' fill='none' stroke='rgba(186, 186, 186, 0.1)' strokeWidth={1}></path>
-            </pattern>
-          </defs>
-          <rect width='100%' height='100%' fill='url(#grid)'></rect>
-        </svg>
       </div>
     );
   }

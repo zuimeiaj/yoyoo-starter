@@ -202,6 +202,7 @@ export const context_hide_color_picker = 'context/hidecolorpicker';
  */
 export const selection_change = 'selection/change';
 export const selection_update = 'selection/update';
+export const selection_highlight = 'selection/highlight';
 export const selection_start = 'selection/start';
 /**
  * 添加一个控件
@@ -454,7 +455,9 @@ export const NeedResponderAction = {
   [component_resize_start]: 1,
   [component_picker_mode]: 1,
   [component_picker_mode_close]: 1,
-  [component_properties_change]: 1,
+  // 注意：component_properties_change 不在守卫列表 —— 其 payload 自带 target（{ target, key, value }），
+  // 写入定位走 target.properties.id + PATHES，不依赖 firstResponder。若列入守卫，
+  // 连线工具（无需选中组件即可拖线）在 firstResponder 为 null 时派发会被 EventBus 静默丢弃 → 连不上
   [component_show_resizer]: 1,
   [component_edit_mode]: 1,
   [component_close_edit_mode]: 1,

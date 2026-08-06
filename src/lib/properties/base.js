@@ -94,6 +94,8 @@ export class Rect extends ViewProperties {
     this.border.width = 1;
     this.border.color = DEFAULT_COLOR;
     this.bg = DEFAULT_COLOR;
+    // 双击编辑的文本（流程图节点文字）
+    this.text = '';
   }
 }
 
@@ -121,6 +123,49 @@ export class Triangle extends ViewProperties {
     this.alias = '三角';
     this.transform.width = 200;
     this.border.width = 1;
+    delete this.shadow;
+    delete this.corner;
+  }
+}
+
+// 流程图图形：菱形（判断）、平行四边形（输入/输出）、六边形（循环/准备），均可双击编辑文本
+export class Diamond extends ViewProperties {
+  constructor() {
+    super();
+    this.type = 'diamond';
+    this.alias = '菱形';
+    this.transform.width = 200;
+    this.transform.height = 120;
+    this.border.width = 1;
+    this.text = '';
+    delete this.shadow;
+    delete this.corner;
+  }
+}
+
+export class Parallelogram extends ViewProperties {
+  constructor() {
+    super();
+    this.type = 'parallelogram';
+    this.alias = '平行四边形';
+    this.transform.width = 240;
+    this.transform.height = 120;
+    this.border.width = 1;
+    this.text = '';
+    delete this.shadow;
+    delete this.corner;
+  }
+}
+
+export class Hexagon extends ViewProperties {
+  constructor() {
+    super();
+    this.type = 'hexagon';
+    this.alias = '六边形';
+    this.transform.width = 220;
+    this.transform.height = 120;
+    this.border.width = 1;
+    this.text = '';
     delete this.shadow;
     delete this.corner;
   }
@@ -193,6 +238,7 @@ const SerializableKeys = {
   interactions: 1,
   animations: 1,
   connections: 1,
+  text: 1,
   border: 1,
   shadow: 1,
   corner: 1,

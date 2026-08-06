@@ -1,5 +1,5 @@
 import Group from './group';
-import DefaultView, { Bubble, Circle, Line, Path, Rect, Triangle } from './base';
+import DefaultView, { Bubble, Circle, Diamond, Hexagon, Line, Parallelogram, Path, Rect, Triangle } from './base';
 import Text, { ButtonProperties, FontIconProperties, InputProperties, TextAreaProperties } from './text';
 import { isArray, isPlainObject, uuid } from '../util/helper';
 import Image from './image';
@@ -34,6 +34,9 @@ const ViewTypes = {
   checkbox: CheckboxProperties,
   line: Line,
   triangle: Triangle,
+  diamond: Diamond,
+  parallelogram: Parallelogram,
+  hexagon: Hexagon,
   bubble: Bubble,
   circle: Circle,
   path: Path,

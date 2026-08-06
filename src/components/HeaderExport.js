@@ -112,6 +112,32 @@ export default class HeaderExport extends React.Component {
       exportContainer.appendChild(el.cloneNode(true))
     })
 
+    // 连线层导出：html2canvas 不支持内联 SVG（渲染为空白），且原导出未克隆 .link-layer 导致连线丢失。
+    // 将 SVG 序列化为 data URL 图片，以 <img> 形式加入导出容器 —— 连线层与组件同坐标系
+    // （absolute 0,0 铺满 20000×20000），裁剪到页面尺寸后 1:1 映射，位置与组件对齐
+    const linkLayer = sourcePanel.querySelector('.link-layer')
+    if (linkLayer && linkLayer.querySelectorAll('path[stroke]').length > 0) {
+      const svg = linkLayer.cloneNode(true)
+      // 独立 SVG 必须显式 xmlns（React 内联渲染时省略），否则 data URL 图片无法解析
+      svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg')
+      svg.setAttribute('width', pageWidth)
+      svg.setAttribute('height', pageHeight)
+      svg.style.width = pageWidth + 'px'
+      svg.style.height = pageHeight + 'px'
+      const svgData = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(new XMLSerializer().serializeToString(svg))
+      const img = document.createElement('img')
+      Object.assign(img.style, {
+        position: 'absolute',
+        left: 0,
+        top: 0,
+        width: pageWidth + 'px',
+        height: pageHeight + 'px',
+        pointerEvents: 'none',
+      })
+      img.src = svgData
+      exportContainer.appendChild(img)
+    }
+
     // 放入屏幕内可见位置（html2canvas 需要元素在可见区域内）
     const wrapper = document.createElement('div')
     wrapper.className = 'canvas-save-as-image'

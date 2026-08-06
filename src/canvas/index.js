@@ -27,7 +27,9 @@ export default class CanvasRender {
       width,
       height,
       backgroundColor = '#ffffff',
-      scale = window.devicePixelRatio || 1,
+      // 固定 2：不能用 window.devicePixelRatio —— 双屏（笔记本 2 / 外接 1080p 1）下
+      // 导出结果随浏览器窗口所在屏幕变化，DPR=1 时 html2canvas 渲染出白色块（曾踩坑）
+      scale = 2,
     } = options;
 
     const canvas = await html2canvas(element, {
