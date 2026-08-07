@@ -9,14 +9,12 @@ import { component_active, component_properties_change, controllers_change, cont
 import Search from '../lib/ui/Search';
 import { ComponentIconMap } from '@/config/BaseComponents';
 import Icon from '@/lib/Icon';
-import { Tree } from 'antd';
+import { Tree } from '../lib/ui/TreeNode'; // 自研树（虚拟滚动，antd Tree 3.x 无虚拟化）
 import EditableLabel from '@/lib/ui/EditableLabel';
 import { component_empty, context_show } from '@/lib/util/actions';
 import { Draggable } from '@/lib/ui/NativeDragDrop';
 import { getQuery } from '@/lib/util/helper';
 import { getMasterFromStore } from '@/api/master';
-
-const TreeNode = Tree.TreeNode;
 
 class OutlineCoverage extends React.Component {
   state = {
@@ -63,10 +61,10 @@ class OutlineCoverage extends React.Component {
     data = data.slice(0, 50);
     this.setState({ data, source });
   };
-  handleSelect = (keys, e) => {
-    Event.dispatch(outline_coverage_select, e.node.props.eventKey);
+  handleSelect = (path, id) => {
+    Event.dispatch(outline_coverage_select, id);
     Event.dispatch(workspace_scroll_center);
-    this.setState({ selectedKeys: [e.node.props.eventKey] });
+    this.setState({ selectedKeys: [id] });
   };
   handleNameChange = (path, id, name) => {
     if (name && window.allWidgets[id]) {
@@ -116,50 +114,32 @@ class OutlineCoverage extends React.Component {
     Event.dispatch(context_show, window.allWidgets[id]);
   };
 
+  // 图层列表节点内容（renderNode 模式：自研 Tree 展平树形数据，行级统一处理选中/点击）
+  renderNode = (item) => {
+    return (
+      <div className={'node-title-wrapper ' + (item.settings.isHide ? 'hide' : '')}>
+        <Draggable namespace={'nodedrag'} params={item.id}>
+          <EditableLabel onChange={(value) => this.handleNameChange(item.id, value)} value={item.alias} />
+        </Draggable>
+        {item.settings.isHide && <Icon onClick={(e) => this.showComponent(item.id, e)} type={'uneye'} />}
+      </div>
+    );
+  };
+
   render() {
-    const renderTreeNode = (items) => {
-      return items.map((item) => {
-        if (item.items) {
-          return (
-            <TreeNode
-              key={item.id}
-              title={
-                <div className={'node-title-wrapper ' + (item.settings.isHide ? 'hide' : '')}>
-                  <Draggable namespace={'nodedrag'} params={item.id}>
-                    <EditableLabel onChange={(value) => this.handleNameChange(item.id, value)} value={item.alias} />
-                  </Draggable>
-                  {item.settings.isHide && <Icon onClick={(e) => this.showComponent(item.id, e)} type={'uneye'} />}
-                </div>
-              }
-            >
-              {renderTreeNode(item.items)}
-            </TreeNode>
-          );
-        }
-        return (
-          <TreeNode
-            key={item.id}
-            title={
-              <div className={'node-title-wrapper ' + (item.settings.isHide ? 'hide' : '')}>
-                <Draggable namespace={'nodedrag'} params={item.id}>
-                  <EditableLabel onChange={(value) => this.handleNameChange(item.id, value)} value={item.alias} />
-                </Draggable>
-                {item.settings.isHide && <Icon onClick={(e) => this.showComponent(item.id, e)} type={'uneye'} />}
-              </div>
-            }
-          />
-        );
-      });
-    };
     return (
       <div ref={'coverage'} className={'outline-pages outline-converages'}>
         <div className={'action-bar'}>
           <Search placeholder={'按回车搜索'} onSearch={this.handleSearch} />
         </div>
         {this.state.data.length > 0 && (
-          <Tree blockNode multiple selectedKeys={this.state.selectedKeys} onSelect={this.handleSelect}>
-            {renderTreeNode(this.state.data)}
-          </Tree>
+          <Tree
+            data={this.state.data}
+            selectedKeys={this.state.selectedKeys}
+            onSelect={this.handleSelect}
+            renderNode={this.renderNode}
+            onScrollBottom={this.onScrollBottom}
+          />
         )}
       </div>
     );

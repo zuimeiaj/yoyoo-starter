@@ -93,3 +93,32 @@
     }
   }
 }
+
+// 虚拟滚动（Tree 组件）：容器独立滚动 + 节点行固定高度（与 TreeNode.js ROW_H=30 同步，
+// 行高不一致会导致滚动位置错位）；flex:1 让容器高度确定（父 outline-pages 为 flex 纵向布局）
+.aj-component-tree {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  box-sizing: border-box;
+
+  // 占位 div（撑开滚动空间）有内联高度，不受此规则影响
+  .tree-virtual-row {
+    height: 30px;
+    box-sizing: border-box;
+  }
+}
+
+// 图层列表（renderNode 模式）行级选中高亮
+.aj-component-tree .tree-virtual-row.selected {
+  background: var(--yoo-assist-tint);
+  border-radius: 5px;
+}
+
+// 图层列表（renderNode 模式）行内容：垂直居中 + 左内边距（高亮时文本不贴顶不贴边）
+.aj-component-tree .tree-virtual-row-custom {
+  display: flex;
+  align-items: center;
+  padding-left: 6px;
+  box-sizing: border-box;
+}

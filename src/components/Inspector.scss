@@ -12,6 +12,10 @@
   box-shadow: inset 1px 0 0 var(--yoo-glass-highlight);
   // 面板整体文字色：Checkbox 标签/控件 label 等纯文本继承此色，暗色下可读
   color: var(--yoo-text-primary);
+  // 属性分组（Collapse）之间的上下间距
+  .aj-component-collapse {
+    margin-bottom: 10px;
+  }
 }
 
 .root-layout-inspector {

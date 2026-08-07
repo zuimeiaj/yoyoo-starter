@@ -229,6 +229,11 @@ class TreeNode extends React.PureComponent {
 
 const noop = () => {};
 
+// 虚拟滚动：节点行高（px，与 scss .tree-virtual-row 强制高度一致）+ 预渲染缓冲行数。
+// 行高固定是切片计算的前提；调整行高时两处必须同步
+const ROW_H = 30;
+const OVERSCAN = 10;
+
 export class Tree extends React.Component {
   static propTypes = {
     data: Types.array.isRequired,
@@ -239,54 +244,113 @@ export class Tree extends React.Component {
     onMove: Types.func,
     draggable: Types.bool,
     renderActions: Types.func,
+    // 图层列表（组件树）模式：自定义节点内容 + 受控选中高亮 + 滚动到底回调（懒加载分页）
+    renderNode: Types.func,
+    selectedKeys: Types.array,
+    onScrollBottom: Types.func,
   };
 
   static defaultProps = {
     onSelect: noop,
     domRef: noop,
     renderActions: noop,
+    selectedKeys: [],
   };
+
+  state = { scrollTop: 0, viewH: 0 };
 
   componentDidMount() {
     this.props.domRef(this.refs.g);
+    this._updateViewH();
+    window.addEventListener('resize', this._updateViewH);
   }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this._updateViewH);
+  }
+
+  // 树展平为可见节点数组（当前树无折叠功能，全展开；缩进层级保留）。
+  // 虚拟滚动必须平级渲染（原嵌套 tree-node-has-sub 结构移除），行高固定 + 占位撑开滚动空间
+  _flatten() {
+    let flat = [];
+    const walk = (children, parentPath, paddingLeft, parentid) => {
+      children.forEach((item, index) => {
+        let _path = parentPath + index;
+        let _subpath = _path + '-';
+        let hasChildren = item.items && item.items.length > 0;
+        flat.push({ item, path: _path, subpath: _subpath, paddingLeft, parentid, hasChildren });
+        if (hasChildren) walk(item.items, _subpath, paddingLeft + 15, item.id);
+      });
+    };
+    walk(this.props.data, '', 2);
+    return flat;
+  }
+
+  _updateViewH = () => {
+    let viewH = this.refs.g ? this.refs.g.clientHeight : 0;
+    if (viewH !== this.state.viewH) this.setState({ viewH });
+  };
+
+  handleScroll = (e) => {
+    let el = e.target;
+    let scrollTop = el.scrollTop;
+    if (scrollTop !== this.state.scrollTop) this.setState({ scrollTop });
+    this._updateViewH();
+    // 滚动到底（±60px 缓冲）→ 懒加载回调（图层列表分页加载）
+    let { onScrollBottom } = this.props;
+    if (onScrollBottom && el.scrollHeight - scrollTop - el.clientHeight < 60) {
+      onScrollBottom();
+    }
+  };
 
   handleSelect = (path, id) => {
     this.props.onSelect(path, id);
   };
 
   render() {
-    const { onMove, onNameChange, renderIcon, onSelect, data, renderActions } = this.props;
-    const loop = (children, parentPath, paddingLeft, parentid) => {
-      return children.map((item, index) => {
-        let _path = parentPath + index;
-        let _subpath = _path + '-';
-        let hasChildren = item.items && item.items.length > 0;
-        return (
-          <div data-uid={item.id} key={item.id}>
-            <TreeNode
-              draggable={this.props.draggable}
-              parentid={parentid}
-              icon={renderIcon}
-              hasChildren={hasChildren}
-              path={_path}
-              onMove={onMove}
-              paddingLeft={paddingLeft}
-              type={item.type}
-              renderActions={renderActions}
-              onNameChange={onNameChange}
-              onSelect={onSelect}
-              name={item.alias || item.name}
-              id={item.id}
-            />
-            {item.items && item.items.length > 0 && <div className={'tree-node-has-sub'}>{loop(item.items, _subpath, paddingLeft + 15, item.id)}</div>}
-          </div>
-        );
-      });
-    };
+    const { onMove, onNameChange, renderIcon, onSelect, data, renderActions, draggable, renderNode, selectedKeys, onScrollBottom } = this.props;
+    // 虚拟切片：只渲染可视区（±缓冲）节点，上下用占位 div 撑开滚动空间
+    let flat = this._flatten();
+    let { scrollTop, viewH } = this.state;
+    let start = Math.max(0, Math.floor(scrollTop / ROW_H) - OVERSCAN);
+    let end = Math.min(flat.length, Math.ceil((scrollTop + (viewH || 600)) / ROW_H) + OVERSCAN);
+    let visible = flat.slice(start, end);
     return (
-      <div ref={'g'} className={'aj-component-tree'}>
-        {loop(data, '', 2)}
+      <div ref={'g'} className={'aj-component-tree'} onScroll={this.handleScroll}>
+        <div style={{ height: start * ROW_H }} />
+        {visible.map((n) => {
+          let selected = renderNode && selectedKeys.indexOf(n.item.id) > -1;
+          return (
+            <div
+              data-uid={n.item.id}
+              key={n.item.id}
+              className={'tree-virtual-row' + (renderNode ? ' tree-virtual-row-custom' : '') + (selected ? ' selected' : '')}
+              // renderNode 模式（组件树）：行级统一选中；页面树模式由 TreeNode 内部 onClick 处理
+              onClick={renderNode ? () => this.handleSelect(n.path, n.item.id) : undefined}
+            >
+              {renderNode ? (
+                renderNode(n.item)
+              ) : (
+                <TreeNode
+                  draggable={draggable}
+                  parentid={n.parentid}
+                  icon={renderIcon}
+                  hasChildren={n.hasChildren}
+                  path={n.path}
+                  onMove={onMove}
+                  paddingLeft={n.paddingLeft}
+                  type={n.item.type}
+                  renderActions={renderActions}
+                  onNameChange={onNameChange}
+                  onSelect={onSelect}
+                  name={n.item.alias || n.item.name}
+                  id={n.item.id}
+                />
+              )}
+            </div>
+          );
+        })}
+        <div style={{ height: (flat.length - end) * ROW_H }} />
       </div>
     );
   }

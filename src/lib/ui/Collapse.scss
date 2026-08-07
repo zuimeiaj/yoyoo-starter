@@ -1,6 +1,7 @@
 .aj-component-collapse {
   .aj-component-collapse-content {
     display: none;
+    margin-top: 6px; // 内容区与标题的间距
   }
   &.expand {
     .aj-component-collapse-content {

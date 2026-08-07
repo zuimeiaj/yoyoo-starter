@@ -289,6 +289,11 @@
 .outline-pages {
   padding: 10px;
   overflow-y: auto;
+  // 虚拟滚动树：flex 纵向布局，树容器 flex:1 获得确定高度（height:100% 对 auto 父级会塌陷）
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  box-sizing: border-box;
   &::-webkit-scrollbar {
     display: none;
   }
