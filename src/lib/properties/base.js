@@ -1,9 +1,20 @@
-import jQuery from 'jquery';
+// jQuery 已移除：深拷贝/纯对象判断内联实现（properties 数据为纯 JSON 结构，JSON 方案安全）
+const isPlainObject = (obj) => {
+  if (typeof obj !== 'object' || obj === null || Array.isArray(obj)) return false;
+  let proto = Object.getPrototypeOf(obj);
+  return proto === Object.prototype || proto === null;
+};
+const deepClone = (obj) => JSON.parse(JSON.stringify(obj));
 
 export const DEFAULT_COLOR = 'rgba(221,221,221,1)';
 // 流程图节点规范：黑色边框、不填充（透明背景）—— flow 类形状统一默认
 export const FLOW_BORDER = 'rgba(0,0,0,1)';
 export const FLOW_BG = 'rgba(255,255,255,0)';
+// 流程图节点文本字体默认（属性面板「字体」项：字号 + 颜色）
+export const FLOW_FONT = { color: '#333333', size: 14 };
+// 流程图形状 resize 白名单：无旋转手柄（流程图节点一般不旋转），四角 + 边热区保留
+//（连线模式下 applyResizeHandles 再剔除 tm/bm/l/r，只留四角）
+export const FLOW_RESIZE = ['tl', 'tm', 'tr', 'r', 'br', 'bm', 'bl', 'l', 'borderTop', 'borderRight', 'borderBottom', 'borderLeft'];
 /**
  *  created by yaojun on 2018/12/1
  *
@@ -75,8 +86,8 @@ export default class ViewProperties {
           result[key] = this.items.map((item) => JSON.parse(item.toString()));
         } else {
           let obj = this[key];
-          if (jQuery.isPlainObject(obj)) {
-            result[key] = jQuery.extend(true, {}, obj);
+          if (isPlainObject(obj)) {
+            result[key] = deepClone(obj);
           } else {
             result[key] = obj;
           }
@@ -91,24 +102,29 @@ export default class ViewProperties {
   }
 }
 
+// 基础「矩形」：div 实现（ViewContainer，基类应用背景/圆角/阴影），有背景色、属性全可调。
+// 流程图直角矩形用 flowrect（SVG 渲染，见 flow.js）
 export class Rect extends ViewProperties {
   constructor() {
     super();
     this.border.width = 1;
-    // 流程图节点规范：黑色边框、不填充
-    this.border.color = FLOW_BORDER;
-    this.bg = FLOW_BG;
-    // 双击编辑的文本（流程图节点文字）
+    this.border.color = DEFAULT_COLOR;
+    this.bg = DEFAULT_COLOR;
+    // 双击编辑的文本（节点文字）+ 字体样式（属性面板字体项）
     this.text = '';
+    this.font = FLOW_FONT;
   }
 }
 
+// 「直线」组件独立 type（lineShape）：line 被图表折线图占用（ViewChart/LineProperties），
+// 原 line 注册到图表后直线拖出来是折线图（曾踩坑）
+// resize 白名单空：无 resize/rotate 手柄，选中时用两端编辑圆点（ViewLine 拖动端点改长度/角度）
 export class Line extends ViewProperties {
   constructor() {
     super();
-    this.type = 'line';
+    this.type = 'lineShape';
     this.alias = '直线';
-    this.settings.resize = ['l', 'r', 'rotation'];
+    this.settings.resize = [];
     this.settings.disableH = true;
     this.transform.height = 1;
     this.transform.width = 200;
@@ -130,6 +146,8 @@ export class Triangle extends ViewProperties {
     this.border.color = FLOW_BORDER;
     this.bg = FLOW_BG;
     this.text = '';
+    this.font = FLOW_FONT;
+    this.settings.resize = FLOW_RESIZE;
     delete this.shadow;
     delete this.corner;
   }
@@ -147,6 +165,8 @@ export class Diamond extends ViewProperties {
     this.border.color = FLOW_BORDER;
     this.bg = FLOW_BG;
     this.text = '';
+    this.font = FLOW_FONT;
+    this.settings.resize = FLOW_RESIZE;
     delete this.shadow;
     delete this.corner;
   }
@@ -163,6 +183,8 @@ export class Parallelogram extends ViewProperties {
     this.border.color = FLOW_BORDER;
     this.bg = FLOW_BG;
     this.text = '';
+    this.font = FLOW_FONT;
+    this.settings.resize = FLOW_RESIZE;
     delete this.shadow;
     delete this.corner;
   }
@@ -179,6 +201,8 @@ export class Hexagon extends ViewProperties {
     this.border.color = FLOW_BORDER;
     this.bg = FLOW_BG;
     this.text = '';
+    this.font = FLOW_FONT;
+    this.settings.resize = FLOW_RESIZE;
     delete this.shadow;
     delete this.corner;
   }
@@ -237,6 +261,8 @@ export class Bubble extends ViewProperties {
     // 三角沿内矩形周线（[10,10]→[w-10,h-10]）的像素弧长，0 = 顶边左端，顺时针；可绕主体一圈
     // 不写默认值：模板会覆盖构造宽高（如 300×100），写死像素值会漂移；
     // 新组件由 ViewPolygon._getPos 按实际尺寸兜底为底部中间
+    this.font = FLOW_FONT;
+    this.settings.resize = FLOW_RESIZE;
     this.bubble = {};
     delete this.shadow;
     delete this.corner;
@@ -305,6 +331,8 @@ export const ViewIconMaps = {
   switch: 'switch',
   image: 'image',
   rect: 'rect',
+  flowrect: 'rect',
+  lineShape: 'line',
   text: 'text',
   group: 'group',
   view: 'rect',

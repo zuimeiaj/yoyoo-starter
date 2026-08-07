@@ -31,7 +31,7 @@ npm test               # node scripts/test.js (Jest)
 - **Dexie** (IndexedDB 封装，用于页面数据持久化)
 - **html2canvas** (画布导出)
 - **Sass** (样式，`.scss` 文件)
-- **jQuery** (部分遗留 DOM 操作)
+- ~~jQuery~~ **已移除**（深拷贝用 `JSON.parse(JSON.stringify())` 替代、class 操作用 `classList`、纯对象判断内联——properties 数据为纯 JSON 结构，JSON 深拷贝安全；package.json 依赖已删）
 
 ## 核心架构
 
@@ -102,10 +102,12 @@ Root
 
 ## 流程图组件
 
-- **形状清单**：rect（矩形）/triangle（三角形）/diamond（菱形）/parallelogram（平行四边形）/hexagon（六边形）/bubble（气泡）为既有组件；capsule（胶囊起止）/ellipse（椭圆）/predefined（预定义过程）/document（文档）/cylinder（数据库）/trapezoid（手动输入）/delay（延迟）/annotation（注释）为通用形状组件
+- **形状清单**：flowrect（流程矩形，SVG 渲染）/triangle（三角形）/diamond（菱形）/parallelogram（平行四边形）/hexagon（六边形）/bubble（气泡）为既有组件；capsule（胶囊起止）/ellipse（椭圆）/predefined（预定义过程）/document（文档）/cylinder（数据库）/trapezoid（手动输入）/delay（延迟）/annotation（注释）/person（人员，draw.io 简笔小人：圆头+躯干+双臂+双腿，纯线条 fill none）为通用形状组件；**base 分类另有「矩形」（type rect，div 实现 ViewContainer，有背景色/圆角/阴影全属性）**——两种矩形类型不同：流程矩形 SVG 黑边透明，基础矩形 div 通用样式
 - **通用形状**：`src/lib/Widget/ViewFlowShape.js` 按 `properties.flowShape` 分派渲染（path 坐标按当前宽高实时计算，resize 自适应），继承 `ShapeTextController` 双击编辑文本；属性类在 `src/lib/properties/flow.js`（工厂生成，`flowShape` 已入 SerializableKeys 序列化白名单）
-- **默认样式规范**：流程图节点**边框黑色**（`FLOW_BORDER`）+ **不填充**（`FLOW_BG` 透明）——base.js 既有 flow 类（Rect/Triangle/Diamond/Parallelogram/Hexagon/Bubble）与 flow.js 新增类统一（定义在 base.js 顶部常量）
+- **默认样式规范**：流程图节点**边框黑色**（`FLOW_BORDER`）+ **不填充**（`FLOW_BG` 透明）+ **无圆角/阴影**（`delete corner/shadow`，属性面板不显示）+ **字体样式**（`FLOW_FONT` = { color: '#333333', size: 14 }，属性面板「字体」项可调，`ShapeTextController.renderText` 渲染读取）+ **无旋转手柄**（`FLOW_RESIZE` 白名单 = 四角 + 边热区，流程图节点一般不旋转；连线模式再剔 tm/bm/l/r 只留四角）——base.js 既有 flow 类（Triangle/Diamond/Parallelogram/Hexagon/Bubble）与 flow.js 新增类统一（定义在 base.js 顶部常量；基础矩形 rect 保留旋转）
 - **注册链路**：`View.js` maps + `properties/types.js` ViewTypes + `config/BaseComponents.js`（条目 + ComponentIconMap 图标），新增形状三处同步
+- **「直线」组件独立 type `lineShape`**：`line` 被图表折线图占用（ViewChart/LineProperties），原注册顺序下直线拖出来是折线图（曾踩坑）——base.js `Line` 类 type 改为 lineShape，折线图保持 `line`
+- **直线编辑（draw.io 风格）**：`settings.resize = []` 无 resize/rotate 手柄；选中时两端显示编辑圆点（ViewLine 内 SVG circle，原生 capture mousedown 挂 DOM），拖动端点固定另一端、绕其伸缩旋转（长度 + 角度一次成型：`atan2` 算角度、`hypot` 算长度、容器中心 = 端点中点），拖动中直改 DOM（setTransform + 圆点 cx），松手 `component_properties_change` 落库
 
 ## 连线功能（Link）
 
@@ -135,6 +137,7 @@ Root
 - 整层 `pointer-events: none`；线删除热区单独开 `pointerEvents="visibleStroke"`（透明 12px 加粗，mousedown stopPropagation 不清除选中）；预览模式（props.items 只读）不挂热区
 - 贝塞尔控制点按**锚点轴系**定向（left/right → 水平、top/bottom → 垂直），方向取**各自锚点的外法线**（起点外侧 → 起点切线向外 =「从内到外出发」；终点外侧 → 终点切线指向组件内部 =「从外到内进入」，箭头朝向组件，与 corner 箭头规则一致）——不能用全局连接方向（dx/dy 符号）：目标锚点在起点「背后」时两端控制点翻到组件内侧，线从起点反面冒出、箭头背对目标，即「首尾不连」（曾踩坑）
 - 渲染顺序：线最底 → 起点圆点/终点箭头最上（线画在箭头上会穿出三角形露"尾巴"）
+- **线段颜色/粗细可配置**（HeaderLinkStyle 右上角工具栏）：颜色矩形触发（显示当前色，hover 弹预设色板 `LINK_COLORS` 9 色，黑为默认）+ 粗细触发钮（Popover 弹 1/2/3/4/5px，触发钮横线按当前粗细绘制）；存 `page.linkColor`/`page.linkWidth` + `window.__linkColor`/`__linkWidth`（切页 handlePageSelect 同步），渲染走 `getLinkColor()`/`getLinkWidth()`（props > window > 默认黑/1px）；选中红 `#ff7875`/hover 蓝 `#40a9ff` 为交互反馈色不随配置，选中/hover 线宽 +1px
 - 删除交互：点击线选中（红色保持）→ Delete/Backspace（**selected 优先**，hover 蓝色仅提示、且仅在组件也未选中时才作为快捷删除目标——否则选中组件时鼠标悬停线上，Delete 会误删线）；点击组件（component_active）/点空白（component_inactive）清选中；轻点锚点断开该锚点全部；再点取消选中
 - 线段热区交互：选中在 **mousedown** 完成（click 会被重渲染打断丢失）；热区 mousedown 必须用**原生 capture**（ref 挂 path DOM，同锚点/ViewTable 模式）——Selection 的 Draggable 挂 `#layout-editor-view` 容器冒泡 mousedown 会 stopPropagation，事件到不了 document，React 合成 onMouseDown 永不触发（曾用合成事件导致"点击线段无高亮"）；hover 走 React 合成（mouseover 无拦截者）。点击线 mousedown 均 stopPropagation + blur 输入框焦点（否则 Delete 时 e.target 是 INPUT 被输入保护跳过，线删不掉）
 - 自连禁止：`findAnchor` 排除自身 + `setLink` 入口校验双保险

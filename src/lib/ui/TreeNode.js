@@ -7,7 +7,6 @@ import React from 'react';
 import Types from 'prop-types';
 import Icon from '../Icon';
 import './TreeNode.scss';
-import jQuery from 'jquery';
 import Event from '../Base/Event';
 import { component_enter } from '../util/actions';
 import EditableLabel from '@/lib/ui/EditableLabel';
@@ -94,9 +93,7 @@ class EditableName extends React.Component {
     e.preventDefault();
     e.stopPropagation();
     if (checkCanDrop(e)) {
-      jQuery(e.target)
-        .parent()
-        .addClass('drag-over');
+      e.target.parentElement.classList.add('drag-over');
     }
   };
 
@@ -107,16 +104,12 @@ class EditableName extends React.Component {
     if (id && id !== this.props.id) {
       this.props.onMove(id, this.props.id, true);
     }
-    jQuery(e.target)
-      .parent()
-      .removeClass('drag-over');
+    e.target.parentElement.classList.remove('drag-over');
   };
 
   handleMouseLeave = (e) => {
     e.stopPropagation();
-    jQuery(e.target)
-      .parent()
-      .removeClass('drag-over');
+    e.target.parentElement.classList.remove('drag-over');
   };
 
   //over
@@ -181,7 +174,7 @@ class TreeNode extends React.PureComponent {
   handleDrop = (e) => {
     e.preventDefault();
     let dragid = e.dataTransfer.getData('nodedrag');
-    jQuery(e.target).removeClass('drag-over');
+    e.target.classList.remove('drag-over');
     if (dragid != this.props.id) {
       this.props.onMove(dragid, this.props.id);
     }
@@ -191,14 +184,14 @@ class TreeNode extends React.PureComponent {
   handleDropOver = (e) => {
     e.preventDefault();
     if (checkCanDrop(e)) {
-      jQuery(e.target).addClass('drag-over');
+      e.target.classList.add('drag-over');
     } else {
       e.dataTransfer.dropEffect = 'none';
     }
   };
 
   handleMouseLeave = (e) => {
-    jQuery(e.target).removeClass('drag-over');
+    e.target.classList.remove('drag-over');
   };
 
   // over

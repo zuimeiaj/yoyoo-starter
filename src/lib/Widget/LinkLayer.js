@@ -373,14 +373,16 @@ const pathClear = (pts, obstacles, exempt0, exempt1) => {
  *  - 段方向垂直锚点轴（如 right 锚点垂直线段沿组件边）点积为 0，天然安全 */
 const axOk = (prev, cur, dir) => (cur.x - prev.x) * dir[0] + (cur.y - prev.y) * dir[1] >= 0;
 
-/** 候选坐标：所有障碍物边界 ±MARGIN + 额外值（锚点坐标） */
+/** 候选坐标：所有障碍物边界 ±(MARGIN+1) + 额外值（锚点坐标）。
+ *  +1 余量：pathClear 的膨胀判定是闭区间（segHitsBox 边界也算命中），
+ *  候选恰好落在 ±MARGIN 上会贴膨胀边界被误杀 → 绕行路径无解回退 cornerPath（曾踩坑） */
 const candidatesOnAxis = (obstacles, axis, extras) => {
   let set = new Set(extras);
   obstacles.forEach((o) => {
     let lo = axis === 'x' ? o.x : o.y;
     let hi = lo + (axis === 'x' ? o.width : o.height);
-    set.add(lo - MARGIN);
-    set.add(hi + MARGIN);
+    set.add(lo - MARGIN - 1);
+    set.add(hi + MARGIN + 1);
   });
   return [...set];
 };
@@ -476,7 +478,8 @@ const axisCands = (obstacles, axis, p0, p1) => {
  *  首段保证脖子长度、尾段保证箭头可画，且端点落在自由区（A* 起点/终点需自由） */
 const extendFrom = (from, dir, targetLen, obstacles, exempt) => {
   for (let l = targetLen; l >= 0; l -= 2) {
-    let pt = { x: from.x + dir.x * l, y: from.y + dir.y * l };
+    // dir 是 anchorDir 数组 [dx, dy]（曾误用 dir.x → NaN，A* 兜底全部失败回退 cornerPath）
+    let pt = { x: from.x + dir[0] * l, y: from.y + dir[1] * l };
     if (pathClear([from, pt], obstacles, exempt)) return pt;
   }
   return from;
@@ -680,9 +683,12 @@ export const orthoRoute = (p0, p1, obstacles = []) => {
   if ((p0.box && p0.box.rotation) || (p1.box && p1.box.rotation)) return null;
   let h0 = isHorizontalAnchor(p0.anchor);
   let h1 = isHorizontalAnchor(p1.anchor);
-  // 直线（0 拐角）：共线 + 尾段够画箭头 + 首尾段轴向合法 + 不穿任何组件（首尾段豁免端点自身）
+  // 直线（0 拐角）：共线 + 尾段够画箭头 + 首尾段轴向合法 + 不穿任何组件（首尾段豁免端点自身）。
+  // 线方向必须与两端锚点轴一致（水平共线 → 两端水平锚点；垂直共线 → 两端垂直锚点）：
+  // 否则 trimPathEnd 把线终点裁剪到箭头底边（沿锚点轴回退 8px），水平线 + top 锚点会裁出斜尾段（曾踩坑）
   if (
     (p0.x === p1.x || p0.y === p1.y) &&
+    ((p0.y === p1.y && h0 && h1) || (p0.x === p1.x && !h0 && !h1)) &&
     hasArrowTail([p0, p1]) &&
     axOk(p0, p1, anchorDir(p0.anchor)) &&
     axOk(p1, p0, anchorDir(p1.anchor)) &&
@@ -1011,6 +1017,12 @@ export default class LinkLayer extends React.Component {
   // 当前连线样式：props（预览）> window 全局（编辑器，HeaderLinkStyle 写 + 切页时 handlePageSelect 刷新）> 默认曲线
   getLinkStyle = () => this.props.linkStyle || window.__linkStyle || 'curve';
 
+  // 当前线段颜色：props（预览）> window 全局（HeaderLinkStyle 写 + 切页刷新）> 默认黑（draw.io 风格）
+  getLinkColor = () => this.props.linkColor || window.__linkColor || '#000000';
+
+  // 当前线段粗细（px）：props（预览）> window 全局 > 默认 1
+  getLinkWidth = () => this.props.linkWidth || window.__linkWidth || 1;
+
   // Delete/Backspace 删除连线（capture 拦截，阻断组件删除快捷键）
   // selected 优先：点击选中的线永远是删除目标；无选中线时 hover 可作为快捷删除目标（仅组件也未选中时）
   _handleKeyDown = (e) => {
@@ -1112,8 +1124,9 @@ export default class LinkLayer extends React.Component {
           // 选中线 hover 时保持红色不切换，避免"点击没生效"的误判
           let selected = selectedId === l.id;
           let hovering = hoverId === l.id && !selected;
-          let stroke = selected ? '#ff7875' : hovering ? '#40a9ff' : '#1890ff';
-          let strokeW = selected || hovering ? 3 : 2;
+          // 线色/粗细可配置（HeaderLinkStyle）；选中红/hover 蓝为交互反馈色，不随配置；选中/hover 加粗 1px
+          let stroke = selected ? '#ff7875' : hovering ? '#40a9ff' : this.getLinkColor();
+          let strokeW = selected || hovering ? this.getLinkWidth() + 1 : this.getLinkWidth();
           // 线终点裁剪到箭头底边中心（顶点往回 8px），箭头从底边延伸到顶点 —— 线从三角底部传入；
           // 回退路径（orthoPoints）尾段方向可能背离组件，若不裁剪线会从箭头顶点方向插入，视觉反向
           let u = linkArrowUnit(l.from, l.to, linkStyle);

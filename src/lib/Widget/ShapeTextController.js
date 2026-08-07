@@ -61,8 +61,10 @@ export default class ShapeTextController extends ViewController {
     }
   };
 
-  /** 文本节点：覆盖整个组件、水平垂直居中；非编辑态不拦鼠标（拖拽/缩放/连线锚点照常） */
+  /** 文本节点：覆盖整个组件、水平垂直居中；非编辑态不拦鼠标（拖拽/缩放/连线锚点照常）。
+   *  字体样式读 properties.font（{ size, color }，属性面板「字体」项可调） */
   renderText() {
+    let font = this.properties.font || {};
     return (
       <div
         ref={'text'}
@@ -80,8 +82,8 @@ export default class ShapeTextController extends ViewController {
           textAlign: 'center',
           boxSizing: 'border-box',
           padding: '0 6px',
-          fontSize: 14,
-          color: '#333333',
+          fontSize: font.size || 14,
+          color: font.color || '#333333',
           lineHeight: 1.4,
           wordBreak: 'break-all',
           whiteSpace: 'pre-wrap',

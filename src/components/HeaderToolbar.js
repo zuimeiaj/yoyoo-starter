@@ -66,8 +66,8 @@ export default class HeaderToolbar extends React.Component {
           <Radio.Button value="pen">钢笔</Radio.Button>
           <Radio.Button value="link">连线</Radio.Button>
         </Radio.Group>
-        {/* 线段样式切换（曲线/直角曲线）：跟随「连线」工具 */}
-        <HeaderLinkStyle />
+        {/* 线段样式/颜色/粗细（4 个控件）：仅连线模式显示（跟随「连线」工具激活态） */}
+        {this.state.mode === 'link' ? <HeaderLinkStyle /> : null}
       </div>
     );
   }

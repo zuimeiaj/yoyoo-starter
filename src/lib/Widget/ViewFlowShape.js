@@ -53,6 +53,22 @@ const buildD = (shape, w, h) => {
     // 注释：右上角 8×8 斜切
     case 'annotation':
       return `M 1 1 H ${w - 8} L ${w - 1} 9 V ${h - 1} H 1 Z`;
+    // 人员（draw.io Person）：圆头 + 躯干 + 双臂 + 双腿，纯线条（fill none，renderContent 用 fill: bg 透明）
+    case 'person': {
+      let cx = w / 2;
+      let r = Math.min(h * 0.14, w * 0.4); // 头半径（按高，宽小时钳制）
+      let headC = h * 0.18; // 圆心
+      let bodyTop = headC + r; // 躯干起点（圆底）
+      let bodyBot = h * 0.62; // 躯干底（腿起点）
+      let armY = (bodyTop + bodyBot) / 2; // 手臂高度
+      let legBot = h * 0.96; // 腿底
+      return (
+        `M ${cx} ${headC - r} A ${r} ${r} 0 1 1 ${cx} ${headC + r} A ${r} ${r} 0 1 1 ${cx} ${headC - r} ` +
+        `M ${cx} ${bodyTop} L ${cx} ${bodyBot} ` +
+        `M ${w * 0.32} ${armY} L ${w * 0.68} ${armY} ` +
+        `M ${cx} ${bodyBot} L ${w * 0.32} ${legBot} M ${cx} ${bodyBot} L ${w * 0.68} ${legBot}`
+      );
+    }
     default:
       return null;
   }
@@ -76,6 +92,38 @@ export default class ViewFlowShape extends ShapeTextController {
     Dom.of(this.refs.line).css(key, value);
   }
 
+  setTransform(x, y, w, h, r) {
+    super.setTransform(x, y, w, h, r);
+    // resize 拖动中实时刷新内部图形：拖动时 React 不重渲染，必须直接操作 DOM
+    //（与 ViewDiamond/ViewParallelogram 同模式；renderContent 首次渲染走 JSX，二者几何一致）
+    this._applyBody();
+  }
+
+  // 按当前 transform 重写内部图形（主元素 + 附加元素：预定义双竖线）
+  _applyBody = () => {
+    let line = this.refs.line;
+    if (!line) return;
+    let { width: w, height: h } = this.properties.transform;
+    let shape = this.properties.flowShape || 'capsule';
+    if (shape === 'rect' || shape === 'capsule') {
+      line.setAttribute('x', 1);
+      line.setAttribute('y', 1);
+      line.setAttribute('width', Math.max(w - 2, 0));
+      line.setAttribute('height', Math.max(h - 2, 0));
+      line.setAttribute('rx', shape === 'capsule' ? (h - 2) / 2 : 0);
+    } else if (shape === 'ellipse') {
+      line.setAttribute('cx', w / 2);
+      line.setAttribute('cy', h / 2);
+      line.setAttribute('rx', Math.max((w - 2) / 2, 0));
+      line.setAttribute('ry', Math.max((h - 2) / 2, 0));
+    } else {
+      line.setAttribute('d', buildD(shape, w, h));
+    }
+    if (shape === 'predefined' && this.refs.divider) {
+      this.refs.divider.setAttribute('d', `M ${w / 6} 1 V ${h - 1} M ${(w * 5) / 6} 1 V ${h - 1}`);
+    }
+  };
+
   renderContent() {
     let { width: w, height: h } = this.properties.transform;
     let {
@@ -92,8 +140,8 @@ export default class ViewFlowShape extends ShapeTextController {
     }
     let shape = this.properties.flowShape || 'capsule';
     let body;
-    if (shape === 'capsule') {
-      // 胶囊（起止）：全圆角矩形
+    if (shape === 'rect' || shape === 'capsule') {
+      // 流程矩形（直角 SVG rect）/ 胶囊（起止）：全圆角矩形
       body = (
         <rect
           ref={'line'}
@@ -101,7 +149,7 @@ export default class ViewFlowShape extends ShapeTextController {
           y={1}
           width={Math.max(w - 2, 0)}
           height={Math.max(h - 2, 0)}
-          rx={(h - 2) / 2}
+          rx={shape === 'capsule' ? (h - 2) / 2 : 0}
           {...strokeDash}
           strokeWidth={sw}
           style={{ fill: bg, stroke: color }}
@@ -132,9 +180,9 @@ export default class ViewFlowShape extends ShapeTextController {
         className={'view-flow-shape'}
       >
         {body}
-        {/* 预定义过程：左右双竖线（不填充，与外框同色同宽） */}
+        {/* 预定义过程：左右双竖线（不填充，与外框同色同宽；ref 供 resize 实时刷新） */}
         {shape === 'predefined' ? (
-          <path d={`M ${w / 6} 1 V ${h - 1} M ${(w * 5) / 6} 1 V ${h - 1}`} stroke={color} strokeWidth={sw} fill={'none'} />
+          <path ref={'divider'} d={`M ${w / 6} 1 V ${h - 1} M ${(w * 5) / 6} 1 V ${h - 1}`} stroke={color} strokeWidth={sw} fill={'none'} />
         ) : null}
       </svg>,
       this.renderText(),

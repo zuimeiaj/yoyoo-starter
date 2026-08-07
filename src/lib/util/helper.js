@@ -731,3 +731,6 @@ export const mergeProps = (oldValue, newValue) => {
   }
   return newValue;
 };
+
+/** 深拷贝（jQuery.extend(true) 替代：properties 等数据均为纯 JSON 结构，JSON 方案安全） */
+export const deepClone = (obj) => JSON.parse(JSON.stringify(obj));

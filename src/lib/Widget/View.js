@@ -49,7 +49,8 @@ const maps = {
   checkbox: ViewCheckbox,
   switch: ViewIcon,
   select: ViewSelect,
-  line: ViewLine,
+  lineShape: ViewLine,
+  line: ViewChart, // 折线图（line 被图表占用，直线用 lineShape）
   triangle: ViewTriangle,
   diamond: ViewDiamond,
   parallelogram: ViewParallelogram,
@@ -58,6 +59,7 @@ const maps = {
   circle: ViewCircle,
   path: ViewPath,
   // 流程图新增形状（ViewFlowShape 按 flowShape 渲染）
+  flowrect: ViewFlowShape,
   capsule: ViewFlowShape,
   ellipse: ViewFlowShape,
   predefined: ViewFlowShape,
@@ -66,6 +68,7 @@ const maps = {
   trapezoid: ViewFlowShape,
   delay: ViewFlowShape,
   annotation: ViewFlowShape,
+  person: ViewFlowShape,
   master: MasterView,
   comment: CommentView,
   table: ViewTable,

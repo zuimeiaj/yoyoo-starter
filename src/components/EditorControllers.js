@@ -621,10 +621,12 @@ class EditorControllers extends React.Component {
       // 不清会污染 —— 新页 Ctrl+Z 会回退出旧页内容，且 setState 后把旧页数据存成当前页
       HistoryRecord.length = 0
       RedoRecord.length = 0
-      // 恢复页面保存的连线样式（window 全局，LinkLayer 渲染读取）；
-      // 页面无 linkStyle 时重置为默认，避免沿用上一页的样式
+      // 恢复页面保存的连线样式/颜色（window 全局，LinkLayer 渲染读取）；
+      // 页面无 linkStyle/linkColor 时重置为默认，避免沿用上一页的样式
       let page = getPageDataWithId(pageid)
       window.__linkStyle = (page && page.linkStyle) || 'curve'
+      window.__linkColor = (page && page.linkColor) || '#000000'
+      window.__linkWidth = (page && page.linkWidth) || 1
       // 页面变化后，由于组件id未改变，导致component数据被共享了。
       // 需要 彻底卸载之前的数据
       await super.setState({ items: [] })

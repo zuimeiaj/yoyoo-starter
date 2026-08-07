@@ -19,7 +19,6 @@ import './InspectorControl.scss'
 import Event from "../Base/Event";
 import {component_drag, component_stroke_change} from "../util/actions";
 import {ANIMATIONS, isPlainObject} from "../util/helper";
-import jQuery from 'jquery'
 import {getPageDataWithId} from "../util/page";
 import { Input } from 'antd'
 
@@ -653,7 +652,7 @@ export class InspectorInteraction extends InspectorBase {
         let page = getPageDataWithId(id)
         if (page) {
             // page
-            let current = jQuery.extend(true, {}, this.state.current)
+            let current = JSON.parse(JSON.stringify(this.state.current))
             current.t = [{id, alias : page.alias}]
             current.o = 'jump'
             current.a = ''
@@ -682,7 +681,7 @@ export class InspectorInteraction extends InspectorBase {
     }
     
     save = () =>{
-        let current = jQuery.extend(true, {}, this.state.current)
+        let current = JSON.parse(JSON.stringify(this.state.current))
         if (!current.e || current.t.length == 0 || !current.o || (current.o == 'play' && !current.a)) {
             // TODO Message box
             return
@@ -699,12 +698,12 @@ export class InspectorInteraction extends InspectorBase {
     }
     
     update = (index) =>{
-        let current = jQuery.extend(true, {}, this.state.list[index])
+        let current = JSON.parse(JSON.stringify(this.state.list[index]))
         this.setState({selectedIndex : index, current, type : current.o == 'jump' ? 'p' : 'c'})
     }
     
     handleDeleteDropItem = (index) =>{
-        let current = jQuery.extend(true, {}, this.state.current)
+        let current = JSON.parse(JSON.stringify(this.state.current))
         current.t.splice(index, 1)
         this.setState({current})
     }

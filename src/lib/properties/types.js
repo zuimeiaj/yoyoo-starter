@@ -7,7 +7,6 @@ import SelectProperties from './select';
 import RadioProperties from './radio';
 import CheckboxProperties from './checkbox';
 import Chart, { BarProperties, LineProperties, AreaProperties, PieProperties, RadarProperties } from './chart';
-import jQuery from 'jquery';
 import { BlockProperties, MasterProperties } from '@/lib/properties/group';
 import { CommentProperties } from '@/lib/properties/text';
 import TableProperties from './table';
@@ -19,11 +18,12 @@ import BadgeProperties from './badge';
 import AvatarProperties from './avatar';
 import AlertProperties from './alert';
 import StepsProperties from './steps';
-import { Annotation, Capsule, Cylinder, Delay, Document, Ellipse, Predefined, Trapezoid } from './flow';
+import { Annotation, Capsule, Cylinder, Delay, Document, Ellipse, FlowRect, Person, Predefined, Trapezoid } from './flow';
 
 const ViewTypes = {
   group: Group,
   rect: Rect,
+  lineShape: Line,
   text: Text,
   image: Image,
   input: InputProperties,
@@ -42,6 +42,7 @@ const ViewTypes = {
   circle: Circle,
   path: Path,
   // 流程图新增形状（边框黑、不填充，ViewFlowShape 渲染）
+  flowrect: FlowRect,
   capsule: Capsule,
   ellipse: Ellipse,
   predefined: Predefined,
@@ -50,6 +51,7 @@ const ViewTypes = {
   trapezoid: Trapezoid,
   delay: Delay,
   annotation: Annotation,
+  person: Person,
   block: BlockProperties,
   master: MasterProperties,
   comment: CommentProperties,
@@ -310,9 +312,9 @@ export function createViewFrom(data) {
   for (let key in data) {
     let obj = data[key];
     if (isPlainObject(obj)) {
-      obj = jQuery.extend(true, {}, obj);
+      obj = JSON.parse(JSON.stringify(obj));
     } else if (isArray(obj)) {
-      obj = jQuery.extend(true, [], obj);
+      obj = JSON.parse(JSON.stringify(obj));
     }
     view[key] = obj;
   }

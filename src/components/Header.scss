@@ -244,4 +244,94 @@ $header_height: 50px;
       background: var(--yoo-assist-tint);
     }
   }
+
+  // 线段颜色：矩形触发（显示当前色），hover 弹预设色板
+  .link-color-trigger {
+    width: 22px;
+    height: 14px;
+    border-radius: 2px;
+    border: 1px solid var(--yoo-border-1);
+    box-sizing: border-box;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+      border-color: var(--yoo-assist-color);
+    }
+  }
+
+  // 线段粗细触发钮（横线按当前粗细绘制）
+  .link-width-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+      background: var(--yoo-surface-hover);
+    }
+  }
+}
+
+// 线段颜色预设色板（antd Popover 挂 body，全局样式）
+.link-color-pop {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  width: 118px;
+
+  .link-color-swatch {
+    width: 20px;
+    height: 20px;
+    border-radius: 3px;
+    border: 1px solid var(--yoo-border-1);
+    box-sizing: border-box;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+      border-color: var(--yoo-assist-color);
+    }
+
+    &.active {
+      border-color: var(--yoo-assist-color);
+      box-shadow: 0 0 0 1px var(--yoo-assist-color);
+    }
+  }
+}
+
+// 线段粗细 pop 选项（antd Popover 挂 body，全局样式）
+.link-width-pop {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  .link-width-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    color: var(--yoo-text-secondary);
+    transition: all 0.2s;
+
+    svg {
+      flex-shrink: 0;
+    }
+
+    &:hover {
+      background: var(--yoo-surface-hover);
+    }
+
+    &.active {
+      color: var(--yoo-assist-color);
+      background: var(--yoo-assist-tint);
+    }
+  }
 }

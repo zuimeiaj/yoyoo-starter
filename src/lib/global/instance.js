@@ -1,6 +1,5 @@
 import Event from '../Base/Event'
 import { component_active, component_empty, component_inactive } from '../util/actions'
-import jQuery from 'jquery'
 import ViewSelectGroupBordered from '../Widget/ViewSelectGroupBordered'
 import { createNewPage, getPageData, storage_page_key } from '../util/page'
 import { findPageDetail } from '../../api/page'
@@ -86,13 +85,13 @@ export const setFirstResponder = (responder, options) => {
   if (firstResponder && firstResponder !== responder) {
     Event.dispatch(component_inactive, firstResponder, responder)
     let dom = firstResponder.getIndexDomWrapper()
-    jQuery(dom).removeClass('component-active')
+    dom.classList.remove('component-active')
   }
   if (responder) {
     firstResponder = responder
     Event.dispatch(component_active, responder, options)
     let dom = responder.getIndexDomWrapper()
-    jQuery(dom).addClass('component-active')
+    dom.classList.add('component-active')
   } else {
     firstResponder = null
     Event.dispatch(component_empty)

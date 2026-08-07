@@ -34,6 +34,8 @@ export default class PositionInfo extends NoZoomTransform {
   };
   handleDrag = (target, options = {}) => {
     if (!this.show) return;
+    // 直线（lineShape）无位置/尺寸/角度信息意义（端点编辑替代 resize/rotate），不显示信息条
+    if (target.properties && target.properties.type === 'lineShape') return;
     this.target = target;
     this.options = options;
     this.setBoundingRect();

@@ -7,11 +7,7 @@ import IconText from '../lib/ui/IconText';
 import { Draggable } from '../lib/ui/NativeDragDrop';
 import { BaseComponents } from '../config/BaseComponents';
 import Collapse from '../lib/ui/Collapse';
-import Icon from '../lib/Icon';
-import { Tooltip } from 'antd';
 import CacheState from '@/lib/Base/CacheState';
-import event from '@/lib/Base/Event';
-import { context_outline_menu_change } from '@/lib/util/actions';
 
 export default class OutlineComponents extends CacheState {
   state = {
@@ -89,39 +85,4 @@ class WrapperAdvs extends React.PureComponent {
   }
 }
 
-export class BaseComponentsActionBar extends React.Component {
-  state = {
-    show: true,
-  };
 
-  componentWillMount() {
-    event.listen(context_outline_menu_change, this.handleShow);
-  }
-
-  componentWillUnmount() {
-    event.destroy(context_outline_menu_change, this.handleShow);
-  }
-
-  handleShow = (t) => {
-    this.setState({ show: t != 'components' });
-  };
-
-  render() {
-    if (!this.state.show) return null;
-    return (
-      <div className={'base-components_action-bar'}>
-        {BaseComponents.map((item) => {
-          return (
-            <Tooltip key={item.name} placement={'right'} title={item.name}>
-              <span className={'base-component_action-item'}>
-                <Draggable key={item.name} params={item}>
-                  <Icon type={item.icon} />
-                </Draggable>
-              </span>
-            </Tooltip>
-          );
-        })}
-      </div>
-    );
-  }
-}

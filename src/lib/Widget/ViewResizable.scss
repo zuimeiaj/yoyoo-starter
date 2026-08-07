@@ -39,7 +39,7 @@ $zindex: 10000000;
   width: 20px;
   height: 20px;
   display: none;
-  cursor: crosshair;
+  cursor: move; // 旋转手柄：move 光标（原 crosshair 加号看起来奇怪）
   z-index: $zindex;
   svg {
     display: block;

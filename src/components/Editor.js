@@ -13,7 +13,6 @@ import { Settings } from './HeaderSettings';
 import CanvasDraggable from '../lib/Widget/CanvasDraggable';
 import LineNumber from '../lib/ui/LineNumber';
 import BackToProject from '../lib/Widget/BackToProject';
-import { BaseComponentsActionBar } from '@/components/OutlineComponents';
 import ZoomSlider from '@/lib/ui/ZoomSlider';
 
 const debounce = require('debounce');
@@ -50,8 +49,6 @@ export default class Editor extends Component {
         <LineNumber />
 
         <ZoomSlider />
-
-        <BaseComponentsActionBar />
 
         <BackToProject />
       </div>

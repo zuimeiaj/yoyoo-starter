@@ -1,7 +1,6 @@
 import React from 'react';
 import Types from 'prop-types';
 import './NativeDragDrop.scss';
-import jquery from 'jquery';
 import { isPlainObject } from '@/lib/util/helper';
 
 export class Draggable extends React.PureComponent {
@@ -54,17 +53,17 @@ export class Dropable extends React.PureComponent {
     let data = e.dataTransfer.getData(this.props.namespace);
     if (data && data[0] == '{' && data[data.length - 1] == '}') data = JSON.parse(data);
     data && this.props.onDrop(data, e);
-    jquery(this.refs.g).removeClass('enter');
+    this.refs.g.classList.remove('enter');
   };
   allowDrop = (e) => {
     e.preventDefault();
     e.stopPropagation();
   };
   onEnter = () => {
-    jquery(this.refs.g).addClass('enter');
+    this.refs.g.classList.add('enter');
   };
   onLeave = () => {
-    jquery(this.refs.g).removeClass('enter');
+    this.refs.g.classList.remove('enter');
   };
 
   render() {

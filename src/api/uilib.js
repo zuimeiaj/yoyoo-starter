@@ -1,6 +1,5 @@
 import {Http} from "@/api/config";
 import {isArray} from "@/lib/util/helper";
-import jQuery from 'jquery'
 import {BASE_OSS} from '@config'
 
 

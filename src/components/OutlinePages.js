@@ -10,7 +10,6 @@ import Event from '../lib/Base/Event'
 import { outline_page_delete, outline_page_select, pages_load_end } from '../lib/util/actions'
 import arrayToTree from 'array-to-tree'
 import Search from '../lib/ui/Search'
-import jQuery from 'jquery'
 import { Form, Modal, Radio, Tooltip } from 'antd'
 import Icon from '../lib/Icon'
 import { getQuery } from '../lib/util/helper'
@@ -48,9 +47,8 @@ export default class OutlinePages extends React.Component {
       let id = localStorage.getItem('selected-page')
       id = id || getPageData()[0].id
       if (id) {
-        jQuery(this.refs.wrapper)
-          .find(`#treenode${id}`)
-          .addClass('selected')
+        let sel = this.refs.wrapper.querySelector(`#treenode${id}`)
+        if (sel) sel.classList.add('selected')
         this.handleSelect(null, id)
       }
     }, 20)
@@ -64,9 +62,10 @@ export default class OutlinePages extends React.Component {
     this.setState({ data })
   }
   handleSelect = (path, id) => {
-    let wrapper = jQuery(this.refs.wrapper)
-    wrapper.find('.selected').removeClass('selected')
-    wrapper.find(`#treenode${id}`).addClass('selected')
+    let wrapper = this.refs.wrapper
+    wrapper.querySelectorAll('.selected').forEach((el) => el.classList.remove('selected'))
+    let sel = wrapper.querySelector(`#treenode${id}`)
+    if (sel) sel.classList.add('selected')
     Event.dispatch(outline_page_select, id)
   }
   handleCreate = async () => {

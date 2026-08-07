@@ -5,7 +5,7 @@
  *  各形状用工厂生成（type/alias/flowShape/默认尺寸不同，其余规范一致）
  */
 
-import ViewProperties, { FLOW_BG, FLOW_BORDER } from './base';
+import ViewProperties, { FLOW_BG, FLOW_BORDER, FLOW_FONT, FLOW_RESIZE } from './base';
 
 const makeFlowShape = (type, alias, flowShape, width, height) =>
   class extends ViewProperties {
@@ -20,11 +20,14 @@ const makeFlowShape = (type, alias, flowShape, width, height) =>
       this.border.color = FLOW_BORDER;
       this.bg = FLOW_BG;
       this.text = '';
+      this.font = FLOW_FONT; // 字体样式（属性面板字体项）
+      this.settings.resize = FLOW_RESIZE; // 无旋转手柄（流程图节点一般不旋转）
       delete this.shadow;
       delete this.corner;
     }
   };
 
+export const FlowRect = makeFlowShape('flowrect', '矩形', 'rect', 100, 100);
 export const Capsule = makeFlowShape('capsule', '胶囊', 'capsule', 200, 80);
 export const Ellipse = makeFlowShape('ellipse', '椭圆', 'ellipse', 200, 100);
 export const Predefined = makeFlowShape('predefined', '预定义', 'predefined', 200, 100);
@@ -32,4 +35,5 @@ export const Document = makeFlowShape('document', '文档', 'document', 160, 120
 export const Cylinder = makeFlowShape('cylinder', '数据库', 'cylinder', 180, 120);
 export const Trapezoid = makeFlowShape('trapezoid', '梯形', 'trapezoid', 200, 100);
 export const Delay = makeFlowShape('delay', '延迟', 'delay', 200, 100);
+export const Person = makeFlowShape('person', '人员', 'person', 50, 40);
 export const Annotation = makeFlowShape('annotation', '注释', 'annotation', 160, 120);

@@ -242,8 +242,8 @@ export default class Preview extends React.Component {
           {items.map((item) => (
             <View key={item.id} type={item.type} properties={item} />
           ))}
-          {/* 连线层（只读渲染，坐标由 transform 实时计算，样式跟随页面 linkStyle） */}
-          <LinkLayer items={items} linkStyle={page.linkStyle} />
+          {/* 连线层（只读渲染，坐标由 transform 实时计算，样式/颜色/粗细跟随页面 linkStyle/linkColor/linkWidth） */}
+          <LinkLayer items={items} linkStyle={page.linkStyle} linkColor={page.linkColor} linkWidth={page.linkWidth} />
         </div>
         <IconText className={'preview-close'} icon={'guanbi'} onClick={this.handleClose}>
           关闭

@@ -3,7 +3,6 @@ import NumberInput from '../lib/ui/NumberInput';
 import './HeaderSettingsPreferences.scss';
 import config from '../lib/util/preference';
 import Types from 'prop-types';
-import jQuery from 'jquery';
 import { Radio } from 'antd';
 
 export default class HeaderSettingPreference extends PureComponent {
@@ -11,7 +10,7 @@ export default class HeaderSettingPreference extends PureComponent {
     onChange: Types.func,
   };
   values = {
-    snap: jQuery.extend(true, {}, config.snap),
+    snap: JSON.parse(JSON.stringify(config.snap)),
     autoAlign: config.autoAlign,
     selection: config.selection,
   };

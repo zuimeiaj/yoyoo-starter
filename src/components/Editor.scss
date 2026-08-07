@@ -56,67 +56,6 @@
   background: $primary-alpha;
 }
 
-.base-components_action-bar {
-  // 组件增多后一列放不下：两列网格 + 超高滚动兜底
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px 8px;
-  position: fixed;
-  left: 290px;
-  top: 80px;
-  max-height: calc(100vh - 120px);
-  overflow-y: auto;
-  background: $primary-alpha;
-  border: 1px solid var(--yoo-border-1);
-  padding: 10px;
-  color: var(--yoo-text-secondary);
-  box-shadow: 2px 0 20px 5px rgba(0, 0, 0, 0.05);
-  .base-component_action-item {
-    display: flex;
-    justify-content: center;
-    &:hover {
-      cursor: pointer;
-    }
-    // 自绘 SVG 图标（svg: 前缀）无 1em 内联尺寸，此处显式定尺寸（与字体图标 20px 一致）
-    svg {
-      width: 20px;
-      height: 20px;
-    }
-    .icon-tupian-copy-copy {
-      font-size: 20px;
-      font-weight: 700;
-    }
-    .icon-anniu1 {
-      font-size: 24px;
-    }
-    .icon-qipao {
-      font-size: 15px;
-    }
-    .icon-xianduanceliang {
-      font-size: 20px;
-      font-weight: 700;
-    }
-    .icon-xianduan {
-      font-size: 20px;
-      font-weight: 700;
-    }
-    .icon-icon_yuanxing {
-      font-size: 22px;
-      font-weight: 600;
-    }
-    .icon-danhangshuru,
-    .icon-fuhao-duohangshurukuang {
-      font-size: 20px;
-    }
-    .icon-xialaxuanze {
-      font-size: 19px;
-      font-weight: 700;
-    }
-    .icon-Triangle {
-      font-size: 18px;
-    }
-  }
-}
 
 .back-backspace {
   position: absolute;
