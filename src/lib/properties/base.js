@@ -1,6 +1,9 @@
 import jQuery from 'jquery';
 
 export const DEFAULT_COLOR = 'rgba(221,221,221,1)';
+// 流程图节点规范：黑色边框、不填充（透明背景）—— flow 类形状统一默认
+export const FLOW_BORDER = 'rgba(0,0,0,1)';
+export const FLOW_BG = 'rgba(255,255,255,0)';
 /**
  *  created by yaojun on 2018/12/1
  *
@@ -92,8 +95,9 @@ export class Rect extends ViewProperties {
   constructor() {
     super();
     this.border.width = 1;
-    this.border.color = DEFAULT_COLOR;
-    this.bg = DEFAULT_COLOR;
+    // 流程图节点规范：黑色边框、不填充
+    this.border.color = FLOW_BORDER;
+    this.bg = FLOW_BG;
     // 双击编辑的文本（流程图节点文字）
     this.text = '';
   }
@@ -123,6 +127,9 @@ export class Triangle extends ViewProperties {
     this.alias = '三角';
     this.transform.width = 200;
     this.border.width = 1;
+    this.border.color = FLOW_BORDER;
+    this.bg = FLOW_BG;
+    this.text = '';
     delete this.shadow;
     delete this.corner;
   }
@@ -137,6 +144,8 @@ export class Diamond extends ViewProperties {
     this.transform.width = 200;
     this.transform.height = 120;
     this.border.width = 1;
+    this.border.color = FLOW_BORDER;
+    this.bg = FLOW_BG;
     this.text = '';
     delete this.shadow;
     delete this.corner;
@@ -147,10 +156,12 @@ export class Parallelogram extends ViewProperties {
   constructor() {
     super();
     this.type = 'parallelogram';
-    this.alias = '平行四边形';
+    this.alias = '四边形';
     this.transform.width = 240;
     this.transform.height = 120;
     this.border.width = 1;
+    this.border.color = FLOW_BORDER;
+    this.bg = FLOW_BG;
     this.text = '';
     delete this.shadow;
     delete this.corner;
@@ -165,6 +176,8 @@ export class Hexagon extends ViewProperties {
     this.transform.width = 220;
     this.transform.height = 120;
     this.border.width = 1;
+    this.border.color = FLOW_BORDER;
+    this.bg = FLOW_BG;
     this.text = '';
     delete this.shadow;
     delete this.corner;
@@ -219,6 +232,8 @@ export class Bubble extends ViewProperties {
     this.alias = '气泡';
     this.transform.width = 400;
     this.border.width = 1;
+    this.border.color = FLOW_BORDER;
+    this.bg = FLOW_BG; // 气泡默认不填充（透明）
     // 三角沿内矩形周线（[10,10]→[w-10,h-10]）的像素弧长，0 = 顶边左端，顺时针；可绕主体一圈
     // 不写默认值：模板会覆盖构造宽高（如 300×100），写死像素值会漂移；
     // 新组件由 ViewPolygon._getPos 按实际尺寸兜底为底部中间
@@ -273,6 +288,7 @@ const SerializableKeys = {
   curve: 1,
   circle: 1,
   path: 1,
+  flowShape: 1,
   masterId: 1,
   chartData: 1,
   chartType: 1,

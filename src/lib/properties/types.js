@@ -19,6 +19,7 @@ import BadgeProperties from './badge';
 import AvatarProperties from './avatar';
 import AlertProperties from './alert';
 import StepsProperties from './steps';
+import { Annotation, Capsule, Cylinder, Delay, Document, Ellipse, Predefined, Trapezoid } from './flow';
 
 const ViewTypes = {
   group: Group,
@@ -40,6 +41,15 @@ const ViewTypes = {
   bubble: Bubble,
   circle: Circle,
   path: Path,
+  // 流程图新增形状（边框黑、不填充，ViewFlowShape 渲染）
+  capsule: Capsule,
+  ellipse: Ellipse,
+  predefined: Predefined,
+  document: Document,
+  cylinder: Cylinder,
+  trapezoid: Trapezoid,
+  delay: Delay,
+  annotation: Annotation,
   block: BlockProperties,
   master: MasterProperties,
   comment: CommentProperties,

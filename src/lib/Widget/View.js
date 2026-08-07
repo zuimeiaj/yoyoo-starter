@@ -21,6 +21,7 @@ import ViewHexagon from './ViewHexagon';
 import ViewPolygon from './ViewPolygon';
 import ViewCircle from './ViewCircle';
 import ViewPath from './ViewPath';
+import ViewFlowShape from './ViewFlowShape';
 import ViewChart from './ViewChart';
 import { BlockView, MasterView } from '@/lib/Widget/ViewGroup';
 import CommentView from '@/lib/Widget/Comment';
@@ -56,6 +57,15 @@ const maps = {
   bubble: ViewPolygon,
   circle: ViewCircle,
   path: ViewPath,
+  // 流程图新增形状（ViewFlowShape 按 flowShape 渲染）
+  capsule: ViewFlowShape,
+  ellipse: ViewFlowShape,
+  predefined: ViewFlowShape,
+  document: ViewFlowShape,
+  cylinder: ViewFlowShape,
+  trapezoid: ViewFlowShape,
+  delay: ViewFlowShape,
+  annotation: ViewFlowShape,
   master: MasterView,
   comment: CommentView,
   table: ViewTable,

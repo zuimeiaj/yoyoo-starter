@@ -100,9 +100,19 @@ Root
          → global/instance 状态更新 → React 重新渲染
 ```
 
+## 流程图组件
+
+- **形状清单**：rect（矩形）/triangle（三角形）/diamond（菱形）/parallelogram（平行四边形）/hexagon（六边形）/bubble（气泡）为既有组件；capsule（胶囊起止）/ellipse（椭圆）/predefined（预定义过程）/document（文档）/cylinder（数据库）/trapezoid（手动输入）/delay（延迟）/annotation（注释）为通用形状组件
+- **通用形状**：`src/lib/Widget/ViewFlowShape.js` 按 `properties.flowShape` 分派渲染（path 坐标按当前宽高实时计算，resize 自适应），继承 `ShapeTextController` 双击编辑文本；属性类在 `src/lib/properties/flow.js`（工厂生成，`flowShape` 已入 SerializableKeys 序列化白名单）
+- **默认样式规范**：流程图节点**边框黑色**（`FLOW_BORDER`）+ **不填充**（`FLOW_BG` 透明）——base.js 既有 flow 类（Rect/Triangle/Diamond/Parallelogram/Hexagon/Bubble）与 flow.js 新增类统一（定义在 base.js 顶部常量）
+- **注册链路**：`View.js` maps + `properties/types.js` ViewTypes + `config/BaseComponents.js`（条目 + ComponentIconMap 图标），新增形状三处同步
+
 ## 连线功能（Link）
 
-组件间贝塞尔曲线连线：选中组件四边出现锚点（外移 16px，避免与 ViewResizable 边中点手柄重叠），按住拖出虚线、悬停目标锚点（12px 阈值）高亮吸附、松开建立连接。
+组件间贝塞尔曲线连线：连线模式下鼠标移入组件显示 4 个控制点**箭头**（贴边 `ANCHOR_OFFSET=0`，尖朝外、随组件旋转；移出组件外扩 30px 缓冲带消失），按住拖出虚线、悬停目标锚点（16px 阈值）高亮吸附、松开建立连接。连线模式下移动单位自动切 10px（`window.__linkPrevSnap` 记住原值、退出还原），组件拖动按 10px 步进。
+
+- **控制点 hover 显示**（`LinkAnchors.handleHoverMove`）：连线模式挂 document mousemove，每帧按「组件本体优先、外扩 HOVER_EXPAND=30 缓冲带最近」计算 hoverUid，只渲染该组件的 4 个箭头（坐标现算），移出缓冲带消失 —— 不常驻渲染全部锚点；拖动组件中隐藏（dragging）
+- **边中点缩放热区仅连线模式隐藏**（ViewResizable `applyResizeHandles` 在 `window.__linkTool` 时把 tm/bm/l/r 从显示白名单剔除，只留四角 + 旋转；监听 link_tool_active/close 即时刷新当前选中组件）：边中点与贴边控制点位置冲突，设计模式保持原样（四角 + 四边热区）
 
 ### 数据模型（只存引用，不存坐标）
 
@@ -123,12 +133,12 @@ Root
 
 - 覆盖层 SVG 挂 Stage 内（`EditorViews`）与组件同坐标系；**必须显式大尺寸 viewport（20000×20000）**——editor-control-panel 无显式尺寸（内容全 absolute），`width/height: 100%` 解析为 0×0 线不可见
 - 整层 `pointer-events: none`；线删除热区单独开 `pointerEvents="visibleStroke"`（透明 12px 加粗，mousedown stopPropagation 不清除选中）；预览模式（props.items 只读）不挂热区
-- 贝塞尔控制点按**锚点轴系**定向（left/right → 水平、top/bottom → 垂直，方向取连接方向）→ 终点切线恒等于连接方向，箭头不会回折（曾用锚点方向/起点终点方向均产生箭头朝向 bug）
+- 贝塞尔控制点按**锚点轴系**定向（left/right → 水平、top/bottom → 垂直），方向取**各自锚点的外法线**（起点外侧 → 起点切线向外 =「从内到外出发」；终点外侧 → 终点切线指向组件内部 =「从外到内进入」，箭头朝向组件，与 corner 箭头规则一致）——不能用全局连接方向（dx/dy 符号）：目标锚点在起点「背后」时两端控制点翻到组件内侧，线从起点反面冒出、箭头背对目标，即「首尾不连」（曾踩坑）
 - 渲染顺序：线最底 → 起点圆点/终点箭头最上（线画在箭头上会穿出三角形露"尾巴"）
 - 删除交互：点击线选中（红色保持）→ Delete/Backspace（**selected 优先**，hover 蓝色仅提示、且仅在组件也未选中时才作为快捷删除目标——否则选中组件时鼠标悬停线上，Delete 会误删线）；点击组件（component_active）/点空白（component_inactive）清选中；轻点锚点断开该锚点全部；再点取消选中
 - 线段热区交互：选中在 **mousedown** 完成（click 会被重渲染打断丢失）；热区 mousedown 必须用**原生 capture**（ref 挂 path DOM，同锚点/ViewTable 模式）——Selection 的 Draggable 挂 `#layout-editor-view` 容器冒泡 mousedown 会 stopPropagation，事件到不了 document，React 合成 onMouseDown 永不触发（曾用合成事件导致"点击线段无高亮"）；hover 走 React 合成（mouseover 无拦截者）。点击线 mousedown 均 stopPropagation + blur 输入框焦点（否则 Delete 时 e.target 是 INPUT 被输入保护跳过，线删不掉）
 - 自连禁止：`findAnchor` 排除自身 + `setLink` 入口校验双保险
-- 锚点配色为**浅一档蓝色系**（已连接 `#69b1ff`/未连接边框 `#bae7ff`/中心点 `#91caff`）——锚点铺满所有组件，太深太抢眼；悬停/吸附红 `#ff7875` 保持醒目（交互反馈不调浅）
+- 控制点箭头配色**浅一档蓝色系**（已连接实心 `#69b1ff`/未连接空心白底 `#bae7ff`）；悬停/吸附红 `#ff7875` 保持醒目；起点**米字标记**固定 `#91caff`（不随选中/hover 变色，装饰性指示出发位置，贴边后压在组件边缘上）
 - 连线导出：HeaderExport 把 `.link-layer` 序列化为 SVG data URL `<img>` 加入导出容器（html2canvas 不支持内联 SVG，见「Canvas 导出层」）
 
 ### 全局避障路由（corner 样式）
@@ -137,13 +147,15 @@ Root
 
 - **直线（0 拐角）**：两端锚点共线 + 不穿任何组件 + 尾段 ≥13px，直接连线
 - **同轴 Z 形（2 拐角，默认形态）**：`[p0, 中间段, p1]`，中间段坐标候选枚举，强制**首段 ≥16px（脖子）、尾段 ≥13px（箭头尾段）**——除直线外最少两个直角，线"有首有脖有尾"（中间段不能贴着锚点）；候选含**锚点外推值**（锚点沿锚点轴外推 16/13 的端点，`axisCands`）
+- **同轴 3 拐角（2 拐角无解补位）**：近距堆叠/遮挡走廊（2 拐角需首 16+尾 13 的间距空间，不足即无解）——`[p0, 轴伸出, 垂直段, 平行段, 垂直段, 轴进入 p1]` 三变量截断枚举（12³），同样带首尾段长度约束；否则直接跳 A* 常因尾段无法外推失败 → 回退 cornerPath 穿越组件
 - **异轴 3 拐角**：H,V,H,V（或 V,H,V,H），双变量截断枚举（12×12），同样带首尾段长度约束
-- **A* 网格兜底**（任意拐角，复杂遮挡）：首段/尾段沿锚点轴伸出（`extendFrom` 24/16px）后中间任意绕行；网格 8px、区域两端点 bbox 外扩 300、转向付 TURN=2 代价抑制锯齿、结果去共线；区域超 50 万格放弃
+- **A* 网格兜底**（任意拐角，复杂遮挡）：首段/尾段沿锚点轴伸出（`extendFrom` 24/16px）后中间任意绕行；网格 8px、区域两端点 bbox 外扩 300、转向付 TURN=2 代价抑制锯齿、结果去共线；区域超 50 万格放弃；结果经 **`axialSplice` 首尾段轴向修正**（网格中心与锚点不对齐 → 首尾段斜线、箭头错位：沿锚点轴补过渡拐点并验证 pathClear 豁免端点 + axOk 方向校验）
+- **端点贴边豁免**：锚点贴边（`ANCHOR_OFFSET=0`）后 p0/p1 落在自身膨胀 bbox 内，`pathClear(pts, obstacles, exempt0, exempt1)`（端点 box 引用）——首/尾段跳过端点自身判定（贴边出发/进入合法），**中间段仍逐段避让所有组件含端点**；方向合法性由 **`axOk`** 显式校验（首段沿锚点外法线、尾段沿锚点轴进入，反向候选不再依赖 pathClear 隐式淘汰）——曾依赖 pathClear 杀反向候选，豁免后必须显式保证
 - **端点组件在 obstacles 内**（线段不能穿越任何组件包括自己）：反向候选（拐点落在端点组件内）由 `pathClear` 自动淘汰，无需方向过滤
 - 同档候选取质量最优 = 长度 + EDGE_PENALTY(80) × 贴边段数（贴边 = 与组件边缘平行擦过且距离 < EDGE_TOL 24px，视觉"挤"）
 - 旋转组件作为端点 → 直接回退（锚点轴已非轴对齐，约束失效）；作为中间障碍物用**外接矩形**（`boxOf` 处理 rotation）
 - 无解 → `routePath` 回退 `cornerPath`（两端约束折线，线仍可见）
-- **avoid 状态机**：用户拖拽/缩放/旋转中 `avoid=false` 走简单路径（跟手）；`component_dragend`/`component_resize_end`/`controllers_change` → `avoid=true` 切避障路径；程序化变换（Snapline 吸附/对齐）不退出避障态（refresh 按 `options.from` 判断）
+- **相关线联动（dragId）**：交互拖动（Draggable/Resizable/Rotatable，refresh 按 `options.from`）时只重算**相关线**（`fromId`/`toId` 命中拖动组件的线，`refreshRelated` 增量刷新），走简单路径跟手；**不相关线原样保留（含 `_p` path 缓存 → 渲染零重算、视觉静止）**；`component_dragend`/`component_resize_end` → 清 dragId + `_p` 缓存 → 全部切回避障路径；`controllers_change`（落库）/样式切换（handleStyleChange）→ 全量重建/清缓存
 - 不做线-线避让（连线交叉正常）
 - **箭头**：`linkArrowUnit` 按锚点进入方向（left → +x 指向组件内部）；线 path 终点 `trimPathEnd` 裁剪到箭头底边（顶点往回 8px）——线永远从三角底部传入，三角形尖指向组件
 

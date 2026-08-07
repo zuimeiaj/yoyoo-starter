@@ -99,30 +99,43 @@ export const anchorPoint = (m, anchor, offset = 0) => {
   return { x: cx + p.x, y: cy + p.y };
 };
 
-// 锚点控制点相对组件边缘的外移量（画布坐标，与缩放无关；足够大以便点击且不与 resize 手柄重叠）
-export const ANCHOR_OFFSET = 16;
+// 锚点控制点相对组件边缘的外移量（画布坐标，与缩放无关）。
+// 0 = 贴边：锚点/连线端点在组件边上（draw.io 风格）；首尾段路由豁免端点自身（见 pathClear exempt）
+export const ANCHOR_OFFSET = 0;
+
+// 起点米字标记颜色（浅一档蓝，装饰性指示出发位置，不随选中/hover 变色）
+const STAR_COLOR = '#91caff';
 
 /**
  * 三次贝塞尔控制点（标准连接图做法）：
  * 控制点按锚点轴系定向 —— left/right 锚点控制点沿 x 方向，top/bottom 沿 y 方向，
- * 方向取"连接方向"（指向/背离对方），长度 = 该方向距离的一半（最小 40px）。
- * 这样曲线终点切线恒等于连接方向：终点切线 = p1 - c2 即指向目标组件，不会回折
+ * 方向取各自锚点的外法线（anchorDir）：
+ *  - 起点控制点放起点锚点外侧 → 起点切线 = 外法线，曲线从组件内向外出发
+ *  - 终点控制点放终点锚点外侧 → 终点切线 = 内法线（指向组件内部），箭头朝向目标组件
+ * 长度 = 该方向距离的一半（最小 40px）。
+ * 不能用"全局连接方向"（dx/dy 符号）：目标锚点在起点"背后"时（如 A.right 连 B.left、
+ * B 在 A 下方左侧，dx < 0），两端控制点都会翻到组件内侧 —— 起点切线反向（线从 A 左侧
+ * 冒出来）、终点切线背离目标（箭头背对 B），即"首尾不连"（曾踩坑）
  */
 const isHorizontalAnchor = (anchor) => anchor === 'left' || anchor === 'right';
+
+/** 控制点外延方向：锚点外法线在该轴的分量（left → -x、right → +x、top → -y、bottom → +y）；
+ *  无锚点（拖线未吸附，终点跟随鼠标）回退全局方向，保持预览跟手 */
+const ctrlDir = (anchor, axis, dv) => (anchor ? anchorDir(anchor)[axis === 'x' ? 0 : 1] : Math.sign(dv || 1));
 
 export const linkControls = (p0, p1) => {
   let dx = p1.x - p0.x;
   let dy = p1.y - p0.y;
   let c1, c2;
   if (isHorizontalAnchor(p0.anchor)) {
-    c1 = { x: p0.x + Math.sign(dx || 1) * Math.max(40, Math.abs(dx) * 0.5), y: p0.y };
+    c1 = { x: p0.x + ctrlDir(p0.anchor, 'x', dx) * Math.max(40, Math.abs(dx) * 0.5), y: p0.y };
   } else {
-    c1 = { x: p0.x, y: p0.y + Math.sign(dy || 1) * Math.max(40, Math.abs(dy) * 0.5) };
+    c1 = { x: p0.x, y: p0.y + ctrlDir(p0.anchor, 'y', dy) * Math.max(40, Math.abs(dy) * 0.5) };
   }
   if (isHorizontalAnchor(p1.anchor)) {
-    c2 = { x: p1.x - Math.sign(dx || 1) * Math.max(40, Math.abs(dx) * 0.5), y: p1.y };
+    c2 = { x: p1.x + ctrlDir(p1.anchor, 'x', dx) * Math.max(40, Math.abs(dx) * 0.5), y: p1.y };
   } else {
-    c2 = { x: p1.x, y: p1.y - Math.sign(dy || 1) * Math.max(40, Math.abs(dy) * 0.5) };
+    c2 = { x: p1.x, y: p1.y + ctrlDir(p1.anchor, 'y', dy) * Math.max(40, Math.abs(dy) * 0.5) };
   }
   return { c1, c2 };
 };
@@ -323,25 +336,42 @@ export const cornerPath = (p0, p1, radius = 10) => roundedPolylinePath(orthoPoin
  * 1. 直线（0 拐角）：两端锚点共线 + 不穿任何组件 + 尾段够画箭头
  * 2. 同轴 Z 形（2 拐角，默认形态）：[p0, 中间段, p1]，中间段坐标候选枚举，
  *    强制"首段 ≥16px（脖子）、尾段 ≥13px（箭头尾段）"——除直线外最少两个直角，线有首有脖有尾
- * 3. 异轴 3 拐角：H,V,H,V（或 V,H,V,H），同样带首尾段长度约束
- * 4. A* 网格路由兜底（任意拐角，复杂遮挡）：首尾段沿锚点轴伸出后中间任意绕行
+ * 3. 同轴 3 拐角（2 拐角无解时补位）：[p0, 轴伸出, 垂直段, 平行段, 垂直段, 轴进入 p1]，
+ *    三变量截断枚举，同样带首尾段长度约束。2 拐角要求首 16 + 尾 13 的间距空间，
+ *    近距堆叠/遮挡走廊时无解，直接跳 A* 又常因尾段无法外推而失败 → 回退不避障的 cornerPath 穿越组件
+ * 4. 异轴 3 拐角：H,V,H,V（或 V,H,V,H），同样带首尾段长度约束
+ * 5. A* 网格路由兜底（任意拐角，复杂遮挡）：首尾段沿锚点轴伸出后中间任意绕行；
+ *    结果首尾段轴向修正（axialSplice）：网格中心与锚点不对齐 → 首尾段斜线，箭头错位
  * 端点组件旋转时（锚点轴已非轴对齐，约束失效）→ 返回 null，调用方回退 cornerPath */
 const MARGIN = 8;
 const MAX_CAND = 12;
 const START_MIN = 16; // 首段最小长度（脖子）
 const TAIL_MIN = 13; // 尾段最小长度（箭头 8 + 可见尾 5）
 
-/** 折线整体避障：每段 vs 每个障碍物（膨胀 MARGIN，路径与组件保持间距） */
-const pathClear = (pts, obstacles) => {
+/** 折线整体避障：每段 vs 每个障碍物（膨胀 MARGIN，路径与组件保持间距）。
+ *  exempt0/exempt1：端点组件 box 引用（引用相等比较）——锚点贴边后 p0/p1 在组件边上，
+ *  落在自身膨胀 bbox 内，首/尾段从边上出发/进入是合法形态，跳过自身组件判定；
+ *  其余障碍（含两端组件）仍逐段判定（中间段不能穿越任何组件）。
+ *  首/尾段的方向合法性由调用方 axOk 显式校验（豁免后不再依赖 pathClear 隐式淘汰） */
+const pathClear = (pts, obstacles, exempt0, exempt1) => {
   for (let i = 1; i < pts.length; i++) {
     let a = pts[i - 1],
       b = pts[i];
+    let first = i === 1,
+      last = i === pts.length - 1;
     for (let o of obstacles) {
+      if ((first && o === exempt0) || (last && o === exempt1)) continue;
       if (segHitsBox(a.x, a.y, b.x, b.y, { x: o.x - MARGIN, y: o.y - MARGIN, width: o.width + 2 * MARGIN, height: o.height + 2 * MARGIN })) return false;
     }
   }
   return true;
 };
+
+/** 端点轴向合法性：向量 prev→cur 与锚点外法线点积 ≥ 0。
+ *  - 首段：dot(p0→pts[1], 外法线) ≥ 0 —— 首段沿锚点轴向外（贴边后反向候选必穿组件）
+ *  - 尾段：dot(p1→pts[last-1], 外法线) ≥ 0 —— 倒数第二点在锚点外侧，尾段沿锚点轴进入组件
+ *  - 段方向垂直锚点轴（如 right 锚点垂直线段沿组件边）点积为 0，天然安全 */
+const axOk = (prev, cur, dir) => (cur.x - prev.x) * dir[0] + (cur.y - prev.y) * dir[1] >= 0;
 
 /** 候选坐标：所有障碍物边界 ±MARGIN + 额外值（锚点坐标） */
 const candidatesOnAxis = (obstacles, axis, extras) => {
@@ -444,10 +474,10 @@ const axisCands = (obstacles, axis, p0, p1) => {
 
 /** 从 from 沿 dir 伸出线段，返回"不穿任何障碍"的最长端点（从 targetLen 往回 2px 步进）；
  *  首段保证脖子长度、尾段保证箭头可画，且端点落在自由区（A* 起点/终点需自由） */
-const extendFrom = (from, dir, targetLen, obstacles) => {
+const extendFrom = (from, dir, targetLen, obstacles, exempt) => {
   for (let l = targetLen; l >= 0; l -= 2) {
     let pt = { x: from.x + dir.x * l, y: from.y + dir.y * l };
-    if (pathClear([from, pt], obstacles)) return pt;
+    if (pathClear([from, pt], obstacles, exempt)) return pt;
   }
   return from;
 };
@@ -594,33 +624,124 @@ const astarRoute = (a0, a1, obstacles) => {
   return simp;
 };
 
+/** A* 结果首尾段轴向修正：A* 端点取"含外推点的网格中心"，与锚点（任意坐标）不对齐 →
+ *  首/尾段是斜线，而箭头恒按锚点轴方向画（linkArrowUnit corner 分支），斜尾与箭头错位；
+ *  外推点被障碍覆盖时 nearest() 还可能吸附到离轴/组件内侧的格子（首段反向冒出）。
+ *  修正：沿锚点轴补过渡拐点（轴向段 + 垂直段），从近到远尝试中间点（近处轴向段短，
+ *  最可能不穿障碍），新增段验证 pathClear；全部失败保留原斜段（组件重叠等极端场景，可接受） */
+const axialSplice = (pts, p0, p1, obstacles) => {
+  let h0 = isHorizontalAnchor(p0.anchor);
+  let h1 = isHorizontalAnchor(p1.anchor);
+  // 首段：把第 k 个中间点投影到 p0 锚点轴（水平锚点 y = p0.y / 垂直锚点 x = p0.x），
+  // 投影点与 m 之间的过渡段垂直于锚点轴；失败则试更远的中间点
+  let head = [p0];
+  let cut = 1; // 未消费的中间点从 pts[cut] 开始
+  for (let k = 1; k < pts.length - 1; k++) {
+    let m = pts[k];
+    let n = h0 ? { x: m.x, y: p0.y } : { x: p0.x, y: m.y };
+    // 投影点必须在 p0 锚点外侧（方向校验，贴边豁免后防反向）；首段豁免 p0 自身 box
+    if (axOk(p0, n, anchorDir(p0.anchor)) && pathClear([p0, n, m], obstacles, p0.box)) {
+      head.push(n, m);
+      cut = k + 1;
+      break;
+    }
+  }
+  if (cut === 1) {
+    head.push(pts[1]);
+    cut = 2;
+  }
+  // 尾段（对称）：从尾部往前找可投影点，尾段沿 p1 锚点轴进入
+  let tail = [];
+  let end = pts.length - 1; // 中间段 = pts[cut..end-1]
+  for (let k = pts.length - 2; k >= cut; k--) {
+    let m = pts[k];
+    let n = h1 ? { x: m.x, y: p1.y } : { x: p1.x, y: m.y };
+    // 投影点必须在 p1 锚点外侧（从外侧进入组件）；尾段豁免 p1 自身 box
+    if (axOk(p1, n, anchorDir(p1.anchor)) && pathClear([m, n, p1], obstacles, null, p1.box)) {
+      tail.push(m, n, p1);
+      end = k;
+      break;
+    }
+  }
+  if (!tail.length) {
+    // 全部失败：保留原尾段（斜线），仅当轴向过渡可行时补拐点
+    let m = pts[pts.length - 2];
+    let n = h1 ? { x: m.x, y: p1.y } : { x: p1.x, y: m.y };
+    tail.push(m);
+    if (axOk(p1, n, anchorDir(p1.anchor)) && pathClear([m, n, p1], obstacles, null, p1.box)) tail.push(n);
+    tail.push(p1);
+    end = pts.length - 2;
+  }
+  return dedupePts(head.concat(pts.slice(cut, end), tail));
+};
+
 export const orthoRoute = (p0, p1, obstacles = []) => {
   // 端点组件旋转：锚点轴已非轴对齐，路由约束失效 → 无解回退
   if ((p0.box && p0.box.rotation) || (p1.box && p1.box.rotation)) return null;
   let h0 = isHorizontalAnchor(p0.anchor);
   let h1 = isHorizontalAnchor(p1.anchor);
-  // 直线（0 拐角）：共线 + 尾段够画箭头 + 不穿任何组件（含端点自身）
-  if ((p0.x === p1.x || p0.y === p1.y) && hasArrowTail([p0, p1]) && pathClear([p0, p1], obstacles)) {
+  // 直线（0 拐角）：共线 + 尾段够画箭头 + 首尾段轴向合法 + 不穿任何组件（首尾段豁免端点自身）
+  if (
+    (p0.x === p1.x || p0.y === p1.y) &&
+    hasArrowTail([p0, p1]) &&
+    axOk(p0, p1, anchorDir(p0.anchor)) &&
+    axOk(p1, p0, anchorDir(p1.anchor)) &&
+    pathClear([p0, p1], obstacles, p0.box, p1.box)
+  ) {
     return [p0, p1];
   }
   let best = null,
     bestQ = Infinity;
+  const tryPts = (pts) => {
+    // 首尾段轴向校验（贴边豁免端点后显式保证方向：首段沿外法线、尾段沿锚点轴进入）
+    if (!axOk(p0, pts[1], anchorDir(p0.anchor))) return;
+    if (pts.length > 2 && !axOk(p1, pts[pts.length - 2], anchorDir(p1.anchor))) return;
+    if (!pathClear(pts, obstacles, p0.box, p1.box)) return;
+    let q = pathQuality(pts, obstacles);
+    if (q < bestQ) {
+      bestQ = q;
+      best = pts;
+    }
+  };
   if (h0 === h1) {
     // 同轴 2 拐角 Z 形（默认形态，除直线外最少两个直角）：
     // [p0, 中间段, p1]，中间段垂直于两端轴；候选含锚点外推值（脖子/箭头尾段），
-    // 首段 ≥START_MIN、尾段 ≥TAIL_MIN，反向候选（穿端点组件）由 pathClear 淘汰
+    // 首段 ≥START_MIN、尾段 ≥TAIL_MIN，反向候选由 tryPts 的 axOk 方向校验淘汰
     let vari = h0 ? 'x' : 'y';
     let a = p0[vari],
       b = p1[vari];
     let cands = axisCands(obstacles, vari, p0, p1);
     for (let c of cands) {
       if (Math.abs(c - a) < START_MIN || Math.abs(c - b) < TAIL_MIN) continue;
-      let pts = h0 ? [p0, { x: c, y: p0.y }, { x: c, y: p1.y }, p1] : [p0, { x: p0.x, y: c }, { x: p1.x, y: c }, p1];
-      if (!pathClear(pts, obstacles)) continue;
-      let q = pathQuality(pts, obstacles);
-      if (q < bestQ) {
-        bestQ = q;
-        best = pts;
+      tryPts(h0 ? [p0, { x: c, y: p0.y }, { x: c, y: p1.y }, p1] : [p0, { x: p0.x, y: c }, { x: p1.x, y: c }, p1]);
+    }
+    // 同轴 3 拐角（2 拐角无解时补位：近距堆叠/遮挡走廊 —— 2 拐角要求首 16 + 尾 13 的间距空间，
+    // 间距不足时无解，直接跳 A* 又常因尾段无法外推而失败 → 回退不避障的 cornerPath 穿越组件）。
+    // [p0, 轴伸出, 垂直段, 平行段, 垂直段, 轴进入 p1]（水平锚点）/ 对称形状（垂直锚点），
+    // 三变量（两端伸出位 + 中间段位）截断枚举，同样带首尾段长度约束；反向候选由 axOk 方向校验淘汰
+    if (!best) {
+      let candsX = axisCands(obstacles, 'x', p0, p1);
+      let candsY = axisCands(obstacles, 'y', p0, p1);
+      if (h0) {
+        for (let x1 of candsX) {
+          if (Math.abs(x1 - p0.x) < START_MIN) continue;
+          for (let x2 of candsX) {
+            if (Math.abs(x2 - p1.x) < TAIL_MIN) continue;
+            for (let y of candsY) {
+              tryPts([p0, { x: x1, y: p0.y }, { x: x1, y }, { x: x2, y }, { x: x2, y: p1.y }, p1]);
+            }
+          }
+        }
+      } else {
+        for (let y1 of candsY) {
+          if (Math.abs(y1 - p0.y) < START_MIN) continue;
+          for (let y2 of candsY) {
+            if (Math.abs(y2 - p1.y) < TAIL_MIN) continue;
+            for (let x of candsX) {
+              tryPts([p0, { x: p0.x, y: y1 }, { x, y: y1 }, { x, y: y2 }, { x: p1.x, y: y2 }, p1]);
+            }
+          }
+        }
       }
     }
   } else {
@@ -632,24 +753,20 @@ export const orthoRoute = (p0, p1, obstacles = []) => {
         let seg0 = h0 ? Math.abs(x - p0.x) : Math.abs(y - p0.y); // 首段长（沿起点锚点轴）
         let seg1 = h0 ? Math.abs(y - p1.y) : Math.abs(x - p1.x); // 尾段长（沿终点锚点轴）
         if (seg0 < START_MIN || seg1 < TAIL_MIN) continue;
-        let pts = h0 ? [p0, { x, y: p0.y }, { x, y }, { x: p1.x, y }, p1] : [p0, { x: p0.x, y }, { x, y }, { x, y: p1.y }, p1];
-        if (!pathClear(pts, obstacles)) continue;
-        let q = pathQuality(pts, obstacles);
-        if (q < bestQ) {
-          bestQ = q;
-          best = pts;
-        }
+        tryPts(h0 ? [p0, { x, y: p0.y }, { x, y }, { x: p1.x, y }, p1] : [p0, { x: p0.x, y }, { x, y }, { x, y: p1.y }, p1]);
       }
     }
   }
   if (best) return dedupePts(best);
-  // A* 兜底（复杂遮挡，任意拐角）：首段/尾段沿锚点轴伸出（保证方向与"脖/尾"），中间任意绕行
-  let a0 = extendFrom(p0, anchorDir(p0.anchor), 24, obstacles);
-  let a1 = extendFrom(p1, anchorDir(p1.anchor), 16, obstacles);
+  // A* 兜底（复杂遮挡，任意拐角）：首段/尾段沿锚点轴伸出（保证方向与"脖/尾"），中间任意绕行；
+  // 锚点贴边后外推起点在自身膨胀 bbox 内，extendFrom 豁免端点自身 box
+  let a0 = extendFrom(p0, anchorDir(p0.anchor), 24, obstacles, p0.box);
+  let a1 = extendFrom(p1, anchorDir(p1.anchor), 16, obstacles, p1.box);
   if (Math.abs(a1.x - p1.x) + Math.abs(a1.y - p1.y) < TAIL_MIN) return null; // 尾段不足，箭头无法画
   let mid = astarRoute(a0, a1, obstacles);
   if (!mid) return null;
-  return [p0, ...mid, p1];
+  // 首尾段轴向修正：A* 网格中心点与锚点不对齐 → 首尾段斜线，箭头（按锚点轴）错位
+  return axialSplice([p0, ...mid, p1], p0, p1, obstacles);
 };
 
 /** 避障直角 path 入口：有解用避障折线 + 圆角，无解回退 cornerPath（两端约束，至少不穿起终点） */
@@ -662,7 +779,7 @@ export const routePath = (p0, p1, obstacles, radius = 10) => {
 /** 箭头方向单位向量（linkArrowPath / 线终点裁剪共用，保证一致）：
  *  - corner 样式：沿终点锚点轴系，方向恒指向组件内部 —— left → +x、right → -x、top → +y、bottom → -y
  *    （orthoRoute/orthoPoints 均保证最后一段沿锚点轴进入；不能用连接方向，起点在目标另一侧时会背对组件）
- *  - 曲线样式：终点切线（新控制点方案下切线 = 连接方向）
+ *  - 曲线样式：终点切线（控制点沿各自锚点外法线 → 终点切线恒指向组件内部，与 corner 一致）
  *  - 拖线中（p1 无锚点）：直接用起点到终点方向（跟随鼠标） */
 export const linkArrowUnit = (p0, p1, style) => {
   let dx, dy;
@@ -742,7 +859,7 @@ const boxOf = (m) => {
 
 /** 收集整棵树的连线：每条含起点锚点绝对坐标 + 目标 id/锚点 + 避障障碍物；
  * 目标组件不存在时过滤（悬空引用）。障碍物 = 全部组件 bbox（含两端组件自身 ——
- * 线段不能穿越任何组件包括自己，反向/穿本体的候选由 pathClear 淘汰） */
+ * 中间段不能穿越任何组件；首尾段豁免端点自身（锚点贴边合法形态），方向由 axOk 校验） */
 export const collectLinks = (items) => {
   let map = indexItems(items);
   let boxById = {};
@@ -757,6 +874,11 @@ export const collectLinks = (items) => {
         if (!from || !to) return; // 悬空引用（目标组件已删除）不渲染
         links.push({
           id: c.id,
+          // 端点 id/锚点（拖动中增量刷新用：只有相关线重算，其他线静止）
+          fromId: item.id,
+          toId: c.targetId,
+          fromAnchor: c.anchor,
+          toAnchor: c.targetAnchor,
           from: Object.assign({ anchor: c.anchor, box: boxById[item.id] }, anchorPoint(from, c.anchor, ANCHOR_OFFSET)),
           to: Object.assign({ anchor: c.targetAnchor, box: boxById[c.targetId] }, anchorPoint(to, c.targetAnchor, ANCHOR_OFFSET)),
           obstacles: allBoxes,
@@ -770,7 +892,7 @@ export const collectLinks = (items) => {
 };
 
 export default class LinkLayer extends React.Component {
-  state = { links: [], items: [], hoverId: null, selectedId: null, styleTick: 0, avoid: true };
+  state = { links: [], items: [], hoverId: null, selectedId: null, styleTick: 0, dragId: null };
 
   componentWillMount() {
     if (!this.props.items) {
@@ -810,31 +932,63 @@ export default class LinkLayer extends React.Component {
 
   handleItems = (items) => {
     if (this.props.items) return; // 预览模式（props 驱动）不接收编辑器事件
-    // 属性变更（移动/缩放/删除等落库）→ 重建连线并切回全局避障路径
+    // 属性变更（移动/缩放/删除等落库）→ 重建连线（新对象，path 缓存自然失效）并清除拖动态
     let links = collectLinks(items);
     // 选中的线已被删除（如轻点锚点断开）→ 清掉失效的 selectedId/hoverId，避免残留态卡住后续删除
     let { selectedId, hoverId } = this.state;
     if (selectedId && !links.some((l) => l.id === selectedId)) selectedId = null;
     if (hoverId && !links.some((l) => l.id === hoverId)) hoverId = null;
-    this.setState({ items, links, avoid: true, selectedId, hoverId });
+    this.setState({ items, links, dragId: null, selectedId, hoverId });
   };
 
-  // 拖动过程中 transform 变化：重建连线（坐标实时计算，结构不变时仅 path 变化）；
-  // 用户拖拽（Draggable/Resizable/Rotatable）中走简单路径（avoid=false，避障路由重算成本高，不逐帧跑）；
-  // 程序化变换（Snapline 吸附/对齐工具栏）不退出避障态
+  // 拖动过程中 transform 变化：只重算**相关线**（起点/终点是拖动组件），其他线原样保留
+  // （含 _p path 缓存 → 渲染零重算，视觉静止）。
+  // 相关线走简单路径跟手（避障路由重算成本高，不逐帧跑）；程序化变换（Snapline/对齐）全量重建
   refresh = (target, options = {}) => {
     if (this.props.items) return;
     let from = options.from;
-    this.setState({
-      links: collectLinks(this.state.items),
-      avoid: from === 'Draggable' || from === 'Resizable' || from === 'Rotatable' ? false : this.state.avoid,
+    if (from === 'Draggable' || from === 'Resizable' || from === 'Rotatable') {
+      let id = target && target.properties ? target.properties.id : null;
+      this.setState({ links: this.refreshRelated(this.state.links, id), dragId: id });
+    } else {
+      this.setState({ links: collectLinks(this.state.items), dragId: null });
+    }
+  };
+
+  // 增量刷新相关线：仅重算 fromId/toId 命中拖动组件的线（坐标实时跟手），不相关线返回原对象
+  refreshRelated = (links, dragId) => {
+    let items = this.state.items;
+    let map = indexItems(items);
+    let boxById = {};
+    Object.keys(map).forEach((id) => (boxById[id] = boxOf(map[id])));
+    return links.map((l) => {
+      if (l.fromId !== dragId && l.toId !== dragId) return l; // 不相关：原样（缓存生效，静止）
+      let from = map[l.fromId],
+        to = map[l.toId];
+      if (!from || !to) return l;
+      return {
+        id: l.id,
+        fromId: l.fromId,
+        toId: l.toId,
+        fromAnchor: l.fromAnchor,
+        toAnchor: l.toAnchor,
+        from: Object.assign({ anchor: l.fromAnchor, box: boxById[l.fromId] }, anchorPoint(from, l.fromAnchor, ANCHOR_OFFSET)),
+        to: Object.assign({ anchor: l.toAnchor, box: boxById[l.toId] }, anchorPoint(to, l.toAnchor, ANCHOR_OFFSET)),
+        obstacles: l.obstacles,
+      };
     });
   };
 
-  // 松手：切回全局避障路径（links 已是最后一帧的坐标，仅触发重渲染换 path）
+  // 松手：清拖动态 + path 缓存 → 全部线切回全局避障路径（links 已是最后一帧的坐标）
   onDragEnd = () => {
     if (this.props.items) return;
-    this.setState({ avoid: true });
+    this.setState((state) => ({
+      dragId: null,
+      links: state.links.map((l) => {
+        l._p = null;
+        return l;
+      }),
+    }));
   };
 
   // 组件取消选中（点空白/切换选中）时取消连线选中
@@ -844,8 +998,15 @@ export default class LinkLayer extends React.Component {
   // 组件选中与线段选中互斥，否则线段还红着时按 Delete 会删线而非组件
   handleActive = () => this.setState({ selectedId: null });
 
-  // 样式切换：只触发重渲染（样式值实时读 window.__linkStyle，不缓存 state，避免跨页陈旧值）
-  handleStyleChange = () => this.setState({ styleTick: this.state.styleTick + 1 });
+  // 样式切换：触发重渲染 + 清 path 缓存（样式值实时读 window.__linkStyle，不缓存 state，避免跨页陈旧值）
+  handleStyleChange = () =>
+    this.setState((state) => ({
+      styleTick: state.styleTick + 1,
+      links: state.links.map((l) => {
+        l._p = null;
+        return l;
+      }),
+    }));
 
   // 当前连线样式：props（预览）> window 全局（编辑器，HeaderLinkStyle 写 + 切页时 handlePageSelect 刷新）> 默认曲线
   getLinkStyle = () => this.props.linkStyle || window.__linkStyle || 'curve';
@@ -933,17 +1094,20 @@ export default class LinkLayer extends React.Component {
           height: 20000,
           overflow: 'visible',
           pointerEvents: 'none', // 整层不响应鼠标；下方热区 path 单独开启 pointer-events 供点击选择
-          zIndex: 0,
+          // 必须高于组件层（组件 zIndex ≥ 1）：锚点贴边后线端/起点标记压在组件边缘上，zIndex 0 会被组件盖住
+          zIndex: 100,
         }}
       >
         {links.map((l) => {
-          // corner 样式：静止/松手后走全局避障路由（不穿越任何组件），拖动中走简单路径（跟手）
-          let d =
-            linkStyle === 'corner'
-              ? this.state.avoid
-                ? routePath(l.from, l.to, l.obstacles)
-                : cornerPath(l.from, l.to, 10)
-              : linkPath(l.from, l.to);
+          // 相关线（起点/终点是拖动组件）：交互拖动中走简单路径（跟手，不缓存）；
+          // 其他线走 path 缓存（_p，拖动/滚动中零重算 → 视觉静止），松手/数据变化/切样式时失效重算
+          let moving = this.state.dragId && (l.fromId === this.state.dragId || l.toId === this.state.dragId);
+          let d;
+          if (moving) {
+            d = linkStyle === 'corner' ? cornerPath(l.from, l.to, 10) : linkPath(l.from, l.to);
+          } else {
+            d = l._p || (l._p = linkStyle === 'corner' ? routePath(l.from, l.to, l.obstacles) : linkPath(l.from, l.to));
+          }
           // 视觉分层：hover = 蓝色加深（提示可点，不改变选中状态）；selected = 红色（选中保持）。
           // 选中线 hover 时保持红色不切换，避免"点击没生效"的误判
           let selected = selectedId === l.id;
@@ -959,8 +1123,13 @@ export default class LinkLayer extends React.Component {
               {/* 渲染顺序：线最底 → 箭头/圆点盖住线端（线若画在箭头上会穿出三角形露成"尾巴"） */}
               {/* 可见线：hover 蓝加粗 / 选中红加粗；终点在箭头底边 */}
               <path d={lineD} fill="none" stroke={stroke} strokeWidth={strokeW} strokeLinecap="round" />
-              {/* 起点圆点 + 终点箭头（与线同色） */}
-              <circle cx={l.from.x} cy={l.from.y} r={3.5} fill={stroke} />
+              {/* 起点米字（浅色 8 射线，指示出发位置；贴边后压在组件边缘上）+ 终点箭头（与线同色） */}
+              <g stroke={STAR_COLOR} strokeWidth={1.5}>
+                <line x1={l.from.x - 4.5} y1={l.from.y} x2={l.from.x + 4.5} y2={l.from.y} />
+                <line x1={l.from.x} y1={l.from.y - 4.5} x2={l.from.x} y2={l.from.y + 4.5} />
+                <line x1={l.from.x - 3.2} y1={l.from.y - 3.2} x2={l.from.x + 3.2} y2={l.from.y + 3.2} />
+                <line x1={l.from.x - 3.2} y1={l.from.y + 3.2} x2={l.from.x + 3.2} y2={l.from.y - 3.2} />
+              </g>
               <path d={linkArrowPath(l.from, l.to, 8, linkStyle)} fill={stroke} />
               {/* 透明热区（仅编辑器）：加粗 12px，仅线本体可点（capture mousedown 不清除选中）；预览只读不挂 */}
               {!this.props.items && (

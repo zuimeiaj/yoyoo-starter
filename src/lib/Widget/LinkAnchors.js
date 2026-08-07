@@ -2,9 +2,10 @@
  *  created by yaojun on 2026/8/5
  *
  *  连线锚点与拖线交互（仅编辑器使用，预览只读）：
- *  - 设计模式：选中组件四边中点显示锚点（已连接为实心）
- *  - 连线模式（顶部「连线」工具）：所有组件显示锚点，无需选中即可连线，设计/拖拽功能不受影响
- *  - 按住锚点拖动：跟随鼠标渲染虚线（贝塞尔/直角随当前线段样式），悬停其他组件锚点（12px 内）高亮并吸附
+ *  - 连线模式（顶部「连线」工具）：鼠标移入组件（含外扩缓冲带）显示 4 个控制点箭头
+ *    （尖朝外、底边贴组件边，随组件旋转），移出缓冲带消失 —— 不需要常驻全部锚点
+ *  - 连线模式下移动单位自动切 10px（组件拖动步进），退出连线模式还原
+ *  - 按住锚点拖动：跟随鼠标渲染虚线（贝塞尔/直角随当前线段样式），悬停其他组件锚点（16px 内）高亮并吸附
  *  - 松开：在目标锚点上 → 新建/重连；拖回自身同锚点 → 取消
  *  - 轻点（移动 < 4px）已连接锚点 → 断开该锚点的全部连线
  *  - 数据变更走 component_properties_change（可撤销/持久化），坐标实时计算无需同步
@@ -30,22 +31,22 @@ import { ANCHOR_OFFSET, ANCHORS, absolutePos, anchorPoint, cornerPath, linkArrow
 // 12 太紧：快速拖线（mousemove 间隔大）容易滑过锚点导致 hover 未命中、松手不建立连接
 const HIT_DIST = 16;
 
+// hover 显示控制点的缓冲带：组件 bbox 外扩此距离（画布坐标）内鼠标视为"在组件上"。
+// 锚点贴边在组件边上，鼠标移到锚点/组件外附近仍显示箭头；超过此距离消失
+const HOVER_EXPAND = 30;
+
 export default class LinkAnchors extends React.Component {
   state = {
     dragging: false, // 用户拖动组件中（component_drag from Draggable），锚点隐藏
-    tick: 0, // 强制刷新计数（transform/connections 变化时重新渲染锚点）
     drag: null, // { fromId, fromAnchor, start, mouse, hover }
-    linkMode: false, // 连线模式：所有组件显示锚点
-    allAnchors: [], // 连线模式下所有组件锚点列表 [{ id, anchor, x, y, linked }]
+    linkMode: false, // 连线模式：鼠标移入组件显示控制点箭头
+    hoverUid: null, // hover 显示控制点的组件 id（mousemove 实时计算）
   };
 
   componentWillMount() {
     Event.listen(component_inactive, this.handleInactive);
     Event.listen(component_drag, this.handleDrag);
     Event.listen(component_dragend, this.handleDragEnd);
-    Event.listen(component_resize_end, this.refresh);
-    Event.listen(component_properties_change, this.refresh);
-    Event.listen(controllers_change, this.handleControllers);
     Event.listen(link_tool_active, this.handleToolActive);
     Event.listen(link_tool_close, this.handleToolClose);
   }
@@ -54,13 +55,11 @@ export default class LinkAnchors extends React.Component {
     Event.destroy(component_inactive, this.handleInactive);
     Event.destroy(component_drag, this.handleDrag);
     Event.destroy(component_dragend, this.handleDragEnd);
-    Event.destroy(component_resize_end, this.refresh);
-    Event.destroy(component_properties_change, this.refresh);
-    Event.destroy(controllers_change, this.handleControllers);
     Event.destroy(link_tool_active, this.handleToolActive);
     Event.destroy(link_tool_close, this.handleToolClose);
     document.removeEventListener('mousemove', this.handleMouseMove);
     document.removeEventListener('mouseup', this.handleMouseUp);
+    document.removeEventListener('mousemove', this.handleHoverMove);
     for (let a in this._anchorDoms) {
       let el = this._anchorDoms[a];
       if (el) el.removeEventListener('mousedown', this.handleAnchorMouseDown, true);
@@ -69,22 +68,15 @@ export default class LinkAnchors extends React.Component {
 
   handleInactive = () => this.setState({ drag: null, dragging: false });
 
-  refresh = () => {
-    // 连线模式：重建全部锚点（拖动/属性变化时坐标实时跟随）；设计模式不显示锚点
-    if (this.state.linkMode) this.rebuildAnchors();
-  };
-
   // 用户拖动组件时隐藏锚点（避免锚点乱飞/遮挡拖动视线）；松手恢复显示。
   // 程序化变换（Snapline 吸附/对齐工具栏，from 非 Draggable）不隐藏
   handleDrag = (target, options = {}) => {
     let dragging = options.from === 'Draggable';
     if (dragging !== this.state.dragging) this.setState({ dragging });
-    this.refresh();
   };
 
   handleDragEnd = () => {
     if (this.state.dragging) this.setState({ dragging: false });
-    this.refresh();
   };
 
   /* ---------------- 连线工具模式（顶部「连线」按钮） ---------------- */
@@ -93,32 +85,66 @@ export default class LinkAnchors extends React.Component {
     window.__linkTool = true;
     // 重置 dragging：拖动组件时 mouseup 丢失（拖出浏览器边界等）→ dragend 不派发 → dragging 卡 true
     // 锚点被永久隐藏，连线模式无法拖线（间歇性"连不上"）——进入连线模式强制恢复锚点显示
-    this.setState({ linkMode: true, dragging: false }, this.rebuildAnchors);
+    this.setState({ linkMode: true, dragging: false });
+    // 连线模式：移动单位切 10px（组件拖动按 10px 步进，与锚点贴边配套：间距保持稳定），退出还原
+    let cfg = window._config;
+    if (cfg && !window.__linkPrevSnap) {
+      window.__linkPrevSnap = { x: cfg.snap.x, y: cfg.snap.y };
+      cfg.snap.x = 10;
+      cfg.snap.y = 10;
+    }
+    document.addEventListener('mousemove', this.handleHoverMove);
   };
 
   handleToolClose = () => {
     window.__linkTool = false;
-    this.setState({ linkMode: false, drag: null });
+    // 还原移动单位（用户手动改过的值也被记住）
+    let cfg = window._config;
+    if (cfg && window.__linkPrevSnap) {
+      cfg.snap.x = window.__linkPrevSnap.x;
+      cfg.snap.y = window.__linkPrevSnap.y;
+      window.__linkPrevSnap = null;
+    }
+    document.removeEventListener('mousemove', this.handleHoverMove);
+    this.setState({ linkMode: false, drag: null, hoverUid: null });
   };
 
-  handleControllers = () => {
-    // 连线模式下组件增删/数据变化时重建锚点列表
-    if (this.state.linkMode) this.rebuildAnchors();
-  };
-
-  // 构建全部组件锚点列表（坐标实时计算；拖线/轻点不依赖选中组件）
-  rebuildAnchors = () => {
-    let list = [];
+  /* ---------------- hover 控制点显示 ----------------
+   * 鼠标移入组件（含外扩缓冲带 HOVER_EXPAND）显示 4 个控制点箭头，移出缓冲带消失。
+   * 缓冲带 = 组件 bbox 外扩 HOVER_EXPAND：锚点贴边在组件边上，鼠标移到锚点/组件外附近
+   * 仍算 hover（用户要求"离开组件一定距离后消失"）。纯 mousemove 计算（每帧），
+   * 组件本体优先（距离 0），旋转组件用外接矩形判定 */
+  handleHoverMove = (e) => {
+    if (!this.state.linkMode) return;
+    let mouse = pointToWorkspaceCoords(e);
+    let best = null,
+      bestDist = HOVER_EXPAND;
     for (let id in window.allWidgets) {
       let item = window.allWidgets[id];
+      let t = item.transform || {};
       let abs = absolutePos(item);
-      let linked = (item.connections || []).map((c) => c.anchor);
-      ANCHORS.forEach((a) => {
-        let p = anchorPoint({ x: abs.x, y: abs.y, transform: item.transform }, a, ANCHOR_OFFSET);
-        list.push({ id, anchor: a, x: p.x, y: p.y, linked: linked.indexOf(a) > -1 });
-      });
+      let w0 = t.width || 0,
+        h0 = t.height || 0,
+        r = t.rotation || 0;
+      let bw = w0,
+        bh = h0;
+      if (r) {
+        // 旋转组件外接矩形（与 boxOf 一致）：旋转后锚点可超出 bbox 更远
+        let rad = (r * Math.PI) / 180,
+          c = Math.cos(rad),
+          s = Math.sin(rad);
+        bw = Math.abs(w0 * c) + Math.abs(h0 * s);
+        bh = Math.abs(w0 * s) + Math.abs(h0 * c);
+      }
+      let dx = Math.max(abs.x - mouse.x, 0, mouse.x - (abs.x + bw));
+      let dy = Math.max(abs.y - mouse.y, 0, mouse.y - (abs.y + bh));
+      let d = Math.hypot(dx, dy);
+      if (d <= bestDist) {
+        bestDist = d;
+        best = id;
+      }
     }
-    this.setState({ allAnchors: list });
+    if (best !== this.state.hoverUid) this.setState({ hoverUid: best });
   };
 
   /** 鼠标画布坐标 → 命中最近的组件锚点（bbox 粗筛 + 锚点精算）；excludeId 排除自身（禁止自连） */
@@ -132,9 +158,8 @@ export default class LinkAnchors extends React.Component {
       let abs = absolutePos(item);
       let w = t.width || 0;
       let h = t.height || 0;
-      // 粗筛：鼠标到组件包围盒距离（锚点距 bbox 边缘 ANCHOR_OFFSET=16px 外移，
-      // 阈值必须包含该外移量，否则鼠标在锚点外侧时即使距锚点 1px 也会被跳过、吸附失效）。
-      // 旋转组件的锚点可超出 bbox 更远（最多半个对角线），不做粗筛直接精算
+      // 粗筛：鼠标到组件包围盒距离（锚点贴边在 bbox 边缘，阈值含小余量即可；
+      // 旋转组件的锚点可超出 bbox 更远（最多半个对角线），不做粗筛直接精算）
       if (!t.rotation) {
         let dx = Math.max(abs.x - mouse.x, 0, mouse.x - (abs.x + w));
         let dy = Math.max(abs.y - mouse.y, 0, mouse.y - (abs.y + h));
@@ -251,9 +276,17 @@ export default class LinkAnchors extends React.Component {
 
   /* ---------------- 渲染 ---------------- */
 
-  // 渲染单个锚点（仅连线模式渲染；锚点铺满所有组件，用浅一档的蓝避免太抢眼）
+  // 渲染单个锚点（仅 hover 组件的 4 个）：贴边三角箭头，尖朝外（锚点外法线 + 组件旋转），
+  // 底边在组件边缘上（中心 = 组件边，箭头一半嵌组件内一半在外，"从内向外"）；
+  // 已连接实心 / 未连接空心，悬停红
   renderAnchor(key, uid, anchor, p, linked, hovering) {
-    let size = 12;
+    let size = 14;
+    // 本地外法线角（三角初始尖朝右，rotate 对齐锚点方向）：left=180°、right=0°、top=270°、bottom=90°
+    let base = { left: 180, right: 0, top: 270, bottom: 90 }[anchor];
+    let item = window.allWidgets[uid];
+    let rot = (item && item.transform && item.transform.rotation) || 0;
+    let angle = base + rot;
+    let color = hovering ? '#ff7875' : linked ? '#69b1ff' : '#bae7ff';
     return (
       <div
         key={key}
@@ -267,11 +300,7 @@ export default class LinkAnchors extends React.Component {
           top: p.y - size / 2,
           width: size,
           height: size,
-          borderRadius: '50%',
-          boxSizing: 'border-box',
           cursor: 'crosshair',
-          background: hovering ? '#ff7875' : linked ? '#69b1ff' : '#ffffff',
-          border: linked ? '2px solid #69b1ff' : '2px solid #bae7ff',
           // 高于组件 zIndex（从 1000 起递增），否则叠放组件会盖住锚点导致点不到/被遮挡
           zIndex: 999999,
           display: 'flex',
@@ -279,36 +308,38 @@ export default class LinkAnchors extends React.Component {
           justifyContent: 'center',
         }}
       >
-        {/* 中心定位点：未连接浅蓝点 / 已连接或悬停白点 */}
-        <div
-          style={{
-            width: 4,
-            height: 4,
-            borderRadius: '50%',
-            background: hovering || linked ? '#ffffff' : '#91caff',
-          }}
-        />
+        <svg width={12} height={12} style={{ transform: `rotate(${angle}deg)` }}>
+          {/* 三角：尖在右（锚点外侧 4px）、底边在左（组件内侧 4px） */}
+          <path d={'M 2 1 L 11 6 L 2 11 Z'} fill={hovering || linked ? color : '#ffffff'} stroke={color} strokeWidth={1.5} />
+        </svg>
       </div>
     );
   }
 
   render() {
-    let { drag, linkMode, allAnchors, dragging } = this.state;
-    // 连线控制点仅在连线模式显示（设计模式不再显示，避免干扰）；连线模式拖动组件中隐藏，松手恢复
+    let { drag, linkMode, dragging, hoverUid } = this.state;
+    // 控制点仅连线模式显示（设计模式不显示，避免干扰）；拖动组件中隐藏；
+    // 仅 hover 组件的 4 个箭头（坐标现算，鼠标移出缓冲带 hoverUid 置空 → 消失）
     let anchors = [];
-    if (dragging) {
-    } else if (linkMode) {
-      // 连线模式：所有组件锚点（坐标已在 rebuildAnchors 缓存，拖动时实时重建）
-      anchors = allAnchors.map((an) =>
-        this.renderAnchor(
-          an.id + '_' + an.anchor,
-          an.id,
-          an.anchor,
-          { x: an.x, y: an.y },
-          an.linked,
-          !!(drag && drag.hover && drag.hover.id == an.id && drag.hover.anchor == an.anchor)
-        )
-      );
+    if (!dragging && linkMode && hoverUid) {
+      let item = window.allWidgets[hoverUid];
+      if (item) {
+        let abs = absolutePos(item);
+        let linked = (item.connections || []).map((c) => c.anchor);
+        ANCHORS.forEach((a) => {
+          let p = anchorPoint({ x: abs.x, y: abs.y, transform: item.transform }, a, ANCHOR_OFFSET);
+          anchors.push(
+            this.renderAnchor(
+              hoverUid + '_' + a,
+              hoverUid,
+              a,
+              p,
+              linked.indexOf(a) > -1,
+              !!(drag && drag.hover && drag.hover.id == hoverUid && drag.hover.anchor == a)
+            )
+          );
+        });
+      }
     }
     if (anchors.length === 0) return null;
     return (
@@ -325,12 +356,15 @@ export default class LinkAnchors extends React.Component {
     let item = window.allWidgets[hover.id];
     if (!item) return null;
     let abs = absolutePos(item);
-    let size = 12;
+    let rot = (item.transform && item.transform.rotation) || 0;
+    let size = 14;
     return (
       <div className={'link-target-anchors'}>
         {ANCHORS.map((a) => {
           let p = anchorPoint({ x: abs.x, y: abs.y, transform: item.transform }, a, ANCHOR_OFFSET);
           let isHit = a === hover.anchor;
+          let angle = { left: 180, right: 0, top: 270, bottom: 90 }[a] + rot;
+          let color = isHit ? '#ff7875' : '#91caff';
           return (
             <div
               key={a}
@@ -340,26 +374,17 @@ export default class LinkAnchors extends React.Component {
                 top: p.y - size / 2,
                 width: size,
                 height: size,
-                borderRadius: '50%',
-                boxSizing: 'border-box',
                 pointerEvents: 'none',
                 zIndex: 999998,
-                background: isHit ? '#ff7875' : '#e6f4ff',
-                border: isHit ? '2px solid #ff7875' : '2px dashed #91caff',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
               }}
             >
-              {/* 中心定位点：命中白点 / 未命中蓝点 */}
-              <div
-                style={{
-                  width: 4,
-                  height: 4,
-                  borderRadius: '50%',
-                  background: isHit ? '#ffffff' : '#1890ff',
-                }}
-              />
+              {/* 贴边三角箭头（与 hover 控制点一致，命中红 / 未命中浅蓝虚线） */}
+              <svg width={12} height={12} style={{ transform: `rotate(${angle}deg)` }}>
+                <path d={'M 2 1 L 11 6 L 2 11 Z'} fill={isHit ? color : '#ffffff'} stroke={color} strokeWidth={1.5} strokeDasharray={isHit ? 'none' : '3 2'} />
+              </svg>
             </div>
           );
         })}
@@ -372,7 +397,9 @@ export default class LinkAnchors extends React.Component {
     let { drag } = this.state;
     let to = drag.hover ? this.anchorOfHover(drag.hover) : drag.mouse;
     let from = { x: drag.start.x, y: drag.start.y, anchor: drag.fromAnchor, box: drag.start.box };
-    let toPoint = { x: to.x, y: to.y, anchor: drag.hover ? drag.hover.anchor : drag.fromAnchor, box: to.box };
+    // 终点 anchor 仅在吸附到目标锚点时传入（控制点沿目标锚点外法线，从外到内进入）；
+    // 未吸附时传 undefined → linkControls 回退全局方向、箭头走 linkArrowUnit 无 anchor 分支跟随鼠标
+    let toPoint = { x: to.x, y: to.y, anchor: drag.hover ? drag.hover.anchor : undefined, box: to.box };
     let style = window.__linkStyle || 'curve';
     let d = style === 'corner' ? cornerPath(from, toPoint, 10) : linkPath(from, toPoint);
     return (
@@ -390,8 +417,13 @@ export default class LinkAnchors extends React.Component {
           zIndex: 999997,
         }}
       >
-        {/* 起点圆点 + 终点箭头（箭头随鼠标/目标锚点方向） */}
-        <circle cx={drag.start.x} cy={drag.start.y} r={3.5} fill={drag.hover ? '#ff7875' : '#1890ff'} />
+        {/* 起点米字（浅色，与落线后的起点标记一致）+ 终点箭头（随鼠标/目标锚点方向） */}
+        <g stroke="#91caff" strokeWidth={1.5}>
+          <line x1={drag.start.x - 4.5} y1={drag.start.y} x2={drag.start.x + 4.5} y2={drag.start.y} />
+          <line x1={drag.start.x} y1={drag.start.y - 4.5} x2={drag.start.x} y2={drag.start.y + 4.5} />
+          <line x1={drag.start.x - 3.2} y1={drag.start.y - 3.2} x2={drag.start.x + 3.2} y2={drag.start.y + 3.2} />
+          <line x1={drag.start.x - 3.2} y1={drag.start.y + 3.2} x2={drag.start.x + 3.2} y2={drag.start.y - 3.2} />
+        </g>
         <path d={linkArrowPath({ x: drag.start.x, y: drag.start.y, anchor: drag.fromAnchor }, to, 8, style)} fill={drag.hover ? '#ff7875' : '#1890ff'} />
         <path
           d={d}

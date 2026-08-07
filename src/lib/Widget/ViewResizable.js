@@ -15,6 +15,8 @@ import {
   component_resize_start,
   component_show_resizer,
   editor_scroll_change,
+  link_tool_active,
+  link_tool_close,
 } from '../util/actions';
 import './ViewResizable.scss';
 import Draggable from '../Draggable';
@@ -70,6 +72,8 @@ export default class ViewResizable extends NoZoomTransform {
     Event.listen(component_show_resizer, this.onComponentActive);
     Event.listen(component_edit_mode, this.onOpenEditMode);
     Event.listen(component_close_edit_mode, this.onCloseEditMode);
+    Event.listen(link_tool_active, this.onLinkToolChange);
+    Event.listen(link_tool_close, this.onLinkToolChange);
     // 旋转手柄：四个角外侧各一个（Keynote 风格），拖任意一个绕组件中心旋转，
     // 每角一个 Draggable，闭包变量独立；whitelist 通过 'rotation' 键统一控制四个显隐
     ['rotationTL', 'rotationTR', 'rotationBR', 'rotationBL'].forEach((ref) => this.attachRotation(this.refs[ref]));
@@ -407,12 +411,22 @@ export default class ViewResizable extends NoZoomTransform {
       resize = this.target ? this.target.properties.settings.resize : null;
       if (resize === null) resize = gResize;
     }
+    // 连线模式：边中点热区隐藏（让位给贴边连线控制点，避免位置冲突），只保留四角 + 旋转。
+    // 设计模式恢复原样。resize 可能是实例数组，filter 生成新数组不修改原值
+    if (window.__linkTool && resize && resize.indexOf('tm') > -1) {
+      resize = resize.filter((item) => item !== 'tm' && item !== 'bm' && item !== 'l' && item !== 'r');
+    }
     gResize.forEach((item) => {
       this.handleRefs(item).forEach((r) => Dom.of(this.refs[r]).hide());
     });
     (resize || gResize).forEach((item) => {
       this.handleRefs(item).forEach((r) => Dom.of(this.refs[r]).show());
     });
+  };
+
+  // 连线模式切换：当前选中组件的手柄显隐立即刷新（设计模式恢复边中点）
+  onLinkToolChange = () => {
+    if (this.target) this.applyResizeHandles();
   };
 
   onComponentActive = (target) => {
@@ -452,6 +466,8 @@ export default class ViewResizable extends NoZoomTransform {
     Event.destroy(component_close_edit_mode, this.onCloseEditMode);
     Event.destroy(component_edit_mode, this.onOpenEditMode);
     Event.destroy(component_resize_end, this.onComponentDragend);
+    Event.destroy(link_tool_active, this.onLinkToolChange);
+    Event.destroy(link_tool_close, this.onLinkToolChange);
   }
 
   setPosition = (dom, x, y) => {
@@ -553,7 +569,8 @@ export default class ViewResizable extends NoZoomTransform {
             <div data-type='se' ref={'br'} data-d='br' className={'resizable-circle rc-br'}></div>
             <div data-type='sw' ref={'bl'} data-d='bl' className={'resizable-circle rc-bl'}></div>
             {/* 边热区：覆盖整条边外侧 8px 的透明条带，鼠标移到边任意位置 → 缩放光标，拖动即缩放；
-                z-index 低于角方块（$zindex-1），角部命中始终归方块 */}
+                z-index 低于角方块（$zindex-1），角部命中始终归方块。
+                连线模式下由 applyResizeHandles 隐藏（边中点让位给贴边连线控制点） */}
             <div data-type='n' ref={'tm'} data-d='tm' className={'resize-edge rv-tm'}></div>
             <div data-type='s' ref={'bm'} data-d='bm' className={'resize-edge rv-bm'}></div>
             <div data-type='w' ref={'l'} data-d='l' className={'resize-edge rv-l'}></div>

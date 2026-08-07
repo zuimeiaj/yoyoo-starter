@@ -23,7 +23,8 @@ export const BaseComponents = [
     width: 100,
   },
   {
-    icon: 'juxing',
+    // 矩形：svg 线条图标（iconfont 'juxing' 字形缺失曾显示异常）
+    icon: 'svg:<rect x="3" y="4" width="18" height="16"/>',
     name: '矩形',
     category: 'flow',
     type: 'rect',
@@ -31,7 +32,8 @@ export const BaseComponents = [
     height: 100,
   },
   {
-    icon: 'Triangle',
+    // 三角形：svg 线条图标（iconfont 'Triangle' 字形缺失曾显示异常）
+    icon: 'svg:<path d="M12 3l10 18H2z"/>',
     name: '三角形',
     category: 'flow',
     type: 'triangle',
@@ -48,7 +50,7 @@ export const BaseComponents = [
   },
   {
     icon: 'svg:<path d="M5 2h16l-3 20H2z"/>',
-    name: '平行四边形',
+    name: '四边形',
     category: 'flow',
     type: 'parallelogram',
     width: 140,
@@ -65,10 +67,82 @@ export const BaseComponents = [
   {
     icon: 'qipao',
     name: '气泡',
-    category: 'flow',
+    category: 'base',
     type: 'bubble',
     width: 300,
     height: 100,
+  },
+  {
+    // 胶囊（起止节点）：全圆角矩形
+    icon: 'svg:<rect x="3" y="7" width="18" height="10" rx="5"/>',
+    name: '胶囊',
+    category: 'flow',
+    type: 'capsule',
+    width: 200,
+    height: 80,
+  },
+  {
+    // 椭圆（起止节点）
+    icon: 'svg:<ellipse cx="12" cy="12" rx="9" ry="7"/>',
+    name: '椭圆',
+    category: 'flow',
+    type: 'ellipse',
+    width: 200,
+    height: 100,
+  },
+  {
+    // 预定义过程：矩形 + 左右双竖线
+    icon: 'svg:<rect x="4" y="4" width="16" height="16"/><path d="M8 4v16M16 4v16"/>',
+    name: '预定义',
+    category: 'flow',
+    type: 'predefined',
+    width: 200,
+    height: 100,
+  },
+  {
+    // 文档：矩形 + 底部波浪
+    icon: 'svg:<path d="M5 3h10l4 4v14H5z"/><path d="M15 3v4h4"/>',
+    name: '文档',
+    category: 'flow',
+    type: 'document',
+    width: 160,
+    height: 120,
+  },
+  {
+    // 数据库：圆柱体
+    icon: 'svg:<path d="M4 6c0-1.7 3.6-3 8-3s8 1.3 8 3v12c0 1.7-3.6 3-8 3s-8-1.3-8-3z"/><ellipse cx="12" cy="6" rx="8" ry="3"/>',
+    name: '数据库',
+    category: 'flow',
+    type: 'cylinder',
+    width: 180,
+    height: 120,
+  },
+  {
+    // 手动输入：上底短、下底长的梯形
+    icon: 'svg:<path d="M7 4h10l3 16H4z"/>',
+    name: '梯形',
+    category: 'flow',
+    type: 'trapezoid',
+    width: 200,
+    height: 100,
+  },
+  {
+    // 延迟：矩形 + 右侧半圆（D 形）
+    icon: 'svg:<path d="M4 4h9a8 8 0 0 1 0 16H4z"/>',
+    name: '延迟',
+    category: 'flow',
+    type: 'delay',
+    width: 200,
+    height: 100,
+  },
+  {
+    // 注释：右上角折角矩形
+    icon: 'svg:<path d="M4 4h12l4 4v12H4z"/>',
+    name: '注释',
+    category: 'flow',
+    type: 'annotation',
+    width: 160,
+    height: 120,
   },
   {
     icon: 'svg:<path d="M4 20h16"/><rect x="6" y="11" width="3.5" height="9" rx="1"/><rect x="10.5" y="6" width="3.5" height="14" rx="1"/><rect x="15" y="13" width="3.5" height="7" rx="1"/>',
@@ -128,7 +202,7 @@ export const BaseComponents = [
   },
   {
     icon: 'danhangshuru',
-    name: '单行输入',
+    name: '单行',
     category: 'form',
     type: 'input',
     width: 180,
@@ -136,7 +210,7 @@ export const BaseComponents = [
   },
   {
     icon: 'fuhao-duohangshurukuang',
-    name: '多行输入',
+    name: '多行',
     category: 'form',
     type: 'textarea',
     width: 200,
@@ -144,7 +218,7 @@ export const BaseComponents = [
   },
   {
     icon: 'xialaxuanze',
-    name: '下拉选择',
+    name: '下拉',
     category: 'form',
     type: 'select',
     height: 28,
@@ -214,7 +288,7 @@ export const BaseComponents = [
   {
     // 统计数值：柱状图 + 上升
     icon: 'svg:<rect x="4" y="12" width="4" height="8"/><rect x="10" y="7" width="4" height="13"/><rect x="16" y="3" width="4" height="17"/>',
-    name: '统计数值',
+    name: '统计',
     category: 'data',
     type: 'statistic',
     width: 120,
@@ -241,7 +315,7 @@ export const BaseComponents = [
   {
     // 警告：三角 + 感叹号
     icon: 'svg:<path d="M12 4L2.5 20h19z"/><path d="M12 10v4M12 17h.01"/>',
-    name: '警告提示',
+    name: '警告',
     category: 'data',
     type: 'alert',
     width: 300,
@@ -266,14 +340,22 @@ export const ComponentIconMap = {
   circle: 'icon_yuanxing',
   line: 'xianduanceliang',
   bubble: 'qipao',
+  capsule: 'svg:<rect x="3" y="7" width="18" height="10" rx="5"/>',
+  ellipse: 'svg:<ellipse cx="12" cy="12" rx="9" ry="7"/>',
+  predefined: 'svg:<rect x="4" y="4" width="16" height="16"/><path d="M8 4v16M16 4v16"/>',
+  document: 'svg:<path d="M5 3h10l4 4v14H5z"/><path d="M15 3v4h4"/>',
+  cylinder: 'svg:<path d="M4 6c0-1.7 3.6-3 8-3s8 1.3 8 3v12c0 1.7-3.6 3-8 3s-8-1.3-8-3z"/><ellipse cx="12" cy="6" rx="8" ry="3"/>',
+  trapezoid: 'svg:<path d="M7 4h10l3 16H4z"/>',
+  delay: 'svg:<path d="M4 4h9a8 8 0 0 1 0 16H4z"/>',
+  annotation: 'svg:<path d="M4 4h12l4 4v12H4z"/>',
   text: 'text',
   image: 'tupian-copy-copy',
   button: 'anniu1',
-  triangle: 'Triangle',
+  triangle: 'svg:<path d="M12 3l10 18H2z"/>',
   diamond: 'svg:<path d="M12 2l10 10-10 10L2 12z"/>',
   parallelogram: 'svg:<path d="M5 2h16l-3 20H2z"/>',
   hexagon: 'svg:<path d="M12 2l9 5v10l-9 5-9-5V7z"/>',
-  rect: 'juxing',
+  rect: 'svg:<rect x="3" y="4" width="18" height="16"/>',
   icon: 'tubiao',
   block: 'group',
   table: 'table',

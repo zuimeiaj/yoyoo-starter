@@ -1,14 +1,14 @@
 /**
  *  created by yaojun on 2019/2/21
- *
+ *  三角形（流程图"手动操作"等节点）：继承 ShapeTextController 双击编辑文字
  */
 
 import React from 'react';
-import ViewController from './ViewController';
-import { Dom, uuid } from '../util/helper';
+import ShapeTextController from './ShapeTextController';
+import { Dom } from '../util/helper';
 import { initialCoverageIndex } from '../global';
 
-export default class ViewTriangle extends ViewController {
+export default class ViewTriangle extends ShapeTextController {
   initProperties() {
     let dom = Dom.of(this.refs.container);
 
@@ -33,7 +33,7 @@ export default class ViewTriangle extends ViewController {
   }
 
   renderContent() {
-    let { x, y, rotation, width, height } = this.properties.transform;
+    let { width, height } = this.properties.transform;
     let {
       border: { width: sw, color, style },
       bg,
@@ -46,10 +46,11 @@ export default class ViewTriangle extends ViewController {
       strokeDash.strokeDasharray = sw;
       strokeDash.strokeDashoffset = sw;
     }
-    return (
-      <svg style={{ width: '100%', height: '100%' }} xmlns={'http://www.w3.org/2000/svg'} data-uid={this.properties.id} className={'view-triangle'}>
+    return [
+      <svg key={'s'} style={{ width: '100%', height: '100%' }} xmlns={'http://www.w3.org/2000/svg'} data-uid={this.properties.id} className={'view-triangle'}>
         <polygon ref={'line'} strokeWidth={sw} {...strokeDash} points={`1,${height - 1}  ${width / 2},0  ${width - 1},${height - 1}`} style={{ fill: bg, stroke: color }} />
-      </svg>
-    );
+      </svg>,
+      this.renderText(),
+    ];
   }
 }
