@@ -2,7 +2,7 @@
 
 低代码可视化网页生成/编辑工具：拖拽组件搭建页面、右侧属性面板实时编辑、图表数据可视化、交互与动画配置、一键导出图片。纯单机版，数据保存在浏览器本地（IndexedDB，localStorage 备选）。
 
-在线地址: http://zuimeiaj.github.io/yoyoo/
+官网: http://zuimeiaj.com/
 
 ## 功能特性
 
